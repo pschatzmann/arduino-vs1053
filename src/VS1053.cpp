@@ -402,7 +402,7 @@ void VS1053::adjustRate(long ppm2) {
 /**
  * Load a patch or plugin
  */
-void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size)
+void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size) {
     int i = 0;
     while (i<plugin_size) {
         unsigned short addr, n, val;
