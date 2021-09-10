@@ -402,9 +402,9 @@ void VS1053::adjustRate(long ppm2) {
 /**
  * Load a patch or plugin
  */
-void VS1053::loadUserCode(const unsigned short* plugin) {
+void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size)
     int i = 0;
-    while (i<sizeof(plugin)/sizeof(plugin[0])) {
+    while (i<plugin_size) {
         unsigned short addr, n, val;
         addr = plugin[i++];
         n = plugin[i++];
@@ -427,5 +427,5 @@ void VS1053::loadUserCode(const unsigned short* plugin) {
  * Load the latest generic firmware patch
  */
 void VS1053::loadDefaultVs1053Patches() {
-   loadUserCode(PATCHES);
+   loadUserCode(PATCHES,sizeof(PATCHES)/sizeof(PATCHES));
 };
