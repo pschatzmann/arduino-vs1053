@@ -40,6 +40,10 @@
 
 #include "patches/vs1053b-patches.h"
 
+#ifndef _BV
+#define _BV(bit) (1 << (bit))
+#endif
+
 enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_192_KHZ,
     VS1053_I2S_RATE_96_KHZ,
