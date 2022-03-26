@@ -58,7 +58,7 @@
 // This ESP_VS1053_Library
 #include <VS1053.h>
 
-#include "patcches/rtmidi1003b.h"
+#include "patches/rtmidi1003b.h"
 #include "patches/rtmidi1053b.h"
 
 // Wiring of VS1053 board (SPI connected in a standard way)
