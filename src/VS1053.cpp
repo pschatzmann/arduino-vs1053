@@ -265,19 +265,19 @@ void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
     // Hence, in case of running to an infinite loop, commenting await_data_request() is the solution    
     await_data_request(); 
 	
-    SPI.write(0x00);
-    SPI.write(cmd);    
+    spi_write(0x00);
+    spi_write(cmd);    
 
     // Some commands only have one data byte. All cmds less than 0xBn have 2 data bytes 
     // (sort of: http://253.ccarh.org/handout/midiprotocol/)
     if( (cmd & 0xF0) <= 0xB0 || (cmd & 0xF0) >= 0xE0) {
-      SPI.write(0x00);  
-      SPI.write(data1);      
-      SPI.write(0x00);  
-      SPI.write(data2);  
+      spi_write(0x00);  
+      spi_write(data1);      
+      spi_write(0x00);  
+      spi_write(data2);  
     } else {
-      SPI.write(0x00);  
-      SPI.write(data1);
+      spi_write(0x00);  
+      spi_write(data1);
     }
     
     digitalWrite(dcs_pin, HIGH);  //data_mode_off() does not seem to work here
