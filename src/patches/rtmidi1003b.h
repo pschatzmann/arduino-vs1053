@@ -1,5 +1,5 @@
 #ifndef SKIP_PLUGIN_VARNAME
-const unsigned short MIDI1003[] = { /* Compressed plugin */
+const unsigned short MIDI1003[] PROGMEM = { /* Compressed plugin */
 #endif
 	0x0007,0x0001, /*copy 1*/
 	0x8030,
