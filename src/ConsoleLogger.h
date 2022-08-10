@@ -25,7 +25,8 @@
     #elif defined(ARDUINO_ARCH_RP2040) && defined(DEBUG_RP2040_PORT) && defined(DEBUG_VS1053)
         #define LOG(...) DEBUG_RP2040_PORT.printf(__VA_ARGS__)
     #else
-        #define LOG(...)
+        #include <stdio.h>
+        #define LOG(...) {char msg[80]; snprintf(msg, 80,__VA_ARGS__); Serial.println(msg);}
     #endif
 
 #endif // __ESP_VS1053_LIBRARY_CONSOLE_LOGGER__
