@@ -105,19 +105,15 @@ I2S output of the VS1053 chip can be enabled/disabled using methods `enableI2sOu
 
 Refer to the [VS1053 datasheet](https://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf) for details: the pin assignment is specified in section 5.1 on page 12, the I2S DAC interface is described in section 11.14 on page 83.
 
-#### Logging / debugging
+#### Logging / Debugging
 
 The library uses ESP Arduino framework built in logger (Arduino core for [ESP32](https://github.com/espressif/arduino-esp32/issues/893#issuecomment-348069135) and [ESP8266](https://github.com/esp8266/Arduino/blob/master/doc/Troubleshooting/debugging.rst#debug-level)).<br /> 
 
 To see debug messages please add build flags to your `platformio.ini` as below (depending on platform):
 
-- for ESP8266:
+- for ESP8266, RP2040 and any other processor:
 
 `build_flags = -D DEBUG_PORT=Serial`
-
-- for RP2040 using [arduino-pico core](https://github.com/earlephilhower/arduino-pico)
-
-`build_flags = -DDEBUG_PORT=Serial` 
 
 - for ESP32:
 
@@ -200,6 +196,7 @@ Of course as the file will be a part of firmware, it should be small enough acco
 ## Credits
 
 Based on library/applications:
+* [baldram/ESP_VS1053_Library](https://github.com/baldram/ESP_VS1053_Library) by [Marcin Szałomski](https://github.com/baldram)
 * [maniacbug/VS1053](https://github.com/maniacbug/VS1053) by [J. Coliz](https://github.com/maniacbug)
 * [Esp-radio](https://github.com/Edzelf/Esp-radio) by [Ed Smallenburg](https://github.com/Edzelf)
 * [smart-pod](https://github.com/MagicCube/smart-pod) by [Henry Li](https://github.com/MagicCube)
