@@ -7,7 +7,7 @@ Read more: [http://www.vlsi.fi/en/products/vs1053.html](http://www.vlsi.fi/en/pr
 The library enables the possibility to play audio files (recording is not supported).<br />
 Eg. it may be a base to build your own webradio player or different audio device.
 
-Designed specifically to work with the **Espressif ESP8266** and **ESP32** boards. 
+The original version was designed specifically to work with the **Espressif ESP8266** and **ESP32** boards. It has been extended so that it should work with any Arduino board. 
 
 Don't hesitate to create issues or pull requests if you want to improve ESP_VS1053_Library!
 
