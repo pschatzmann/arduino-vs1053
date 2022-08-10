@@ -117,7 +117,7 @@ To see debug messages please add build flags to your `platformio.ini` as below (
 
 - for RP2040 using [arduino-pico core](https://github.com/earlephilhower/arduino-pico)
 
-`build_flags = -DDEBUG_PORT=Serial 
+`build_flags = -DDEBUG_PORT=Serial` 
 
 - for ESP32:
 
