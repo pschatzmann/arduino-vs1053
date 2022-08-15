@@ -13,7 +13,7 @@ Don't hesitate to create issues or pull requests if you want to improve ESP_VS10
 
 ## Documentation
 
-Here is the [relevant class documentation](https://pschatzmann.github.io/Arduino-VS1053/doc/html/struct_v_s1053.html)
+Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/struct_v_s1053.html)
 
 
 ## Introduction
