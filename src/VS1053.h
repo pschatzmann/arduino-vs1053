@@ -51,24 +51,34 @@ enum VS1053_I2S_RATE {
 };
 
 struct VS1053 {
+    /**
+     * @brief Amplitude and Frequency Limit 
+     * 
+     */
     class VS1053EquilizerValue {
     public:
         VS1053EquilizerValue(uint8_t limit){
             this->freq_limit = limit;
         }
-        uint16_t freq_limit=0; // in hz: range 0 to 15000
-        uint8_t amplitude=0;  // range 0 to 100
-        
+        /// Frequency Limit in hz: range 0 to 15000
+        uint16_t freq_limit=0; 
+        /// Amplitude value: range 0 to 100 
+        uint8_t amplitude=0;  
+        /// Register value for amplitude
         uint16_t scaledAmplitude(){
             if (amplitude>100) amplitude = 100;
             return static_cast<float>(amplitude)/100.0*15;
         }
+        /// Register value for Frequency Limit
         uint16_t scaledFreq(float scale){
             uint16_t result = static_cast<float>(freq_limit) / scale;
             if (result>15) result = 15;
             return result;
         }
     };
+    /**
+     * @brief Equilizer Functionality using the SCI_BASS Register
+     */
 
     class VS1053Equilizer {
     protected:
@@ -77,14 +87,17 @@ struct VS1053 {
 
 
     public:
+        /// Provides the bass VS1053EquilizerValue
         VS1053EquilizerValue &bass() {
             return v_bass;
         }
 
+        /// Provides the treble VS1053EquilizerValue
         VS1053EquilizerValue &treble() {
             return v_treble;
         }
 
+        /// Provides the VS1053 SCI_BASS Register Value
         uint16_t value() {
             uint16_t result=0;
             result |= v_treble.scaledAmplitude() << 12;
@@ -201,91 +214,91 @@ protected:
     uint16_t wram_read(uint16_t address);
 
 public:
-    // Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
+    /// Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);
 
-    // Begin operation.  Sets pins correctly, and prepares SPI bus.
+    /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     void begin();
 
-    // Prepare to start playing. Call this each time a new song starts
+    /// Prepare to start playing. Call this each time a new song starts
     void startSong();
 
-    // Play a chunk of data.  Copies the data to the chip.  Blocks until complete
+    /// Play a chunk of data.  Copies the data to the chip.  Blocks until complete
     void playChunk(uint8_t *data, size_t len);
     
-    // performs a MIDI command
+    /// performs a MIDI command
     void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
 	
-    // Finish playing a song. Call this after the last playChunk call
+    /// Finish playing a song. Call this after the last playChunk call
     void stopSong();
 
-    // Set the player volume.Level from 0-100, higher is louder
+    /// Set the player volume.Level from 0-100, higher is louder
     void setVolume(uint8_t vol);
 
-    // Adjusting the left and right volume balance, higher to enhance the right side, lower to enhance the left side.
+    /// Adjusting the left and right volume balance, higher to enhance the right side, lower to enhance the left side.
     void setBalance(int8_t balance);
 
-    // Set the player baas/treble, 4 nibbles for treble gain/freq and bass gain/freq
+    /// Set the player baas/treble, 4 nibbles for treble gain/freq and bass gain/freq
     void setTone(uint8_t *rtone);
 
-    // Get the currenet volume setting, higher is louder
+    /// Get the currenet volume setting, higher is louder
     uint8_t getVolume();
 
-    // Get the currenet balance setting (-100..100)
+    /// Get the currenet balance setting (-100..100)
     int8_t getBalance();
 
-    // Print configuration details to serial output.
+    /// Print configuration details to serial output.
     void printDetails(const char *header);
 
-    // Do a soft reset
+    /// Do a soft reset
     void softReset();
 
-    // Test communication with module
+    /// Test communication with module
     bool testComm(const char *header);
 
     inline bool data_request() const {
         return (digitalRead(dreq_pin) == HIGH);
     }
 
-    // Fine tune the data rate
+    /// Fine tune the data rate
     void adjustRate(long ppm2);
 
-    // Streaming Mode On
+    /// Streaming Mode On
     void streamModeOn();
     
-    // Default: Streaming Mode Off
+    /// Default: Streaming Mode Off
     void streamModeOff();      
 
-    // An optional switch preventing the module starting up in MIDI mode
+    /// An optional switch preventing the module starting up in MIDI mode
     void switchToMp3Mode();
 
-    // disable I2S output; this is the default state
+    /// disable I2S output; this is the default state
     void disableI2sOut();
 
-    // enable I2S output (GPIO4=LRCLK/WSEL; GPIO5=MCLK; GPIO6=SCLK/BCLK; GPIO7=SDATA/DOUT)
+    /// enable I2S output (GPIO4=LRCLK/WSEL; GPIO5=MCLK; GPIO6=SCLK/BCLK; GPIO7=SDATA/DOUT)
     void enableI2sOut(VS1053_I2S_RATE i2sRate = VS1053_I2S_RATE_48_KHZ);
 
-    // Checks whether the VS1053 chip is connected and is able to exchange data to the ESP
+    /// Checks whether the VS1053 chip is connected and is able to exchange data to the ESP
     bool isChipConnected();
 
-    // gets Version of the VLSI chip being used
+    /// gets Version of the VLSI chip being used
     uint16_t getChipVersion();    
 
-    // Provides SCI_DECODE_TIME register value
+    /// Provides SCI_DECODE_TIME register value
     uint16_t getDecodedTime();
 
-    // Clears SCI_DECODE_TIME register (sets 0x00)
+    /// Clears SCI_DECODE_TIME register (sets 0x00)
     void clearDecodedTime();
 
-    // Writes to VS10xx's SCI (serial command interface) SPI bus.
+    /// Writes to VS10xx's SCI (serial command interface) SPI bus.
     // A low level method which lets users access the internals of the VS1053.
     void writeRegister(uint8_t _reg, uint16_t _value) const;
 
-    // Load a patch or plugin to fix bugs and/or extend functionality.
+    /// Load a patch or plugin to fix bugs and/or extend functionality.
     // For more info about patches see http://www.vlsi.fi/en/support/software/vs10xxpatches.html
     void loadUserCode(const unsigned short* plugin, unsigned short plugin_size);
 
-    // Loads the latest generic firmware patch.
+    /// Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
 
 
@@ -316,11 +329,13 @@ public:
     /// Sets the treble frequency limit in hz (range 0 to 15000)
     void setTrebleFrequencyLimit(uint16_t value){
         equilizer.bass().freq_limit = value;
+        writeRegister(SCI_BASS, equilizer.value());
     }
 
     /// Sets the bass frequency limit in hz (range 0 to 15000)
     void setBassFrequencyLimit(uint16_t value){
         equilizer.bass().freq_limit = value;
+        writeRegister(SCI_BASS, equilizer.value());
     }
 
 };
