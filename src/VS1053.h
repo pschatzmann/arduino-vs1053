@@ -219,7 +219,7 @@ public:
     /// Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);
 
-    /// Constructor which allows a custom 
+    /// Constructor which allows a custom reset pin
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin);
 
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
