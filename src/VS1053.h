@@ -34,7 +34,6 @@
 #ifndef VS1053_H
 #define VS1053_H
 
-#include <Arduino.h>
 #include "ConsoleLogger.h"
 #include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
@@ -43,6 +42,10 @@
 #ifndef _BV
 #define _BV(bit) (1 << (bit))
 #endif
+
+
+
+//#endif
 
 enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_192_KHZ,

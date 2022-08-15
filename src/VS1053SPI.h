@@ -2,11 +2,14 @@
 #pragma once
 
 #if defined(ARDUINO)
-#include "Arduino.h"
-#include <SPI.h>
-
+# include "Arduino.h"
+# include <SPI.h>
+#else
+# include "VS1053Ext.h"
+#endif
 /**
- * @brief SPI Dirver for VS1053. We support different alternative implementations
+ * @brief SPI Dirver for VS1053. We support different alternative implementations.
+ * Outside of Arduino you need to provide your own implementation.
  * 
  * @tparam Driver 
  */
@@ -29,6 +32,7 @@ class VS1053SPI {
     Driver driver;
 };
 
+#if defined(ARDUINO)
 
 /**
  * @brief Generic SPI Driver for Arduino
@@ -106,3 +110,4 @@ class VS1053SPIESP32 {
 
 #endif
 #endif
+
