@@ -43,11 +43,11 @@ uint16_t VS1053::read_register(uint8_t _reg) const {
     uint16_t result;
 
     control_mode_on();
-    spi_write(3);    // Read operation
-    spi_write(_reg); // Register to write (0..0xF)
+    spi.write(3);    // Read operation
+    spi.write(_reg); // Register to write (0..0xF)
     // Note: transfer16 does not seem to work
-    result = (SPI.transfer(0xFF) << 8) | // Read 16 bits data
-             (SPI.transfer(0xFF));
+    result = (spi.transfer(0xFF) << 8) | // Read 16 bits data
+             (spi.transfer(0xFF));
     await_data_request(); // Wait for DREQ to be HIGH again
     control_mode_off();
     return result;
@@ -55,9 +55,9 @@ uint16_t VS1053::read_register(uint8_t _reg) const {
 
 void VS1053::writeRegister(uint8_t _reg, uint16_t _value) const {
     control_mode_on();
-    spi_write(2);        // Write operation
-    spi_write(_reg);     // Register to write (0..0xF)
-    spi_write16(_value); // Send 16 bits data
+    spi.write(2);        // Write operation
+    spi.write(_reg);     // Register to write (0..0xF)
+    spi.write16(_value); // Send 16 bits data
     await_data_request();
     control_mode_off();
 }
@@ -74,7 +74,7 @@ void VS1053::sdi_send_buffer(uint8_t *data, size_t len) {
             chunk_length = vs1053_chunk_size;
         }
         len -= chunk_length;
-        spi_write_bytes(data, chunk_length);
+        spi.write_bytes(data, chunk_length);
         data += chunk_length;
     }
     data_mode_off();
@@ -93,7 +93,7 @@ void VS1053::sdi_send_fillers(size_t len) {
         }
         len -= chunk_length;
         while (chunk_length--) {
-            spi_write(endFillByte);
+            spi.write(endFillByte);
         }
     }
     data_mode_off();
@@ -172,7 +172,7 @@ void VS1053::begin() {
     digitalWrite(cs_pin, HIGH);
     delay(500);
     // Init SPI in slow mode ( 0.2 MHz )
-    VS1053_SPI = SPISettings(200000, MSBFIRST, SPI_MODE0);
+        spi.set_speed(200000);
     // printDetails("Right after reset/startup");
     delay(20);
     // printDetails("20 msec after reset");
@@ -183,7 +183,7 @@ void VS1053::begin() {
         // The next clocksetting allows SPI clocking at 5 MHz, 4 MHz is safe then.
         writeRegister(SCI_CLOCKF, 6 << 12); // Normal clock settings multiplyer 3.0 = 12.2 MHz
         // SPI Clock to 4 MHz. Now you can set high speed SPI clock.
-        VS1053_SPI = SPISettings(4000000, MSBFIRST, SPI_MODE0);
+        spi.set_speed(4000000);
         writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
         testComm("Fast SPI, Testing VS1053 read/write registers again...\n");
         delay(10);
@@ -274,19 +274,19 @@ void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
     // Hence, in case of running to an infinite loop, commenting await_data_request() is the solution    
     await_data_request(); 
 	
-    spi_write(0x00);
-    spi_write(cmd);    
+    spi.write(0x00);
+    spi.write(cmd);    
 
     // Some commands only have one data byte. All cmds less than 0xBn have 2 data bytes 
     // (sort of: http://253.ccarh.org/handout/midiprotocol/)
     if( (cmd & 0xF0) <= 0xB0 || (cmd & 0xF0) >= 0xE0) {
-      spi_write(0x00);  
-      spi_write(data1);      
-      spi_write(0x00);  
-      spi_write(data2);  
+      spi.write(0x00);  
+      spi.write(data1);      
+      spi.write(0x00);  
+      spi.write(data2);  
     } else {
-      spi_write(0x00);  
-      spi_write(data1);
+      spi.write(0x00);  
+      spi.write(data1);
     }
     
     digitalWrite(dcs_pin, HIGH);  //data_mode_off() does not seem to work here
@@ -530,5 +530,125 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
  * Load the latest generic firmware patch
  */
 void VS1053::loadDefaultVs1053Patches() {
-   loadUserCode(PATCHES,PATCHES_SIZE);
-};
+    if (getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
+        loadUserCode(pcm48s,PATCHES_SIZE);
+    }
+}
+
+/// Provides the treble amplitude value
+uint8_t VS1053::treble() {
+    return equilizer.treble().amplitude;
+}
+
+/// Sets the treble amplitude value (range 0 to 100)
+void VS1053::setTreble(uint8_t value){
+    if (value>100) value = 100;
+    equilizer.treble().amplitude = value;
+    writeRegister(SCI_BASS, equilizer.value());
+}
+
+/// Provides the Bass amplitude value 
+uint8_t VS1053::bass() {
+    return equilizer.bass().amplitude;
+}
+
+/// Sets the bass amplitude value (range 0 to 100)
+void VS1053::setBass(uint8_t value){
+    if (value>100) value = 100;
+    equilizer.bass().amplitude = value;
+    writeRegister(SCI_BASS, equilizer.value());
+}
+
+/// Sets the treble frequency limit in hz (range 0 to 15000)
+void VS1053::setTrebleFrequencyLimit(uint16_t value){
+    equilizer.bass().freq_limit = value;
+    writeRegister(SCI_BASS, equilizer.value());
+}
+
+/// Sets the bass frequency limit in hz (range 0 to 15000)
+void VS1053::setBassFrequencyLimit(uint16_t value){
+    equilizer.bass().freq_limit = value;
+    writeRegister(SCI_BASS, equilizer.value());
+}
+
+/// Starts the recording of sound as WAV data
+void VS1053::beginInput(bool wavHeader) {
+    // regular setup
+    begin();
+    // clear SM_ADPCM bit
+    uint16_t sci = read_register(SCI_MODE);
+    sci &= ~(1U << SM_ADPCM);
+    writeRegister(SCI_MODE, sci);
+
+    // set the clock to a value between just below 55.3 MHz and 67.6 MHz.
+    // SC_MULT 3.5 & SC_ADD 1x (9.6.4 SCI_CLOCKF (RW))
+    writeRegister(SCI_CLOCKF, SC_MULT_53_35X | SC_ADD_53_10X);
+
+    // Set SCI_BASS (2) to 0.
+    setBassFrequencyLimit(0);
+    setBass(0);
+    // Disable any potential user application
+    writeRegister(SCI_AIADDR, 0);
+
+    // Disable all interrupts except the SCI interrupt
+    writeRegister(INT_ENABLE, 0x2); // Intenable, Enable Data interrupt
+    writeRegister(SCI_WRAMADDR, 0xC01A);
+    writeRegister(SCI_WRAM, 0x2);
+
+    // load plugin profile
+    loadUserCode(pcm48s, 0xC01A);   
+
+    // Set bit SM_ADPCM (12) in register SCI_MODE (0) to 1.
+    sci |= 1U << SM_ADPCM;
+    writeRegister(SCI_MODE, sci);
+
+    // Set recording level control registers SCI_AICTRL1 (13) and SCI_AICTRL2 (14).
+    writeRegister(SCI_AICTRL1, 0);
+    writeRegister(SCI_AICTRL2, 4096);
+    writeRegister(SCI_AICTRL3, 0);
+
+    // activate encoder
+    writeRegister(SCI_AIADDR, 0x34);
+
+    delay(1);
+
+    // Wait until DREQ pin is high before reading any data.
+    while(digitalRead(dreq_pin)==0){
+        delay(100);
+    }
+
+    if (!wavHeader){
+        // remove wav header 44 bytes
+        uint8_t tmp[44];
+        int open = 44;
+        while(open>0){
+            open -= readBytes(tmp, open);
+        }
+    }
+}
+
+/// Stops the recording of sound
+void VS1053::end() {
+    uint16_t sci = read_register(SCI_MODE);
+    // clear SM_ADPCM bit
+    sci &= ~(1U << SM_ADPCM);
+    writeRegister(SCI_MODE, sci);
+    softReset();
+}
+
+/// Provides the number of bytes which are available in the read buffer
+size_t VS1053::available() {
+    size_t available = spi.read16(SCI_HDAT1)*2;
+    return available;
+}
+
+/// Provides the audio data as WAV
+size_t VS1053::readBytes(uint8_t*data, size_t len){
+    size_t read = min(len, available());
+    size_t result = 0;
+    int16_t *p_word = (int16_t*)data;
+    for (int j=0; j<= read/2;j++){
+        *p_word++ = spi.read16(SCI_HDAT0);
+    }
+    return result;
+}

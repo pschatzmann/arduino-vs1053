@@ -35,10 +35,10 @@
 #define VS1053_H
 
 #include <Arduino.h>
-#include <SPI.h>
 #include "ConsoleLogger.h"
-
+#include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
+#include "patches/vs1053-input.h"
 
 #ifndef _BV
 #define _BV(bit) (1 << (bit))
@@ -48,6 +48,12 @@ enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_192_KHZ,
     VS1053_I2S_RATE_96_KHZ,
     VS1053_I2S_RATE_48_KHZ
+};
+
+enum VS1053_INPUT {
+    VS1053_MIC,
+    VS1053_AUX,
+    VS1053_ALL
 };
 
 struct VS1053 {
@@ -120,7 +126,13 @@ protected:
     SPISettings VS1053_SPI;                 // SPI settings for this slave
     uint8_t endFillByte;                    // Byte to send when stopping song
     VS1053Equilizer equilizer;
- 
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
+    VS1053SPI<VS1053SPIESP32> spi;
+#else
+    VS1053SPI<VS1053SPIArduino> spi;
+#endif
+
+
  public:
     // SCI Register
     const uint8_t SCI_MODE = 0x0;
@@ -135,7 +147,13 @@ protected:
     const uint8_t SCI_VOL = 0xB;
     const uint8_t SCI_AICTRL0 = 0xC;
     const uint8_t SCI_AICTRL1 = 0xD;
+    const uint8_t SCI_AICTRL2 = 0xE;
+    const uint8_t SCI_AICTRL3 = 0xF;
     const uint8_t SCI_num_registers = 0xF;
+    // Stream header data
+    const uint8_t SCI_HDAT0 = 0x8;          // Stream header data 0
+    const uint8_t SCI_HDAT1 = 0x9;          // Stream header data 1
+
     // SCI_MODE bits
     const uint8_t SM_SDINEW = 11;           // Bitnumber in SCI_MODE always on
     const uint8_t SM_RESET = 2;             // Bitnumber in SCI_MODE soft reset
@@ -143,11 +161,18 @@ protected:
     const uint8_t SM_TESTS = 5;             // Bitnumber in SCI_MODE for tests
     const uint8_t SM_LINE1 = 14;            // Bitnumber in SCI_MODE for Line input
     const uint8_t SM_STREAM = 6;            // Bitnumber in SCI_MODE for Streaming Mode
+    const uint8_t SM_ADPCM = 12;            // PCM/ADPCM recording active
 
     const uint16_t ADDR_REG_GPIO_DDR_RW = 0xc017;
     const uint16_t ADDR_REG_GPIO_VAL_R = 0xc018;
     const uint16_t ADDR_REG_GPIO_ODATA_RW = 0xc019;
     const uint16_t ADDR_REG_I2S_CONFIG_RW = 0xc040;
+
+    // Timer settings  for VS1053 and VS1063 */
+    const uint16_t INT_ENABLE = 0xC01A;
+    const uint16_t SC_MULT_53_35X = 0x8000;
+    const uint16_t SC_ADD_53_10X = 0x0800;
+
 
 protected:
     inline void await_data_request() const {
@@ -157,25 +182,25 @@ protected:
     }
 
     inline void control_mode_on() const {
-        SPI.beginTransaction(VS1053_SPI);   // Prevent other SPI users
+        spi.beginTransaction();   // Prevent other SPI users
         digitalWrite(dcs_pin, HIGH);        // Bring slave in control mode
         digitalWrite(cs_pin, LOW);
     }
 
     inline void control_mode_off() const {
         digitalWrite(cs_pin, HIGH);         // End control mode
-        SPI.endTransaction();               // Allow other SPI users
+        spi.endTransaction();               // Allow other SPI users
     }
 
     inline void data_mode_on() const {
-        SPI.beginTransaction(VS1053_SPI);   // Prevent other SPI users
+        spi.beginTransaction();   // Prevent other SPI users
         digitalWrite(cs_pin, HIGH);         // Bring slave in data mode
         digitalWrite(dcs_pin, LOW);
     }
 
     inline void data_mode_off() const {
         digitalWrite(dcs_pin, HIGH);        // End data mode
-        SPI.endTransaction();               // Allow other SPI users
+        spi.endTransaction();               // Allow other SPI users
     }
 
     uint16_t read_register(uint8_t _reg) const;
@@ -184,31 +209,7 @@ protected:
 
     void sdi_send_fillers(size_t length);
 
-    inline void spi_write(uint8_t data) const {
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-        SPI.write(data);
-#else
-        (void)SPI.transfer(data);
-#endif
-    }
 
-    inline void spi_write16(uint16_t data) const {
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-        SPI.write16(data);
-#else
-        (void)SPI.transfer16(data);
-#endif
-    }
-
-    inline void spi_write_bytes(const uint8_t * data, uint32_t size) const {
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-        SPI.writeBytes(data, size);
-#else
-        for (int i = 0; i < size; ++i) {
-            SPI.transfer(data[i]);
-        }
-#endif
-    }
 
     void wram_write(uint16_t address, uint16_t data);
 
@@ -310,40 +311,35 @@ public:
 
 
     /// Provides the treble amplitude value
-    uint8_t treble() {
-        return equilizer.treble().amplitude;
-    }
+    uint8_t treble();
 
     /// Sets the treble amplitude value (range 0 to 100)
-    void setTreble(uint8_t value){
-        if (value>100) value = 100;
-        equilizer.treble().amplitude = value;
-        writeRegister(SCI_BASS, equilizer.value());
-    }
+    void setTreble(uint8_t value);
 
     /// Provides the Bass amplitude value 
-    uint8_t bass() {
-        return equilizer.bass().amplitude;
-    }
+    uint8_t bass();
 
     /// Sets the bass amplitude value (range 0 to 100)
-    void setBass(uint8_t value){
-        if (value>100) value = 100;
-        equilizer.bass().amplitude = value;
-        writeRegister(SCI_BASS, equilizer.value());
-    }
+    void setBass(uint8_t value);
 
     /// Sets the treble frequency limit in hz (range 0 to 15000)
-    void setTrebleFrequencyLimit(uint16_t value){
-        equilizer.bass().freq_limit = value;
-        writeRegister(SCI_BASS, equilizer.value());
-    }
+    void setTrebleFrequencyLimit(uint16_t value);
 
     /// Sets the bass frequency limit in hz (range 0 to 15000)
-    void setBassFrequencyLimit(uint16_t value){
-        equilizer.bass().freq_limit = value;
-        writeRegister(SCI_BASS, equilizer.value());
-    }
+    void setBassFrequencyLimit(uint16_t value);
+
+
+    /// Starts the recording of sound as WAV data
+    void beginInput(bool wavHeader=true);
+
+    /// Stops the recording of sound
+    void end();
+
+    /// Provides the number of bytes which are available in the read buffer
+    size_t available();
+
+    /// Provides the audio data as WAV
+    size_t readBytes(uint8_t*data, size_t len);
 
 };
 
