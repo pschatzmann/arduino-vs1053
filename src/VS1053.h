@@ -50,7 +50,51 @@ enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_48_KHZ
 };
 
-class VS1053 {
+struct VS1053 {
+    class VS1053EquilizerValue {
+    public:
+        VS1053EquilizerValue(uint8_t limit){
+            this->freq_limit = limit;
+        }
+        uint16_t freq_limit=0; // in hz: range 0 to 15000
+        uint8_t amplitude=0;  // range 0 to 100
+        
+        uint16_t scaledAmplitude(){
+            if (amplitude>100) amplitude = 100;
+            return static_cast<float>(amplitude)/100.0*15;
+        }
+        uint16_t scaledFreq(float scale){
+            uint16_t result = static_cast<float>(freq_limit) / scale;
+            if (result>15) result = 15;
+            return result;
+        }
+    };
+
+    class VS1053Equilizer {
+    protected:
+        VS1053EquilizerValue v_bass{3}; // 30 hz
+        VS1053EquilizerValue v_treble{15}; // 15000 hz
+
+
+    public:
+        VS1053EquilizerValue &bass() {
+            return v_bass;
+        }
+
+        VS1053EquilizerValue &treble() {
+            return v_treble;
+        }
+
+        uint16_t value() {
+            uint16_t result=0;
+            result |= v_treble.scaledAmplitude() << 12;
+            result |= v_treble.scaledFreq(1000) << 8;
+            result |= v_bass.scaledAmplitude() << 4;
+            result |= v_bass.scaledFreq(10);
+            return result;
+        }
+    };
+
 protected:
     uint8_t cs_pin;                         // Pin where CS line is connected
     uint8_t dcs_pin;                        // Pin where DCS line is connected
@@ -61,6 +105,7 @@ protected:
     const uint8_t vs1053_chunk_size = 32;
     SPISettings VS1053_SPI;                 // SPI settings for this slave
     uint8_t endFillByte;                    // Byte to send when stopping song
+    VS1053Equilizer equilizer;
  
  public:
     // SCI Register
@@ -242,6 +287,42 @@ public:
 
     // Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
+
+
+    /// Provides the treble amplitude value
+    uint8_t treble() {
+        return equilizer.treble().amplitude;
+    }
+
+    /// Sets the treble amplitude value (range 0 to 100)
+    void setTreble(uint8_t value){
+        if (value>100) value = 100;
+        equilizer.treble().amplitude = value;
+        writeRegister(SCI_BASS, equilizer.value());
+    }
+
+    /// Provides the Bass amplitude value 
+    uint8_t bass() {
+        return equilizer.bass().amplitude;
+    }
+
+    /// Sets the bass amplitude value (range 0 to 100)
+    void setBass(uint8_t value){
+        if (value>100) value = 100;
+        equilizer.bass().amplitude = value;
+        writeRegister(SCI_BASS, equilizer.value());
+    }
+
+    /// Sets the treble frequency limit in hz (range 0 to 15000)
+    void setTrebleFrequencyLimit(uint16_t value){
+        equilizer.bass().freq_limit = value;
+    }
+
+    /// Sets the bass frequency limit in hz (range 0 to 15000)
+    void setBassFrequencyLimit(uint16_t value){
+        equilizer.bass().freq_limit = value;
+    }
+
 };
 
 #endif
