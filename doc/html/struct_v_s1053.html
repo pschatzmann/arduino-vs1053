@@ -216,6 +216,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">setBassFrequencyLimit</a> (uint16_t value)</td></tr>
 <tr class="memdesc:a74adda9aec2d4b440deb599e49efaca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the bass frequency limit in hz (range 0 to 15000) <br /></td></tr>
 <tr class="separator:a74adda9aec2d4b440deb599e49efaca5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69bde3ba82c6f8f15111d2b11e795405"><td class="memItemLeft" align="right" valign="top"><a id="a69bde3ba82c6f8f15111d2b11e795405"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a69bde3ba82c6f8f15111d2b11e795405">beginInput</a> (bool wavHeader=true)</td></tr>
+<tr class="memdesc:a69bde3ba82c6f8f15111d2b11e795405"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the recording of sound as WAV data. <br /></td></tr>
+<tr class="separator:a69bde3ba82c6f8f15111d2b11e795405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a791ceada0d6df8dc4e9f2486b2686705"><td class="memItemLeft" align="right" valign="top"><a id="a791ceada0d6df8dc4e9f2486b2686705"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a791ceada0d6df8dc4e9f2486b2686705">end</a> ()</td></tr>
+<tr class="memdesc:a791ceada0d6df8dc4e9f2486b2686705"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the recording of sound. <br /></td></tr>
+<tr class="separator:a791ceada0d6df8dc4e9f2486b2686705"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e5dc44db7c9c04cbd0b998763c69ed5"><td class="memItemLeft" align="right" valign="top"><a id="a2e5dc44db7c9c04cbd0b998763c69ed5"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a2e5dc44db7c9c04cbd0b998763c69ed5">available</a> ()</td></tr>
+<tr class="memdesc:a2e5dc44db7c9c04cbd0b998763c69ed5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the number of bytes which are available in the read buffer. <br /></td></tr>
+<tr class="separator:a2e5dc44db7c9c04cbd0b998763c69ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3c10741b43814477cfa0a0ef1afa22a"><td class="memItemLeft" align="right" valign="top"><a id="ae3c10741b43814477cfa0a0ef1afa22a"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#ae3c10741b43814477cfa0a0ef1afa22a">readBytes</a> (uint8_t *data, size_t len)</td></tr>
+<tr class="memdesc:ae3c10741b43814477cfa0a0ef1afa22a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the audio data as WAV. <br /></td></tr>
+<tr class="separator:ae3c10741b43814477cfa0a0ef1afa22a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -255,9 +271,21 @@ const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_AICTRL0<
 <tr class="memitem:a8c663d7b1eb5ea6df889ef206f6759af"><td class="memItemLeft" align="right" valign="top"><a id="a8c663d7b1eb5ea6df889ef206f6759af"></a>
 const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_AICTRL1</b> = 0xD</td></tr>
 <tr class="separator:a8c663d7b1eb5ea6df889ef206f6759af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af23713adb64b8a8eb847b36ef34e8956"><td class="memItemLeft" align="right" valign="top"><a id="af23713adb64b8a8eb847b36ef34e8956"></a>
+const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_AICTRL2</b> = 0xE</td></tr>
+<tr class="separator:af23713adb64b8a8eb847b36ef34e8956"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c5e559e9bda8fbf3a738017061a46b5"><td class="memItemLeft" align="right" valign="top"><a id="a9c5e559e9bda8fbf3a738017061a46b5"></a>
+const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_AICTRL3</b> = 0xF</td></tr>
+<tr class="separator:a9c5e559e9bda8fbf3a738017061a46b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af198743ea4b9623ebacc6a5eed9a2fdc"><td class="memItemLeft" align="right" valign="top"><a id="af198743ea4b9623ebacc6a5eed9a2fdc"></a>
 const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_num_registers</b> = 0xF</td></tr>
 <tr class="separator:af198743ea4b9623ebacc6a5eed9a2fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd2a588eb04e4704764beb183202a99a"><td class="memItemLeft" align="right" valign="top"><a id="abd2a588eb04e4704764beb183202a99a"></a>
+const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_HDAT0</b> = 0x8</td></tr>
+<tr class="separator:abd2a588eb04e4704764beb183202a99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3647c7b18ae14f638c8368145808254d"><td class="memItemLeft" align="right" valign="top"><a id="a3647c7b18ae14f638c8368145808254d"></a>
+const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SCI_HDAT1</b> = 0x9</td></tr>
+<tr class="separator:a3647c7b18ae14f638c8368145808254d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3feaa1a17dc9c382732a3b6f67d4d82e"><td class="memItemLeft" align="right" valign="top"><a id="a3feaa1a17dc9c382732a3b6f67d4d82e"></a>
 const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SM_SDINEW</b> = 11</td></tr>
 <tr class="separator:a3feaa1a17dc9c382732a3b6f67d4d82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -276,6 +304,9 @@ const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SM_LINE1</b>
 <tr class="memitem:a40da83a9dc07a30b54a300d82cdeef63"><td class="memItemLeft" align="right" valign="top"><a id="a40da83a9dc07a30b54a300d82cdeef63"></a>
 const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SM_STREAM</b> = 6</td></tr>
 <tr class="separator:a40da83a9dc07a30b54a300d82cdeef63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8eced8d99985ce40ce3f47f0c6c4c64a"><td class="memItemLeft" align="right" valign="top"><a id="a8eced8d99985ce40ce3f47f0c6c4c64a"></a>
+const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>SM_ADPCM</b> = 12</td></tr>
+<tr class="separator:a8eced8d99985ce40ce3f47f0c6c4c64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48ebb56601d67fc50bc776d268769f8a"><td class="memItemLeft" align="right" valign="top"><a id="a48ebb56601d67fc50bc776d268769f8a"></a>
 const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>ADDR_REG_GPIO_DDR_RW</b> = 0xc017</td></tr>
 <tr class="separator:a48ebb56601d67fc50bc776d268769f8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -288,6 +319,15 @@ const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>ADDR_REG_GP
 <tr class="memitem:a5a2c4b64f6964b212106bbd9bb7c7f6a"><td class="memItemLeft" align="right" valign="top"><a id="a5a2c4b64f6964b212106bbd9bb7c7f6a"></a>
 const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>ADDR_REG_I2S_CONFIG_RW</b> = 0xc040</td></tr>
 <tr class="separator:a5a2c4b64f6964b212106bbd9bb7c7f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad2b5591a5ee5b463ef953143780744a"><td class="memItemLeft" align="right" valign="top"><a id="aad2b5591a5ee5b463ef953143780744a"></a>
+const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>INT_ENABLE</b> = 0xC01A</td></tr>
+<tr class="separator:aad2b5591a5ee5b463ef953143780744a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c8363f49a4e9f3cd6801883e864194"><td class="memItemLeft" align="right" valign="top"><a id="a12c8363f49a4e9f3cd6801883e864194"></a>
+const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>SC_MULT_53_35X</b> = 0x8000</td></tr>
+<tr class="separator:a12c8363f49a4e9f3cd6801883e864194"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a794a2440bf469c7c09649ba58992fac1"><td class="memItemLeft" align="right" valign="top"><a id="a794a2440bf469c7c09649ba58992fac1"></a>
+const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>SC_ADD_53_10X</b> = 0x0800</td></tr>
+<tr class="separator:a794a2440bf469c7c09649ba58992fac1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -315,15 +355,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>sdi_send_buffer</b> (
 <tr class="memitem:a19998783ec66b3e9878224738e84561a"><td class="memItemLeft" align="right" valign="top"><a id="a19998783ec66b3e9878224738e84561a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>sdi_send_fillers</b> (size_t length)</td></tr>
 <tr class="separator:a19998783ec66b3e9878224738e84561a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a311526a63696e19de0b2db1f7fb3c398"><td class="memItemLeft" align="right" valign="top"><a id="a311526a63696e19de0b2db1f7fb3c398"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>spi_write</b> (uint8_t data) const</td></tr>
-<tr class="separator:a311526a63696e19de0b2db1f7fb3c398"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae741346869af1d5fbc191e9755df8901"><td class="memItemLeft" align="right" valign="top"><a id="ae741346869af1d5fbc191e9755df8901"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>spi_write16</b> (uint16_t data) const</td></tr>
-<tr class="separator:ae741346869af1d5fbc191e9755df8901"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a753e8656d2dc9236ef9a5a327556096e"><td class="memItemLeft" align="right" valign="top"><a id="a753e8656d2dc9236ef9a5a327556096e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>spi_write_bytes</b> (const uint8_t *data, uint32_t size) const</td></tr>
-<tr class="separator:a753e8656d2dc9236ef9a5a327556096e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4577ad4db738df814f4e9ff763825ac4"><td class="memItemLeft" align="right" valign="top"><a id="a4577ad4db738df814f4e9ff763825ac4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>wram_write</b> (uint16_t address, uint16_t data)</td></tr>
 <tr class="separator:a4577ad4db738df814f4e9ff763825ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -363,6 +394,9 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>endFillByte</b></t
 <tr class="memitem:a3dd52a31029be86d874fec6d42747ba8"><td class="memItemLeft" align="right" valign="top"><a id="a3dd52a31029be86d874fec6d42747ba8"></a>
 <a class="el" href="class_v_s1053_1_1_v_s1053_equilizer.html">VS1053Equilizer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>equilizer</b></td></tr>
 <tr class="separator:a3dd52a31029be86d874fec6d42747ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab82b364037ea05afd404dac37b27c4f7"><td class="memItemLeft" align="right" valign="top"><a id="ab82b364037ea05afd404dac37b27c4f7"></a>
+VS1053SPI&lt; VS1053SPIArduino &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>spi</b></td></tr>
+<tr class="separator:ab82b364037ea05afd404dac37b27c4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af6f8a68624196df717588821891903b9"></a>

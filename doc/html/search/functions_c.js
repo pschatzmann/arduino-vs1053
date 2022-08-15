@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['value_79',['value',['../class_v_s1053_1_1_v_s1053_equilizer.html#a842d1384a864f8a1f003b91abeb38dba',1,'VS1053::VS1053Equilizer']]],
-  ['vs1053_80',['VS1053',['../struct_v_s1053.html#af6f8a68624196df717588821891903b9',1,'VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)'],['../struct_v_s1053.html#afbb631010cbd1492d83bd71ff663de7e',1,'VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin)']]]
+  ['testcomm_85',['testComm',['../struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2',1,'VS1053']]],
+  ['treble_86',['treble',['../class_v_s1053_1_1_v_s1053_equilizer.html#a462099834a0cb2119eb9cf351023e7f8',1,'VS1053::VS1053Equilizer::treble()'],['../struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32',1,'VS1053::treble()']]]
 ];
