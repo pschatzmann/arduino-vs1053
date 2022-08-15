@@ -87,6 +87,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af6f8a68624196df717588821891903b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)</td></tr>
 <tr class="memdesc:af6f8a68624196df717588821891903b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. Only sets pin values. Doesn't touch the chip. Be sure to call <a class="el" href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b" title="Begin operation. Sets pins correctly, and prepares SPI bus.">begin()</a>!  <a href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">More...</a><br /></td></tr>
 <tr class="separator:af6f8a68624196df717588821891903b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbb631010cbd1492d83bd71ff663de7e"><td class="memItemLeft" align="right" valign="top"><a id="afbb631010cbd1492d83bd71ff663de7e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#afbb631010cbd1492d83bd71ff663de7e">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin)</td></tr>
+<tr class="memdesc:afbb631010cbd1492d83bd71ff663de7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows a custom. <br /></td></tr>
+<tr class="separator:afbb631010cbd1492d83bd71ff663de7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc6eeb1f8935e86f5568a9f03f93e61b"><td class="memItemLeft" align="right" valign="top"><a id="acc6eeb1f8935e86f5568a9f03f93e61b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b">begin</a> ()</td></tr>
 <tr class="memdesc:acc6eeb1f8935e86f5568a9f03f93e61b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin operation. Sets pins correctly, and prepares SPI bus. <br /></td></tr>
@@ -134,6 +138,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6">softReset</a> ()</td></tr>
 <tr class="memdesc:adedd4f8e71065a99eeacbcd550089be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a soft reset. <br /></td></tr>
 <tr class="separator:adedd4f8e71065a99eeacbcd550089be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a683f9a5985852e1fa21828a1f0754701"><td class="memItemLeft" align="right" valign="top"><a id="a683f9a5985852e1fa21828a1f0754701"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a683f9a5985852e1fa21828a1f0754701">hardReset</a> ()</td></tr>
+<tr class="memdesc:a683f9a5985852e1fa21828a1f0754701"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a hardware reset. <br /></td></tr>
+<tr class="separator:a683f9a5985852e1fa21828a1f0754701"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afee80c5e44ea7ea263dd041f48a448a2"><td class="memItemLeft" align="right" valign="top"><a id="afee80c5e44ea7ea263dd041f48a448a2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2">testComm</a> (const char *header)</td></tr>
 <tr class="memdesc:afee80c5e44ea7ea263dd041f48a448a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test communication with module. <br /></td></tr>
@@ -337,6 +345,9 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>dreq_pin</b></td><
 <tr class="memitem:a0fbad5a8b8b79faad535afa1b05213bc"><td class="memItemLeft" align="right" valign="top"><a id="a0fbad5a8b8b79faad535afa1b05213bc"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>curvol</b></td></tr>
 <tr class="separator:a0fbad5a8b8b79faad535afa1b05213bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5856d97665ccaf7952f21cc1063eb54"><td class="memItemLeft" align="right" valign="top"><a id="af5856d97665ccaf7952f21cc1063eb54"></a>
+int16_t&#160;</td><td class="memItemRight" valign="bottom"><b>reset_pin</b> = -1</td></tr>
+<tr class="separator:af5856d97665ccaf7952f21cc1063eb54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a281c3787615a9988ad0fb372af6cf4f0"><td class="memItemLeft" align="right" valign="top"><a id="a281c3787615a9988ad0fb372af6cf4f0"></a>
 int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>curbalance</b> = 0</td></tr>
 <tr class="separator:a281c3787615a9988ad0fb372af6cf4f0"><td class="memSeparator" colspan="2">&#160;</td></tr>

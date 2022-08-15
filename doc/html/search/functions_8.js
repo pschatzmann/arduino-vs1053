@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['playchunk_57',['playChunk',['../struct_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e',1,'VS1053']]],
-  ['printdetails_58',['printDetails',['../struct_v_s1053.html#aedba287552789ce8da580c5066711b20',1,'VS1053']]]
+  ['loaddefaultvs1053patches_57',['loadDefaultVs1053Patches',['../struct_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0',1,'VS1053']]],
+  ['loadusercode_58',['loadUserCode',['../struct_v_s1053.html#afe9d18a645855a74996c827aaee1df56',1,'VS1053']]]
 ];

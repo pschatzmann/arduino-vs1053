@@ -65,7 +65,7 @@ $(function() {
 <div class="title"><a class="el" href="struct_v_s1053.html">VS1053</a> library </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This is a PlatformIO library for the generic <b><a href="http://www.vlsi.fi/en/products/vs1053.html">VS1053 Breakout</a></b> by VLSI Solution.<br  />
+<div class="textblock"><p>This is a Arduino/PlatformIO library for the generic <b><a href="http://www.vlsi.fi/en/products/vs1053.html">VS1053 Breakout</a></b> by VLSI Solution.<br  />
  A powerful Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec chip.<br  />
  Read more: <a href="http://www.vlsi.fi/en/products/vs1053.html">http://www.vlsi.fi/en/products/vs1053.html</a>.</p>
 <p>The library enables the possibility to play audio files (recording is not supported).<br  />
@@ -73,17 +73,20 @@ $(function() {
 <p>The original version was designed specifically to work with the <b>Espressif ESP8266</b> and <b>ESP32</b> boards. It has been extended so that it should work with any Arduino board.</p>
 <p>Don't hesitate to create issues or pull requests if you want to improve ESP_VS1053_Library!</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
+Documentation</h1>
+<p>Here is the <a href="https://pschatzmann.github.io/arduino-vs1053/doc/html/struct_v_s1053.html">relevant class documentation</a></p>
+<h1><a class="anchor" id="autotoc_md2"></a>
 Introduction</h1>
-<h3><a class="anchor" id="autotoc_md2"></a>
+<h3><a class="anchor" id="autotoc_md3"></a>
 How to use the library?</h3>
 <p>There are currently two official methods to program the ESP boards: the ESP-IDF and the ESP8266/ESP32 arduino Core. The library was created to work with the <b>arduino Core</b>.</p>
 <p>The ESP8266 is the most popular Wi-Fi MCU (known also as ESP12, NodeMCU, WeMos, ...).</p>
-<h3><a class="anchor" id="autotoc_md3"></a>
+<h3><a class="anchor" id="autotoc_md4"></a>
 Why PlatformIO?</h3>
 <p>As mentioned in first paragraph, the library was prepared to be used with PlatformIO, which is kind of dependency management tool. It is highly recommended environment to be used while developing your electronics/IoT projects. The build automation lets you deal much easier while working with the project. It will help you to have all project dependencies simply resolved out of the box. What more, it provides very good IDE integration (any of popular), debugging possibility, remote unit testing and firmware updates. <a href="https://platformio.org/">Learn more about PlatformIO here</a>.</p>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<h1><a class="anchor" id="autotoc_md5"></a>
 Usage</h1>
-<h3><a class="anchor" id="autotoc_md5"></a>
+<h3><a class="anchor" id="autotoc_md6"></a>
 Configure and use the library</h3>
 <p>To use this library in your PlatformIO project, simply add to your <code>platformio.ini</code> a dependency (id=1744) as following:</p>
 <div class="fragment"><div class="line">lib_deps =</div>
@@ -106,23 +109,23 @@ Configure and use the library</h3>
 </div><!-- fragment --><p>For complete code please check <a href="https://github.com/baldram/ESP_VS1053_Library/tree/master/examples">examples</a> folder. The example plays the sound like this <a href="https://drive.google.com/open?id=1Mm4dc-sM7KjZcKmv5g1nwhe3-qtm7yUl">(click to listen to the sound)</a> every three seconds.</p>
 <p>Please note that <code>player.switchToMp3Mode()</code> is an optional switch. Some of <a class="el" href="struct_v_s1053.html">VS1053</a> modules will start up in MIDI mode. The result is no audio when playing MP3. You can modify the board, but there is a more elegant way without soldering. For more details please read a discussion here: <a href="http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773">http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773</a>. <br  />
 No side effects for boards which do not need this switch, so you can call it just in case.</p>
-<h3><a class="anchor" id="autotoc_md6"></a>
+<h3><a class="anchor" id="autotoc_md7"></a>
 Additionall functionality</h3>
 <p>Below briefly described. For detailed information please see <a href="http://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf">VS1053b Datasheet specification</a>.</p>
-<h4><a class="anchor" id="autotoc_md7"></a>
+<h4><a class="anchor" id="autotoc_md8"></a>
 Test VS1053 chip via &lt;tt&gt;SCI_STATUS&lt;/tt&gt;</h4>
 <p>To check if the <a class="el" href="struct_v_s1053.html">VS1053</a> chip is connected and able to exchange data to the microcontroller use the <code>player.isChipConnected()</code>.</p>
 <p>This is a lightweight method to check if <a class="el" href="struct_v_s1053.html">VS1053</a> is correctly wired up (power supply and connection to SPI interface).</p>
 <p>For additional information please see <a href="https://github.com/baldram/ESP_VS1053_Library/issues/24">this issue</a>.</p>
-<h4><a class="anchor" id="autotoc_md8"></a>
+<h4><a class="anchor" id="autotoc_md9"></a>
 Get chip version via &lt;tt&gt;SCI_STATUS&lt;/tt&gt;</h4>
 <p>A lot of the VS1003 and <a class="el" href="struct_v_s1053.html">VS1053</a> devices completely look the same. They are even both labeled with "VS1003/1053 MP3 CODEC". To check which chip you are using use the <code>player.getChipVersion()</code>. It should return 4 for <a class="el" href="struct_v_s1053.html">VS1053</a> and 3 for VS1003. This is also a lightweight method to check whether your VS10xx device is wired up correctly.</p>
-<h4><a class="anchor" id="autotoc_md9"></a>
+<h4><a class="anchor" id="autotoc_md10"></a>
 Check and reset decoding time by &lt;tt&gt;SCI_DECODE_TIME&lt;/tt&gt;</h4>
 <p><code>uint16_t seconds = player.getDecodedTime();</code></p>
 <p>Above example and self-explanatory method name tells everything. It simply provides current decoded time in full seconds (from <code>SCI_DECODE_TIME</code> register value).</p>
 <p>Optionally available is also <code>player.clearDecodedTime()</code> which clears decoded time (sets <code>SCI_DECODE_TIME</code> register to <code>0x00</code>).</p>
-<h4><a class="anchor" id="autotoc_md10"></a>
+<h4><a class="anchor" id="autotoc_md11"></a>
 Enable I2S output</h4>
 <div class="fragment"><div class="line">player.enableI2sOut(/* i2sRate: optional sampling rate, default is 48kHz */);</div>
 <div class="line">player.disableI2sOut();</div>
@@ -140,7 +143,7 @@ Enable I2S output</h4>
 <td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">SDATA / DOUT   </td></tr>
 </table>
 <p>Refer to the <a href="https://www.vlsi.fi/fileadmin/datasheets/vs1053.pdf">VS1053 datasheet</a> for details: the pin assignment is specified in section 5.1 on page 12, the I2S DAC interface is described in section 11.14 on page 83.</p>
-<h3><a class="anchor" id="autotoc_md11"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 Logging / Debugging</h3>
 <p>The library uses ESP Arduino framework built in logger (Arduino core for <a href="https://github.com/espressif/arduino-esp32/issues/893#issuecomment-348069135">ESP32</a> and <a href="https://github.com/esp8266/Arduino/blob/master/doc/Troubleshooting/debugging.rst#debug-level">ESP8266</a>).<br  />
 </p>
@@ -172,7 +175,7 @@ Logging / Debugging</h3>
 <div class="line">[D][VS1053.cpp:132] testComm(): Slow SPI,Testing VS1053 read/write registers...</div>
 <div class="line">[D][VS1053.cpp:132] testComm(): Fast SPI, Testing VS1053 read/write registers again...</div>
 <div class="line">[D][VS1053.cpp:183] begin(): endFillByte is 0</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md12"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
 Example wiring</h1>
 <p>An example for ESP8266 based board like eg. LoLin NodeMCU V3 or WeMos D1 R2.</p>
 <table class="markdownTable">
@@ -199,19 +202,19 @@ Example wiring</h1>
 </table>
 <p><a href="https://github.com/pschatzmann/arduino-vs1053/blob/master/doc/tested-boards.md">Tested boards</a></p>
 <p><img src="https://user-images.githubusercontent.com/16861531/27875071-3ead1674-61b2-11e7-9a69-02edafa7b286.jpg" alt="VS1053B and NodeMCU v3" title="VS1053B and NodeMCU v3" width="300px" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md14"></a>
 Library developement</h1>
 <p><b>Please feel invited</b> to provide your pull request with improvement or a bug fix.</p>
 <p>A hint for CLion developers. The IDE files are added to <code>.gitignore</code>, but once you clone the code you should be able to develop the library easily with CLion after calling the command from terminal as below:</p>
 <div class="fragment"><div class="line">$ platformio init --ide=clion</div>
 </div><!-- fragment --><p> Then please import the project and run the PIO task: <code>PLATFORMIO_REBUILD_PROJECT_INDEX</code>.<br  />
  Read more here: <a href="http://docs.platformio.org/en/latest/ide/clion.html">PlatformIO &amp; CLion integration</a>.</p>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="autotoc_md15"></a>
 Additional hints</h1>
 <p>If you think how to convert the mp3 file into C header file, please find a <a href="https://www.avrfreaks.net/comment/884247#comment-884247">thread here</a>. It's as simple as calling:</p>
 <p><code>xxd -i your-sound.mp3 ready-to-use-c-header.h</code></p>
 <p>The <code>xxd</code> is available for any platform like Linux or Windows (distributed with Vim editor). It will produce something like in the example <a href="https://github.com/baldram/ESP_VS1053_Library/blob/master/examples/Mp3PlayerDemo/SampleMp3.h">here</a>. Of course as the file will be a part of firmware, it should be small enough according to limited microcontroller's resources The memory is at a premium ;-) I would suggest to use mp3 instead of wave, convert file from stereo to mono and use lower MP3 bit rate if possible (like 112kbps or less instead of 320kbps). Please also find <a href="https://github.com/baldram/ESP_VS1053_Library/issues/18#issuecomment-408984920">additional hints here</a>.</p>
-<h1><a class="anchor" id="autotoc_md15"></a>
+<h1><a class="anchor" id="autotoc_md16"></a>
 Credits</h1>
 <p>Based on library/applications:</p><ul>
 <li><a href="https://github.com/baldram/ESP_VS1053_Library">baldram/ESP_VS1053_Library</a> by <a href="https://github.com/baldram">Marcin Szałomski</a></li>
@@ -219,7 +222,7 @@ Credits</h1>
 <li><a href="https://github.com/Edzelf/Esp-radio">Esp-radio</a> by <a href="https://github.com/Edzelf">Ed Smallenburg</a></li>
 <li><a href="https://github.com/MagicCube/smart-pod">smart-pod</a> by <a href="https://github.com/MagicCube">Henry Li</a></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 License</h1>
 <p>Copyright (C) 2017<br  />
  Licensed under GNU GPLv3 </p>

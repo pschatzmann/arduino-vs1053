@@ -137,201 +137,206 @@ $(function() {
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    uint8_t dcs_pin;                        <span class="comment">// Pin where DCS line is connected</span></div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    uint8_t dreq_pin;                       <span class="comment">// Pin where DREQ line is connected</span></div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    uint8_t curvol;                         <span class="comment">// Current volume setting 0..100%</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    int8_t  curbalance = 0;                 <span class="comment">// Current balance setting -100..100</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                                            <span class="comment">// (-100 = right channel silent, 100 = left channel silent)</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keyword">const</span> uint8_t vs1053_chunk_size = 32;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    SPISettings VS1053_SPI;                 <span class="comment">// SPI settings for this slave</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    uint8_t endFillByte;                    <span class="comment">// Byte to send when stopping song</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    VS1053Equilizer equilizer;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="comment">// SCI Register</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">const</span> uint8_t SCI_MODE = 0x0;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">const</span> uint8_t SCI_STATUS = 0x1;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">const</span> uint8_t SCI_BASS = 0x2;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">const</span> uint8_t SCI_CLOCKF = 0x3;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">const</span> uint8_t SCI_DECODE_TIME = 0x4;        <span class="comment">// current decoded time in full seconds</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AUDATA = 0x5;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">const</span> uint8_t SCI_WRAM = 0x6;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">const</span> uint8_t SCI_WRAMADDR = 0x7;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AIADDR = 0xA;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">const</span> uint8_t SCI_VOL = 0xB;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AICTRL0 = 0xC;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AICTRL1 = 0xD;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keyword">const</span> uint8_t SCI_num_registers = 0xF;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="comment">// SCI_MODE bits</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">const</span> uint8_t SM_SDINEW = 11;           <span class="comment">// Bitnumber in SCI_MODE always on</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">const</span> uint8_t SM_RESET = 2;             <span class="comment">// Bitnumber in SCI_MODE soft reset</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">const</span> uint8_t SM_CANCEL = 3;            <span class="comment">// Bitnumber in SCI_MODE cancel song</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keyword">const</span> uint8_t SM_TESTS = 5;             <span class="comment">// Bitnumber in SCI_MODE for tests</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keyword">const</span> uint8_t SM_LINE1 = 14;            <span class="comment">// Bitnumber in SCI_MODE for Line input</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keyword">const</span> uint8_t SM_STREAM = 6;            <span class="comment">// Bitnumber in SCI_MODE for Streaming Mode</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_DDR_RW = 0xc017;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_VAL_R = 0xc018;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_ODATA_RW = 0xc019;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_I2S_CONFIG_RW = 0xc040;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> await_data_request()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="keywordflow">while</span> (!digitalRead(dreq_pin)) {</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            yield();                        <span class="comment">// Very short delay</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    }</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> control_mode_on()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        SPI.beginTransaction(VS1053_SPI);   <span class="comment">// Prevent other SPI users</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        digitalWrite(dcs_pin, HIGH);        <span class="comment">// Bring slave in control mode</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        digitalWrite(cs_pin, LOW);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    }</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> control_mode_off()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        digitalWrite(cs_pin, HIGH);         <span class="comment">// End control mode</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        SPI.endTransaction();               <span class="comment">// Allow other SPI users</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    }</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> data_mode_on()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        SPI.beginTransaction(VS1053_SPI);   <span class="comment">// Prevent other SPI users</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        digitalWrite(cs_pin, HIGH);         <span class="comment">// Bring slave in data mode</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        digitalWrite(dcs_pin, LOW);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> data_mode_off()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        digitalWrite(dcs_pin, HIGH);        <span class="comment">// End data mode</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        SPI.endTransaction();               <span class="comment">// Allow other SPI users</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    uint16_t read_register(uint8_t _reg) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">void</span> sdi_send_buffer(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">void</span> sdi_send_fillers(<span class="keywordtype">size_t</span> length);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write(uint8_t data)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        SPI.write(data);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        (void)SPI.transfer(data);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    }</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write16(uint16_t data)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        SPI.write16(data);</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        (void)SPI.transfer16(data);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    }</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write_bytes(<span class="keyword">const</span> uint8_t * data, uint32_t size)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        SPI.writeBytes(data, size);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; size; ++i) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            SPI.transfer(data[i]);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    }</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordtype">void</span> wram_write(uint16_t address, uint16_t data);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    uint16_t wram_read(uint16_t address);</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <a class="code" href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">VS1053</a>(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b">begin</a>();</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a2142a85b3902e22611c9db5a3ff8fd28">startSong</a>();</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e">playChunk</a>(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    </div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a064e619933cba300853a06a7aebd450b">sendMidiMessage</a>(uint8_t cmd, uint8_t data1, uint8_t data2);    </div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a12bcfafd720d9739e0b6cd495edcbbab">stopSong</a>();</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aeb90e28879183bb546baaf436009d262">setVolume</a>(uint8_t vol);</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#ac1eb8f9824accaca1d796db7d963aafe">setBalance</a>(int8_t balance);</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a0c68d9a5164e941f2a4a68cd059a1dae">setTone</a>(uint8_t *rtone);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#a406300c0ea9d9f09d4aa363b7e239449">getVolume</a>();</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    int8_t <a class="code" href="struct_v_s1053.html#a297d9a8fe5e317e4fd00730b1aef9922">getBalance</a>();</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aedba287552789ce8da580c5066711b20">printDetails</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *header);</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6">softReset</a>();</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2">testComm</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *header);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">bool</span> data_request()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">return</span> (digitalRead(dreq_pin) == HIGH);</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    int16_t reset_pin = -1;                 <span class="comment">// Custom Reset Pin (optional)</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    int8_t  curbalance = 0;                 <span class="comment">// Current balance setting -100..100</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                                            <span class="comment">// (-100 = right channel silent, 100 = left channel silent)</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">const</span> uint8_t vs1053_chunk_size = 32;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    SPISettings VS1053_SPI;                 <span class="comment">// SPI settings for this slave</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    uint8_t endFillByte;                    <span class="comment">// Byte to send when stopping song</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    VS1053Equilizer equilizer;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="comment">// SCI Register</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">const</span> uint8_t SCI_MODE = 0x0;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">const</span> uint8_t SCI_STATUS = 0x1;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">const</span> uint8_t SCI_BASS = 0x2;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">const</span> uint8_t SCI_CLOCKF = 0x3;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">const</span> uint8_t SCI_DECODE_TIME = 0x4;        <span class="comment">// current decoded time in full seconds</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AUDATA = 0x5;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">const</span> uint8_t SCI_WRAM = 0x6;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">const</span> uint8_t SCI_WRAMADDR = 0x7;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AIADDR = 0xA;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">const</span> uint8_t SCI_VOL = 0xB;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AICTRL0 = 0xC;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keyword">const</span> uint8_t SCI_AICTRL1 = 0xD;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keyword">const</span> uint8_t SCI_num_registers = 0xF;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="comment">// SCI_MODE bits</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">const</span> uint8_t SM_SDINEW = 11;           <span class="comment">// Bitnumber in SCI_MODE always on</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">const</span> uint8_t SM_RESET = 2;             <span class="comment">// Bitnumber in SCI_MODE soft reset</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keyword">const</span> uint8_t SM_CANCEL = 3;            <span class="comment">// Bitnumber in SCI_MODE cancel song</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="keyword">const</span> uint8_t SM_TESTS = 5;             <span class="comment">// Bitnumber in SCI_MODE for tests</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keyword">const</span> uint8_t SM_LINE1 = 14;            <span class="comment">// Bitnumber in SCI_MODE for Line input</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keyword">const</span> uint8_t SM_STREAM = 6;            <span class="comment">// Bitnumber in SCI_MODE for Streaming Mode</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_DDR_RW = 0xc017;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_VAL_R = 0xc018;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_GPIO_ODATA_RW = 0xc019;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">const</span> uint16_t ADDR_REG_I2S_CONFIG_RW = 0xc040;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> await_data_request()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keywordflow">while</span> (!digitalRead(dreq_pin)) {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            yield();                        <span class="comment">// Very short delay</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> control_mode_on()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        SPI.beginTransaction(VS1053_SPI);   <span class="comment">// Prevent other SPI users</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        digitalWrite(dcs_pin, HIGH);        <span class="comment">// Bring slave in control mode</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        digitalWrite(cs_pin, LOW);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> control_mode_off()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        digitalWrite(cs_pin, HIGH);         <span class="comment">// End control mode</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        SPI.endTransaction();               <span class="comment">// Allow other SPI users</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> data_mode_on()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        SPI.beginTransaction(VS1053_SPI);   <span class="comment">// Prevent other SPI users</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        digitalWrite(cs_pin, HIGH);         <span class="comment">// Bring slave in data mode</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        digitalWrite(dcs_pin, LOW);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    }</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> data_mode_off()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        digitalWrite(dcs_pin, HIGH);        <span class="comment">// End data mode</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        SPI.endTransaction();               <span class="comment">// Allow other SPI users</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    }</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    uint16_t read_register(uint8_t _reg) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">void</span> sdi_send_buffer(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">void</span> sdi_send_fillers(<span class="keywordtype">size_t</span> length);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write(uint8_t data)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        SPI.write(data);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        (void)SPI.transfer(data);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write16(uint16_t data)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        SPI.write16(data);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        (void)SPI.transfer16(data);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> spi_write_bytes(<span class="keyword">const</span> uint8_t * data, uint32_t size)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        SPI.writeBytes(data, size);</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; size; ++i) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            SPI.transfer(data[i]);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        }</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordtype">void</span> wram_write(uint16_t address, uint16_t data);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    uint16_t wram_read(uint16_t address);</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <a class="code" href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">VS1053</a>(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <a class="code" href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">VS1053</a>(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b">begin</a>();</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a2142a85b3902e22611c9db5a3ff8fd28">startSong</a>();</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e">playChunk</a>(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a064e619933cba300853a06a7aebd450b">sendMidiMessage</a>(uint8_t cmd, uint8_t data1, uint8_t data2);    </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a12bcfafd720d9739e0b6cd495edcbbab">stopSong</a>();</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aeb90e28879183bb546baaf436009d262">setVolume</a>(uint8_t vol);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#ac1eb8f9824accaca1d796db7d963aafe">setBalance</a>(int8_t balance);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a0c68d9a5164e941f2a4a68cd059a1dae">setTone</a>(uint8_t *rtone);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#a406300c0ea9d9f09d4aa363b7e239449">getVolume</a>();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    int8_t <a class="code" href="struct_v_s1053.html#a297d9a8fe5e317e4fd00730b1aef9922">getBalance</a>();</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aedba287552789ce8da580c5066711b20">printDetails</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *header);</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6">softReset</a>();</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a683f9a5985852e1fa21828a1f0754701">hardReset</a>();</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#af599988b5f5e3e3ba6a509de77ba8c16">adjustRate</a>(<span class="keywordtype">long</span> ppm2);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2">testComm</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *header);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aca2a036cf693c2bfbea032c81e657f93">streamModeOn</a>();</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a3b667022407a08377cb1ff922579dac0">streamModeOff</a>();      </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a6e4d72183750904b91704f7c566db241">switchToMp3Mode</a>();</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc">disableI2sOut</a>();</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#af954478675666426717c25aa2c096b2e">enableI2sOut</a>(VS1053_I2S_RATE i2sRate = VS1053_I2S_RATE_48_KHZ);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="struct_v_s1053.html#aefddc81a3a825b8460eaa0883a0f4327">isChipConnected</a>();</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    uint16_t <a class="code" href="struct_v_s1053.html#aa31a27d4f1a8cda72578e0058f04e443">getChipVersion</a>();    </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    uint16_t <a class="code" href="struct_v_s1053.html#aa5270c3d9df9d42ab611a2778ea248f1">getDecodedTime</a>();</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a1b82bab991932b6a1cf9ad37676e7cea">clearDecodedTime</a>();</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="comment">// A low level method which lets users access the internals of the VS1053.</span></div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(uint8_t _reg, uint16_t _value) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">bool</span> data_request()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        <span class="keywordflow">return</span> (digitalRead(dreq_pin) == HIGH);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#af599988b5f5e3e3ba6a509de77ba8c16">adjustRate</a>(<span class="keywordtype">long</span> ppm2);</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#aca2a036cf693c2bfbea032c81e657f93">streamModeOn</a>();</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a3b667022407a08377cb1ff922579dac0">streamModeOff</a>();      </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a6e4d72183750904b91704f7c566db241">switchToMp3Mode</a>();</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc">disableI2sOut</a>();</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#af954478675666426717c25aa2c096b2e">enableI2sOut</a>(VS1053_I2S_RATE i2sRate = VS1053_I2S_RATE_48_KHZ);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="struct_v_s1053.html#aefddc81a3a825b8460eaa0883a0f4327">isChipConnected</a>();</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    uint16_t <a class="code" href="struct_v_s1053.html#aa31a27d4f1a8cda72578e0058f04e443">getChipVersion</a>();    </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    uint16_t <a class="code" href="struct_v_s1053.html#aa5270c3d9df9d42ab611a2778ea248f1">getDecodedTime</a>();</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// For more info about patches see http://www.vlsi.fi/en/support/software/vs10xxpatches.html</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#afe9d18a645855a74996c827aaee1df56">loadUserCode</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>* plugin, <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> plugin_size);</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0">loadDefaultVs1053Patches</a>();</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a1b82bab991932b6a1cf9ad37676e7cea">clearDecodedTime</a>();</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// A low level method which lets users access the internals of the VS1053.</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(uint8_t _reg, uint16_t _value) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">  306</a></span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">treble</a>() {</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <span class="keywordflow">return</span> equilizer.treble().amplitude;</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    }</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
-<div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">  311</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">setTreble</a>(uint8_t value){</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keywordflow">if</span> (value&gt;100) value = 100;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        equilizer.treble().amplitude = value;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="comment">// For more info about patches see http://www.vlsi.fi/en/support/software/vs10xxpatches.html</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#afe9d18a645855a74996c827aaee1df56">loadUserCode</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>* plugin, <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> plugin_size);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0">loadDefaultVs1053Patches</a>();</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">  313</a></span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">treble</a>() {</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">return</span> equilizer.treble().amplitude;</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    }</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
-<div class="line"><a name="l00318"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">  318</a></span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">bass</a>() {</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">return</span> equilizer.bass().amplitude;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    }</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
-<div class="line"><a name="l00323"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">  323</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">setBass</a>(uint8_t value){</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keywordflow">if</span> (value&gt;100) value = 100;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        equilizer.bass().amplitude = value;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00318"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">  318</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">setTreble</a>(uint8_t value){</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">if</span> (value&gt;100) value = 100;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        equilizer.treble().amplitude = value;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    }</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">  325</a></span>&#160;    uint8_t <a class="code" href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">bass</a>() {</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keywordflow">return</span> equilizer.bass().amplitude;</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    }</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">  330</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">setTrebleFrequencyLimit</a>(uint16_t value){</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        equilizer.bass().freq_limit = value;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    }</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
-<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">  336</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">setBassFrequencyLimit</a>(uint16_t value){</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        equilizer.bass().freq_limit = value;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;};</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">  330</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">setBass</a>(uint8_t value){</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="keywordflow">if</span> (value&gt;100) value = 100;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        equilizer.bass().amplitude = value;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    }</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">  337</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">setTrebleFrequencyLimit</a>(uint16_t value){</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        equilizer.bass().freq_limit = value;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
+<div class="line"><a name="l00343"></a><span class="lineno"><a class="line" href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">  343</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">setBassFrequencyLimit</a>(uint16_t value){</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        equilizer.bass().freq_limit = value;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        <a class="code" href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">writeRegister</a>(SCI_BASS, equilizer.value());</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;};</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclass_v_s1053_1_1_v_s1053_equilizer_html"><div class="ttname"><a href="class_v_s1053_1_1_v_s1053_equilizer.html">VS1053::VS1053Equilizer</a></div><div class="ttdoc">Equilizer Functionality using the SCI_BASS Register.</div><div class="ttdef"><b>Definition:</b> VS1053.h:83</div></div>
 <div class="ttc" id="aclass_v_s1053_1_1_v_s1053_equilizer_html_a00d55a8eac2b0308850f2f7755fdcad5"><div class="ttname"><a href="class_v_s1053_1_1_v_s1053_equilizer.html#a00d55a8eac2b0308850f2f7755fdcad5">VS1053::VS1053Equilizer::bass</a></div><div class="ttdeci">VS1053EquilizerValue &amp; bass()</div><div class="ttdoc">Provides the bass VS1053EquilizerValue.</div><div class="ttdef"><b>Definition:</b> VS1053.h:91</div></div>
 <div class="ttc" id="aclass_v_s1053_1_1_v_s1053_equilizer_html_a462099834a0cb2119eb9cf351023e7f8"><div class="ttname"><a href="class_v_s1053_1_1_v_s1053_equilizer.html#a462099834a0cb2119eb9cf351023e7f8">VS1053::VS1053Equilizer::treble</a></div><div class="ttdeci">VS1053EquilizerValue &amp; treble()</div><div class="ttdoc">Provides the treble VS1053EquilizerValue.</div><div class="ttdef"><b>Definition:</b> VS1053.h:96</div></div>
@@ -342,39 +347,40 @@ $(function() {
 <div class="ttc" id="aclass_v_s1053_1_1_v_s1053_equilizer_value_html_a3610c15dcda102862ec6a63fd5b06063"><div class="ttname"><a href="class_v_s1053_1_1_v_s1053_equilizer_value.html#a3610c15dcda102862ec6a63fd5b06063">VS1053::VS1053EquilizerValue::scaledFreq</a></div><div class="ttdeci">uint16_t scaledFreq(float scale)</div><div class="ttdoc">Register value for Frequency Limit.</div><div class="ttdef"><b>Definition:</b> VS1053.h:73</div></div>
 <div class="ttc" id="aclass_v_s1053_1_1_v_s1053_equilizer_value_html_ac59dc192e484ac47920f66b010dea16d"><div class="ttname"><a href="class_v_s1053_1_1_v_s1053_equilizer_value.html#ac59dc192e484ac47920f66b010dea16d">VS1053::VS1053EquilizerValue::scaledAmplitude</a></div><div class="ttdeci">uint16_t scaledAmplitude()</div><div class="ttdoc">Register value for amplitude.</div><div class="ttdef"><b>Definition:</b> VS1053.h:68</div></div>
 <div class="ttc" id="astruct_v_s1053_html"><div class="ttname"><a href="struct_v_s1053.html">VS1053</a></div><div class="ttdef"><b>Definition:</b> VS1053.h:53</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a064e619933cba300853a06a7aebd450b"><div class="ttname"><a href="struct_v_s1053.html#a064e619933cba300853a06a7aebd450b">VS1053::sendMidiMessage</a></div><div class="ttdeci">void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2)</div><div class="ttdoc">performs a MIDI command</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:258</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a0c68d9a5164e941f2a4a68cd059a1dae"><div class="ttname"><a href="struct_v_s1053.html#a0c68d9a5164e941f2a4a68cd059a1dae">VS1053::setTone</a></div><div class="ttdeci">void setTone(uint8_t *rtone)</div><div class="ttdoc">Set the player baas/treble, 4 nibbles for treble gain/freq and bass gain/freq.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:220</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a12bcfafd720d9739e0b6cd495edcbbab"><div class="ttname"><a href="struct_v_s1053.html#a12bcfafd720d9739e0b6cd495edcbbab">VS1053::stopSong</a></div><div class="ttdeci">void stopSong()</div><div class="ttdoc">Finish playing a song. Call this after the last playChunk call.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:287</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a1b82bab991932b6a1cf9ad37676e7cea"><div class="ttname"><a href="struct_v_s1053.html#a1b82bab991932b6a1cf9ad37676e7cea">VS1053::clearDecodedTime</a></div><div class="ttdeci">void clearDecodedTime()</div><div class="ttdoc">Clears SCI_DECODE_TIME register (sets 0x00)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:455</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a20467bca156da0a0e1422d8b42e5d00c"><div class="ttname"><a href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">VS1053::setTreble</a></div><div class="ttdeci">void setTreble(uint8_t value)</div><div class="ttdoc">Sets the treble amplitude value (range 0 to 100)</div><div class="ttdef"><b>Definition:</b> VS1053.h:311</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a2142a85b3902e22611c9db5a3ff8fd28"><div class="ttname"><a href="struct_v_s1053.html#a2142a85b3902e22611c9db5a3ff8fd28">VS1053::startSong</a></div><div class="ttdeci">void startSong()</div><div class="ttdoc">Prepare to start playing. Call this each time a new song starts.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:239</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a256218ff89d8818c54b1a192e9dd6f32"><div class="ttname"><a href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">VS1053::treble</a></div><div class="ttdeci">uint8_t treble()</div><div class="ttdoc">Provides the treble amplitude value.</div><div class="ttdef"><b>Definition:</b> VS1053.h:306</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a297d9a8fe5e317e4fd00730b1aef9922"><div class="ttname"><a href="struct_v_s1053.html#a297d9a8fe5e317e4fd00730b1aef9922">VS1053::getBalance</a></div><div class="ttdeci">int8_t getBalance()</div><div class="ttdoc">Get the currenet balance setting (-100..100)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:235</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a29fcc8ea9ab3d936f368b8b35bbeea0e"><div class="ttname"><a href="struct_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e">VS1053::playChunk</a></div><div class="ttdeci">void playChunk(uint8_t *data, size_t len)</div><div class="ttdoc">Play a chunk of data. Copies the data to the chip. Blocks until complete.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:243</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a3b667022407a08377cb1ff922579dac0"><div class="ttname"><a href="struct_v_s1053.html#a3b667022407a08377cb1ff922579dac0">VS1053::streamModeOff</a></div><div class="ttdeci">void streamModeOff()</div><div class="ttdoc">Default: Streaming Mode Off.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:330</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a406300c0ea9d9f09d4aa363b7e239449"><div class="ttname"><a href="struct_v_s1053.html#a406300c0ea9d9f09d4aa363b7e239449">VS1053::getVolume</a></div><div class="ttdeci">uint8_t getVolume()</div><div class="ttdoc">Get the currenet volume setting, higher is louder.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:231</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a5914b66a2219f7235478983e40e25e51"><div class="ttname"><a href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">VS1053::setBass</a></div><div class="ttdeci">void setBass(uint8_t value)</div><div class="ttdoc">Sets the bass amplitude value (range 0 to 100)</div><div class="ttdef"><b>Definition:</b> VS1053.h:323</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a68c0dbc4db0dba4f1e89b08d3ec0ec27"><div class="ttname"><a href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">VS1053::writeRegister</a></div><div class="ttdeci">void writeRegister(uint8_t _reg, uint16_t _value) const</div><div class="ttdoc">Writes to VS10xx's SCI (serial command interface) SPI bus.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:53</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a6e4d72183750904b91704f7c566db241"><div class="ttname"><a href="struct_v_s1053.html#a6e4d72183750904b91704f7c566db241">VS1053::switchToMp3Mode</a></div><div class="ttdeci">void switchToMp3Mode()</div><div class="ttdoc">An optional switch preventing the module starting up in MIDI mode.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:361</div></div>
-<div class="ttc" id="astruct_v_s1053_html_a74adda9aec2d4b440deb599e49efaca5"><div class="ttname"><a href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">VS1053::setBassFrequencyLimit</a></div><div class="ttdeci">void setBassFrequencyLimit(uint16_t value)</div><div class="ttdoc">Sets the bass frequency limit in hz (range 0 to 15000)</div><div class="ttdef"><b>Definition:</b> VS1053.h:336</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aa31a27d4f1a8cda72578e0058f04e443"><div class="ttname"><a href="struct_v_s1053.html#aa31a27d4f1a8cda72578e0058f04e443">VS1053::getChipVersion</a></div><div class="ttdeci">uint16_t getChipVersion()</div><div class="ttdoc">gets Version of the VLSI chip being used</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:417</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aa5270c3d9df9d42ab611a2778ea248f1"><div class="ttname"><a href="struct_v_s1053.html#aa5270c3d9df9d42ab611a2778ea248f1">VS1053::getDecodedTime</a></div><div class="ttdeci">uint16_t getDecodedTime()</div><div class="ttdoc">Provides SCI_DECODE_TIME register value.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:443</div></div>
-<div class="ttc" id="astruct_v_s1053_html_abf25fb179ec81efe548ae96b376b8538"><div class="ttname"><a href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">VS1053::setTrebleFrequencyLimit</a></div><div class="ttdeci">void setTrebleFrequencyLimit(uint16_t value)</div><div class="ttdoc">Sets the treble frequency limit in hz (range 0 to 15000)</div><div class="ttdef"><b>Definition:</b> VS1053.h:330</div></div>
-<div class="ttc" id="astruct_v_s1053_html_ac1eb8f9824accaca1d796db7d963aafe"><div class="ttname"><a href="struct_v_s1053.html#ac1eb8f9824accaca1d796db7d963aafe">VS1053::setBalance</a></div><div class="ttdeci">void setBalance(int8_t balance)</div><div class="ttdoc">Adjusting the left and right volume balance, higher to enhance the right side, lower to enhance the l...</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:210</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aca2a036cf693c2bfbea032c81e657f93"><div class="ttname"><a href="struct_v_s1053.html#aca2a036cf693c2bfbea032c81e657f93">VS1053::streamModeOn</a></div><div class="ttdeci">void streamModeOn()</div><div class="ttdoc">Streaming Mode On.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:323</div></div>
-<div class="ttc" id="astruct_v_s1053_html_acc6eeb1f8935e86f5568a9f03f93e61b"><div class="ttname"><a href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b">VS1053::begin</a></div><div class="ttdeci">void begin()</div><div class="ttdoc">Begin operation. Sets pins correctly, and prepares SPI bus.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:149</div></div>
-<div class="ttc" id="astruct_v_s1053_html_adedd4f8e71065a99eeacbcd550089be6"><div class="ttname"><a href="struct_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6">VS1053::softReset</a></div><div class="ttdeci">void softReset()</div><div class="ttdoc">Do a soft reset.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:307</div></div>
-<div class="ttc" id="astruct_v_s1053_html_adfbf07ea5a57f92ea7929f5615c944fc"><div class="ttname"><a href="struct_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc">VS1053::disableI2sOut</a></div><div class="ttdeci">void disableI2sOut()</div><div class="ttdoc">disable I2S output; this is the default state</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:369</div></div>
-<div class="ttc" id="astruct_v_s1053_html_adfde9ea37c2fb65f7e7be9b645b43ff0"><div class="ttname"><a href="struct_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0">VS1053::loadDefaultVs1053Patches</a></div><div class="ttdeci">void loadDefaultVs1053Patches()</div><div class="ttdoc">Loads the latest generic firmware patch.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:513</div></div>
-<div class="ttc" id="astruct_v_s1053_html_ae26b328b10fd00601b6e3477526c112a"><div class="ttname"><a href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">VS1053::bass</a></div><div class="ttdeci">uint8_t bass()</div><div class="ttdoc">Provides the Bass amplitude value.</div><div class="ttdef"><b>Definition:</b> VS1053.h:318</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aeb90e28879183bb546baaf436009d262"><div class="ttname"><a href="struct_v_s1053.html#aeb90e28879183bb546baaf436009d262">VS1053::setVolume</a></div><div class="ttdeci">void setVolume(uint8_t vol)</div><div class="ttdoc">Set the player volume.Level from 0-100, higher is louder.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:189</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aedba287552789ce8da580c5066711b20"><div class="ttname"><a href="struct_v_s1053.html#aedba287552789ce8da580c5066711b20">VS1053::printDetails</a></div><div class="ttdeci">void printDetails(const char *header)</div><div class="ttdoc">Print configuration details to serial output.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:337</div></div>
-<div class="ttc" id="astruct_v_s1053_html_aefddc81a3a825b8460eaa0883a0f4327"><div class="ttname"><a href="struct_v_s1053.html#aefddc81a3a825b8460eaa0883a0f4327">VS1053::isChipConnected</a></div><div class="ttdeci">bool isChipConnected()</div><div class="ttdoc">Checks whether the VS1053 chip is connected and is able to exchange data to the ESP.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:406</div></div>
-<div class="ttc" id="astruct_v_s1053_html_af599988b5f5e3e3ba6a509de77ba8c16"><div class="ttname"><a href="struct_v_s1053.html#af599988b5f5e3e3ba6a509de77ba8c16">VS1053::adjustRate</a></div><div class="ttdeci">void adjustRate(long ppm2)</div><div class="ttdoc">Fine tune the data rate.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:463</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a064e619933cba300853a06a7aebd450b"><div class="ttname"><a href="struct_v_s1053.html#a064e619933cba300853a06a7aebd450b">VS1053::sendMidiMessage</a></div><div class="ttdeci">void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2)</div><div class="ttdoc">performs a MIDI command</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:267</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a0c68d9a5164e941f2a4a68cd059a1dae"><div class="ttname"><a href="struct_v_s1053.html#a0c68d9a5164e941f2a4a68cd059a1dae">VS1053::setTone</a></div><div class="ttdeci">void setTone(uint8_t *rtone)</div><div class="ttdoc">Set the player baas/treble, 4 nibbles for treble gain/freq and bass gain/freq.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:229</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a12bcfafd720d9739e0b6cd495edcbbab"><div class="ttname"><a href="struct_v_s1053.html#a12bcfafd720d9739e0b6cd495edcbbab">VS1053::stopSong</a></div><div class="ttdeci">void stopSong()</div><div class="ttdoc">Finish playing a song. Call this after the last playChunk call.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:296</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a1b82bab991932b6a1cf9ad37676e7cea"><div class="ttname"><a href="struct_v_s1053.html#a1b82bab991932b6a1cf9ad37676e7cea">VS1053::clearDecodedTime</a></div><div class="ttdeci">void clearDecodedTime()</div><div class="ttdoc">Clears SCI_DECODE_TIME register (sets 0x00)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:474</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a20467bca156da0a0e1422d8b42e5d00c"><div class="ttname"><a href="struct_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c">VS1053::setTreble</a></div><div class="ttdeci">void setTreble(uint8_t value)</div><div class="ttdoc">Sets the treble amplitude value (range 0 to 100)</div><div class="ttdef"><b>Definition:</b> VS1053.h:318</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a2142a85b3902e22611c9db5a3ff8fd28"><div class="ttname"><a href="struct_v_s1053.html#a2142a85b3902e22611c9db5a3ff8fd28">VS1053::startSong</a></div><div class="ttdeci">void startSong()</div><div class="ttdoc">Prepare to start playing. Call this each time a new song starts.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:248</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a256218ff89d8818c54b1a192e9dd6f32"><div class="ttname"><a href="struct_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32">VS1053::treble</a></div><div class="ttdeci">uint8_t treble()</div><div class="ttdoc">Provides the treble amplitude value.</div><div class="ttdef"><b>Definition:</b> VS1053.h:313</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a297d9a8fe5e317e4fd00730b1aef9922"><div class="ttname"><a href="struct_v_s1053.html#a297d9a8fe5e317e4fd00730b1aef9922">VS1053::getBalance</a></div><div class="ttdeci">int8_t getBalance()</div><div class="ttdoc">Get the currenet balance setting (-100..100)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:244</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a29fcc8ea9ab3d936f368b8b35bbeea0e"><div class="ttname"><a href="struct_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e">VS1053::playChunk</a></div><div class="ttdeci">void playChunk(uint8_t *data, size_t len)</div><div class="ttdoc">Play a chunk of data. Copies the data to the chip. Blocks until complete.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:252</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a3b667022407a08377cb1ff922579dac0"><div class="ttname"><a href="struct_v_s1053.html#a3b667022407a08377cb1ff922579dac0">VS1053::streamModeOff</a></div><div class="ttdeci">void streamModeOff()</div><div class="ttdoc">Default: Streaming Mode Off.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:349</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a406300c0ea9d9f09d4aa363b7e239449"><div class="ttname"><a href="struct_v_s1053.html#a406300c0ea9d9f09d4aa363b7e239449">VS1053::getVolume</a></div><div class="ttdeci">uint8_t getVolume()</div><div class="ttdoc">Get the currenet volume setting, higher is louder.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:240</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a5914b66a2219f7235478983e40e25e51"><div class="ttname"><a href="struct_v_s1053.html#a5914b66a2219f7235478983e40e25e51">VS1053::setBass</a></div><div class="ttdeci">void setBass(uint8_t value)</div><div class="ttdoc">Sets the bass amplitude value (range 0 to 100)</div><div class="ttdef"><b>Definition:</b> VS1053.h:330</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a683f9a5985852e1fa21828a1f0754701"><div class="ttname"><a href="struct_v_s1053.html#a683f9a5985852e1fa21828a1f0754701">VS1053::hardReset</a></div><div class="ttdeci">void hardReset()</div><div class="ttdoc">Do a hardware reset.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:324</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a68c0dbc4db0dba4f1e89b08d3ec0ec27"><div class="ttname"><a href="struct_v_s1053.html#a68c0dbc4db0dba4f1e89b08d3ec0ec27">VS1053::writeRegister</a></div><div class="ttdeci">void writeRegister(uint8_t _reg, uint16_t _value) const</div><div class="ttdoc">Writes to VS10xx's SCI (serial command interface) SPI bus.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:56</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a6e4d72183750904b91704f7c566db241"><div class="ttname"><a href="struct_v_s1053.html#a6e4d72183750904b91704f7c566db241">VS1053::switchToMp3Mode</a></div><div class="ttdeci">void switchToMp3Mode()</div><div class="ttdoc">An optional switch preventing the module starting up in MIDI mode.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:380</div></div>
+<div class="ttc" id="astruct_v_s1053_html_a74adda9aec2d4b440deb599e49efaca5"><div class="ttname"><a href="struct_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5">VS1053::setBassFrequencyLimit</a></div><div class="ttdeci">void setBassFrequencyLimit(uint16_t value)</div><div class="ttdoc">Sets the bass frequency limit in hz (range 0 to 15000)</div><div class="ttdef"><b>Definition:</b> VS1053.h:343</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aa31a27d4f1a8cda72578e0058f04e443"><div class="ttname"><a href="struct_v_s1053.html#aa31a27d4f1a8cda72578e0058f04e443">VS1053::getChipVersion</a></div><div class="ttdeci">uint16_t getChipVersion()</div><div class="ttdoc">gets Version of the VLSI chip being used</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:436</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aa5270c3d9df9d42ab611a2778ea248f1"><div class="ttname"><a href="struct_v_s1053.html#aa5270c3d9df9d42ab611a2778ea248f1">VS1053::getDecodedTime</a></div><div class="ttdeci">uint16_t getDecodedTime()</div><div class="ttdoc">Provides SCI_DECODE_TIME register value.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:462</div></div>
+<div class="ttc" id="astruct_v_s1053_html_abf25fb179ec81efe548ae96b376b8538"><div class="ttname"><a href="struct_v_s1053.html#abf25fb179ec81efe548ae96b376b8538">VS1053::setTrebleFrequencyLimit</a></div><div class="ttdeci">void setTrebleFrequencyLimit(uint16_t value)</div><div class="ttdoc">Sets the treble frequency limit in hz (range 0 to 15000)</div><div class="ttdef"><b>Definition:</b> VS1053.h:337</div></div>
+<div class="ttc" id="astruct_v_s1053_html_ac1eb8f9824accaca1d796db7d963aafe"><div class="ttname"><a href="struct_v_s1053.html#ac1eb8f9824accaca1d796db7d963aafe">VS1053::setBalance</a></div><div class="ttdeci">void setBalance(int8_t balance)</div><div class="ttdoc">Adjusting the left and right volume balance, higher to enhance the right side, lower to enhance the l...</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:219</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aca2a036cf693c2bfbea032c81e657f93"><div class="ttname"><a href="struct_v_s1053.html#aca2a036cf693c2bfbea032c81e657f93">VS1053::streamModeOn</a></div><div class="ttdeci">void streamModeOn()</div><div class="ttdoc">Streaming Mode On.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:342</div></div>
+<div class="ttc" id="astruct_v_s1053_html_acc6eeb1f8935e86f5568a9f03f93e61b"><div class="ttname"><a href="struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b">VS1053::begin</a></div><div class="ttdeci">void begin()</div><div class="ttdoc">Begin operation. Sets pins correctly, and prepares SPI bus.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:152</div></div>
+<div class="ttc" id="astruct_v_s1053_html_adedd4f8e71065a99eeacbcd550089be6"><div class="ttname"><a href="struct_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6">VS1053::softReset</a></div><div class="ttdeci">void softReset()</div><div class="ttdoc">Do a soft reset.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:316</div></div>
+<div class="ttc" id="astruct_v_s1053_html_adfbf07ea5a57f92ea7929f5615c944fc"><div class="ttname"><a href="struct_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc">VS1053::disableI2sOut</a></div><div class="ttdeci">void disableI2sOut()</div><div class="ttdoc">disable I2S output; this is the default state</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:388</div></div>
+<div class="ttc" id="astruct_v_s1053_html_adfde9ea37c2fb65f7e7be9b645b43ff0"><div class="ttname"><a href="struct_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0">VS1053::loadDefaultVs1053Patches</a></div><div class="ttdeci">void loadDefaultVs1053Patches()</div><div class="ttdoc">Loads the latest generic firmware patch.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:532</div></div>
+<div class="ttc" id="astruct_v_s1053_html_ae26b328b10fd00601b6e3477526c112a"><div class="ttname"><a href="struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a">VS1053::bass</a></div><div class="ttdeci">uint8_t bass()</div><div class="ttdoc">Provides the Bass amplitude value.</div><div class="ttdef"><b>Definition:</b> VS1053.h:325</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aeb90e28879183bb546baaf436009d262"><div class="ttname"><a href="struct_v_s1053.html#aeb90e28879183bb546baaf436009d262">VS1053::setVolume</a></div><div class="ttdeci">void setVolume(uint8_t vol)</div><div class="ttdoc">Set the player volume.Level from 0-100, higher is louder.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:198</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aedba287552789ce8da580c5066711b20"><div class="ttname"><a href="struct_v_s1053.html#aedba287552789ce8da580c5066711b20">VS1053::printDetails</a></div><div class="ttdeci">void printDetails(const char *header)</div><div class="ttdoc">Print configuration details to serial output.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:356</div></div>
+<div class="ttc" id="astruct_v_s1053_html_aefddc81a3a825b8460eaa0883a0f4327"><div class="ttname"><a href="struct_v_s1053.html#aefddc81a3a825b8460eaa0883a0f4327">VS1053::isChipConnected</a></div><div class="ttdeci">bool isChipConnected()</div><div class="ttdoc">Checks whether the VS1053 chip is connected and is able to exchange data to the ESP.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:425</div></div>
+<div class="ttc" id="astruct_v_s1053_html_af599988b5f5e3e3ba6a509de77ba8c16"><div class="ttname"><a href="struct_v_s1053.html#af599988b5f5e3e3ba6a509de77ba8c16">VS1053::adjustRate</a></div><div class="ttdeci">void adjustRate(long ppm2)</div><div class="ttdoc">Fine tune the data rate.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:482</div></div>
 <div class="ttc" id="astruct_v_s1053_html_af6f8a68624196df717588821891903b9"><div class="ttname"><a href="struct_v_s1053.html#af6f8a68624196df717588821891903b9">VS1053::VS1053</a></div><div class="ttdeci">VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)</div><div class="ttdoc">Constructor. Only sets pin values. Doesn't touch the chip. Be sure to call begin()!</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:35</div></div>
-<div class="ttc" id="astruct_v_s1053_html_af954478675666426717c25aa2c096b2e"><div class="ttname"><a href="struct_v_s1053.html#af954478675666426717c25aa2c096b2e">VS1053::enableI2sOut</a></div><div class="ttdeci">void enableI2sOut(VS1053_I2S_RATE i2sRate=VS1053_I2S_RATE_48_KHZ)</div><div class="ttdoc">enable I2S output (GPIO4=LRCLK/WSEL; GPIO5=MCLK; GPIO6=SCLK/BCLK; GPIO7=SDATA/DOUT)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:378</div></div>
-<div class="ttc" id="astruct_v_s1053_html_afe9d18a645855a74996c827aaee1df56"><div class="ttname"><a href="struct_v_s1053.html#afe9d18a645855a74996c827aaee1df56">VS1053::loadUserCode</a></div><div class="ttdeci">void loadUserCode(const unsigned short *plugin, unsigned short plugin_size)</div><div class="ttdoc">Load a patch or plugin to fix bugs and/or extend functionality.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:489</div></div>
-<div class="ttc" id="astruct_v_s1053_html_afee80c5e44ea7ea263dd041f48a448a2"><div class="ttname"><a href="struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2">VS1053::testComm</a></div><div class="ttdeci">bool testComm(const char *header)</div><div class="ttdoc">Test communication with module.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:109</div></div>
+<div class="ttc" id="astruct_v_s1053_html_af954478675666426717c25aa2c096b2e"><div class="ttname"><a href="struct_v_s1053.html#af954478675666426717c25aa2c096b2e">VS1053::enableI2sOut</a></div><div class="ttdeci">void enableI2sOut(VS1053_I2S_RATE i2sRate=VS1053_I2S_RATE_48_KHZ)</div><div class="ttdoc">enable I2S output (GPIO4=LRCLK/WSEL; GPIO5=MCLK; GPIO6=SCLK/BCLK; GPIO7=SDATA/DOUT)</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:397</div></div>
+<div class="ttc" id="astruct_v_s1053_html_afe9d18a645855a74996c827aaee1df56"><div class="ttname"><a href="struct_v_s1053.html#afe9d18a645855a74996c827aaee1df56">VS1053::loadUserCode</a></div><div class="ttdeci">void loadUserCode(const unsigned short *plugin, unsigned short plugin_size)</div><div class="ttdoc">Load a patch or plugin to fix bugs and/or extend functionality.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:508</div></div>
+<div class="ttc" id="astruct_v_s1053_html_afee80c5e44ea7ea263dd041f48a448a2"><div class="ttname"><a href="struct_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2">VS1053::testComm</a></div><div class="ttdeci">bool testComm(const char *header)</div><div class="ttdoc">Test communication with module.</div><div class="ttdef"><b>Definition:</b> VS1053.cpp:112</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

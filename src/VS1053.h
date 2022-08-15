@@ -113,6 +113,7 @@ protected:
     uint8_t dcs_pin;                        // Pin where DCS line is connected
     uint8_t dreq_pin;                       // Pin where DREQ line is connected
     uint8_t curvol;                         // Current volume setting 0..100%
+    int16_t reset_pin = -1;                 // Custom Reset Pin (optional)
     int8_t  curbalance = 0;                 // Current balance setting -100..100
                                             // (-100 = right channel silent, 100 = left channel silent)
     const uint8_t vs1053_chunk_size = 32;
@@ -217,6 +218,9 @@ public:
     /// Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);
 
+    /// Constructor which allows a custom 
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin);
+
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     void begin();
 
@@ -252,6 +256,9 @@ public:
 
     /// Do a soft reset
     void softReset();
+
+    /// Do a hardware reset
+    void hardReset();
 
     /// Test communication with module
     bool testComm(const char *header);

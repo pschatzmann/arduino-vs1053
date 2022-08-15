@@ -35,6 +35,9 @@
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
 }
+VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin)
+        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
+}
 
 uint16_t VS1053::read_register(uint8_t _reg) const {
     uint16_t result;
@@ -147,6 +150,12 @@ bool VS1053::testComm(const char *header) {
 }
 
 void VS1053::begin() {
+    // support for optional custom reset pin when wiring is not possible
+    if (reset_pin!=-1){
+        pinMode(reset_pin, OUTPUT);
+        digitalWrite(reset_pin, HIGH);
+    }
+
     pinMode(dreq_pin, INPUT); // DREQ is an input
     pinMode(cs_pin, OUTPUT);  // The SCI and SDI signals
     pinMode(dcs_pin, OUTPUT);
@@ -310,6 +319,16 @@ void VS1053::softReset() {
     delay(10);
     await_data_request();
 }
+
+
+void VS1053::hardReset(){
+    if (reset_pin!=-1){
+        digitalWrite(reset_pin, LOW);
+        delay(500);
+        digitalWrite(reset_pin, HIGH);
+    }
+}
+
 
 /**
  * VLSI datasheet: "SM_STREAM activates VS1053b’s stream mode. In this mode, data should be sent with as
