@@ -164,7 +164,7 @@ An example for ESP8266 based board like eg. LoLin NodeMCU V3 or WeMos D1 R2.
 | 5V       | VU       |
 | GND      | G        |
 
-For ESP32 and other boards wiring examples please see thread [Supported hardware](https://github.com/baldram/ESP_VS1053_Library/issues/1) and [Tested boards](https://github.com/baldram/ESP_VS1053_Library/blob/master/doc/tested-boards.md) list.
+[Tested boards](https://github.com/pschatzmann/arduino-vs1053/blob/master/doc/tested-boards.md)
 
 <img alt="VS1053B and NodeMCU v3" title="VS1053B and NodeMCU v3" src="https://user-images.githubusercontent.com/16861531/27875071-3ead1674-61b2-11e7-9a69-02edafa7b286.jpg" width="300px" />
 

@@ -51,7 +51,7 @@ enum VS1053_I2S_RATE {
 };
 
 class VS1053 {
-private:
+protected:
     uint8_t cs_pin;                         // Pin where CS line is connected
     uint8_t dcs_pin;                        // Pin where DCS line is connected
     uint8_t dreq_pin;                       // Pin where DREQ line is connected
@@ -59,6 +59,10 @@ private:
     int8_t  curbalance = 0;                 // Current balance setting -100..100
                                             // (-100 = right channel silent, 100 = left channel silent)
     const uint8_t vs1053_chunk_size = 32;
+    SPISettings VS1053_SPI;                 // SPI settings for this slave
+    uint8_t endFillByte;                    // Byte to send when stopping song
+ 
+ public:
     // SCI Register
     const uint8_t SCI_MODE = 0x0;
     const uint8_t SCI_STATUS = 0x1;
@@ -86,8 +90,6 @@ private:
     const uint16_t ADDR_REG_GPIO_ODATA_RW = 0xc019;
     const uint16_t ADDR_REG_I2S_CONFIG_RW = 0xc040;
 
-    SPISettings VS1053_SPI;                 // SPI settings for this slave
-    uint8_t endFillByte;                    // Byte to send when stopping song
 protected:
     inline void await_data_request() const {
         while (!digitalRead(dreq_pin)) {
