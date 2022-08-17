@@ -41,11 +41,14 @@ class VS1053SPI {
  */
 class VS1053SPIESP32 {
   protected:
-    SPISettings settings = SPISettings(200000, MSBFIRST, SPI_MODE0);
+    uint32_t speed = 200000;
   public:
-    void beginTransaction() const { SPI.beginTransaction(settings);}
+    void beginTransaction() const{ 
+        SPISettings settings(speed, MSBFIRST, SPI_MODE0);       
+        SPI.beginTransaction(settings);
+    }
     void endTransaction() const {SPI.endTransaction();}
-    void set_speed(uint32_t speed){ settings._clock=speed;}
+    void set_speed(uint32_t value){ this->speed = value;}
 
     inline void write(uint8_t data) const {
         SPI.write(data);
@@ -77,7 +80,7 @@ class VS1053SPIESP32 {
  */
 class VS1053SPIArduino {
   protected:
-    uint32_t speed;
+    uint32_t speed = 200000;
 
   public:
     void beginTransaction() const{ 
@@ -85,7 +88,7 @@ class VS1053SPIArduino {
         SPI.beginTransaction(settings);
     }
     void endTransaction() const{SPI.endTransaction();}
-    void set_speed(uint32_t speed){ this->speed = speed;}
+    void set_speed(uint32_t value){ this->speed = value;}
 
     inline void write(uint8_t data) const {
         (void)SPI.transfer(data);
