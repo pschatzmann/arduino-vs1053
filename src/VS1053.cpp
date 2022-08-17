@@ -537,7 +537,7 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
 void VS1053::loadDefaultVs1053Patches() {
     if (getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
         LOG("loadDefaultVs1053Patches\n");
-        loadUserCode(pcm48s,PATCHES_SIZE);
+        loadUserCode(PATCHES, PATCHES_SIZE);
     }
 }
 

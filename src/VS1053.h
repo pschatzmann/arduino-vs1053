@@ -37,7 +37,7 @@
 #include "ConsoleLogger.h"
 #include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
-#include "patches/vs1053-input.h"
+#include "patches_in/vs1053-input.h"
 
 #ifndef _BV
 #define _BV(bit) (1 << (bit))
