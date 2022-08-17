@@ -38,6 +38,7 @@
 #include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
 #include "patches_in/vs1053-input.h"
+#include "patches_midi/rtmidi1053b.h"
 
 #ifndef _BV
 #define _BV(bit) (1 << (bit))
@@ -331,7 +332,6 @@ public:
     /// Sets the bass frequency limit in hz (range 0 to 15000)
     void setBassFrequencyLimit(uint16_t value);
 
-
     /// Starts the recording of sound as WAV data
     void beginInput(bool wavHeader=true);
 
@@ -343,6 +343,10 @@ public:
 
     /// Provides the audio data as WAV
     size_t readBytes(uint8_t*data, size_t len);
+
+    /// Starts the MIDI output processing
+    void beginMIDI();
+
 
 };
 

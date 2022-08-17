@@ -503,10 +503,10 @@ void VS1053::adjustRate(long ppm2) {
  * Please also note that, in order to avoid multiple definitions, if you are using more than one patch, 
  * it is necessary to rename the name of the array plugin[] and the name of PLUGIN_SIZE to names of your choice.
  * example: after renaming plugin[] to plugin_myname[] and PLUGIN_SIZE to PLUGIN_MYNAME_SIZE 
- * the method is called by player.loadUserCode(plugin_myname, PLUGIN_MYNAME_SIZE)
+ * the method is called by loadUserCode(plugin_myname, PLUGIN_MYNAME_SIZE)
  * It is also possible to just rename the array plugin[] to a name of your choice
  * example: after renaming plugin[] to plugin_myname[]  
- * the method is called by player.loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0]))
+ * the method is called by loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0]))
  */
 void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size) {
     LOG("Loading User Code\n");
@@ -657,4 +657,28 @@ size_t VS1053::readBytes(uint8_t*data, size_t len){
         *p_word++ = spi.read16(SCI_HDAT0);
     }
     return result;
+}
+
+void VS1053::beginMIDI() {
+    LOG("beginMIDI");
+                        
+    // initialize the player
+    begin();  
+
+    int version = getChipVersion();
+    switch(version){
+        case 3:
+            LOG("10003b Not supported");    
+            break;              
+        case 4:
+            loadUserCode(MIDI1053, MIDI1053_SIZE); 
+            writeRegister(0xA /*SCI_AIADDR*/, 0x50);  // setting VS1053 Start adress for user code
+            LOG("MIDI plugin VS1053 loaded");  
+            break;   
+
+        default:
+           LOG("Please check whether your device is properly connected!");    
+           break;
+    }
+    setVolume(100);  
 }
