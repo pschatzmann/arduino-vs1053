@@ -172,7 +172,7 @@ void VS1053::begin() {
     digitalWrite(cs_pin, HIGH);
     delay(500);
     // Init SPI in slow mode ( 0.2 MHz )
-        spi.set_speed(200000);
+    spi.set_speed(200000);
     // printDetails("Right after reset/startup");
     delay(20);
     // printDetails("20 msec after reset");
@@ -323,9 +323,12 @@ void VS1053::softReset() {
 
 void VS1053::hardReset(){
     if (reset_pin!=-1){
+        LOG("Performing hard-reset\n");
         digitalWrite(reset_pin, LOW);
         delay(500);
         digitalWrite(reset_pin, HIGH);
+    } else {
+        LOG("hard-reset not supported\n");
     }
 }
 
@@ -506,6 +509,7 @@ void VS1053::adjustRate(long ppm2) {
  * the method is called by player.loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0]))
  */
 void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size) {
+    LOG("Loading User Code\n");
     int i = 0;
     while (i<plugin_size) {
         unsigned short addr, n, val;
@@ -524,6 +528,7 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
             }
         }
     }
+    LOG("User Code - done\n");
 }
 
 /**
@@ -531,6 +536,7 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
  */
 void VS1053::loadDefaultVs1053Patches() {
     if (getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
+        LOG("loadDefaultVs1053Patches\n");
         loadUserCode(pcm48s,PATCHES_SIZE);
     }
 }
