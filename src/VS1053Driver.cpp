@@ -198,7 +198,7 @@ void VS1053::begin() {
 void VS1053::setVolume(uint8_t vol) {
     // Set volume.  Both left and right.
     // Input value is 0..100.  100 is the loudest.
-    uint8_t valueL, valueR; // Values to send to SCI_VOL
+    uint16_t valueL, valueR; // Values to send to SCI_VOL
 
     curvol = vol;                         // Save for later use
     valueL = vol;
@@ -213,7 +213,9 @@ void VS1053::setVolume(uint8_t vol) {
     valueL = map(valueL, 0, 100, 0xFE, 0x00); // 0..100% to left channel
     valueR = map(valueR, 0, 100, 0xFE, 0x00); // 0..100% to right channel
 
-    writeRegister(SCI_VOL, (valueL << 8) | valueR); // Volume left and right
+    int16_t value = (valueL << 8) | valueR;
+    writeRegister(SCI_VOL, value); // Volume left and right
+    LOG("setVolume: %x", value);
 }
 
 void VS1053::setBalance(int8_t balance) {
