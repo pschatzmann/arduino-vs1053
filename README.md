@@ -24,8 +24,8 @@ The major disadvantage of the VS1053 based modules is the number of pins that ne
 | SCK      | SPI Serial Clock                            |
 | MISO     | SPI Master Input ← Slave Output             |
 | MOSI     | SPI Master Output → Slave Input             |
-| CS       | SPI Chip Select/ Configured in Sketch       |
-| DCS      | Data Chip Select: Configured in Sketch      |
+| (X)CS    | SPI Chip Select/ Configured in Sketch       |
+| (X)DCS   | Data Chip Select: Configured in Sketch      |
 | DREQ     | Data Request: Configured in Sketch          |
 | XRST     | Hardware Reset Pin: low=reset               |
 | 5V       | Power Supply                                |
