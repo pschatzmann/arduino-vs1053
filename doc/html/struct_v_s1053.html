@@ -232,6 +232,10 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#ae3c10741b43814477cfa0a0ef1afa22a">readBytes</a> (uint8_t *data, size_t len)</td></tr>
 <tr class="memdesc:ae3c10741b43814477cfa0a0ef1afa22a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides the audio data as WAV. <br /></td></tr>
 <tr class="separator:ae3c10741b43814477cfa0a0ef1afa22a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c477a62a33d1da087bd0724b4a8c50d"><td class="memItemLeft" align="right" valign="top"><a id="a3c477a62a33d1da087bd0724b4a8c50d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_v_s1053.html#a3c477a62a33d1da087bd0724b4a8c50d">beginMIDI</a> ()</td></tr>
+<tr class="memdesc:a3c477a62a33d1da087bd0724b4a8c50d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the MIDI output processing. <br /></td></tr>
+<tr class="separator:a3c477a62a33d1da087bd0724b4a8c50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -395,7 +399,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>endFillByte</b></t
 <a class="el" href="class_v_s1053_1_1_v_s1053_equilizer.html">VS1053Equilizer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>equilizer</b></td></tr>
 <tr class="separator:a3dd52a31029be86d874fec6d42747ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab82b364037ea05afd404dac37b27c4f7"><td class="memItemLeft" align="right" valign="top"><a id="ab82b364037ea05afd404dac37b27c4f7"></a>
-VS1053SPI&lt; VS1053SPIArduino &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>spi</b></td></tr>
+<a class="el" href="class_v_s1053_s_p_i.html">VS1053SPI</a>&lt; VS1053SPIArduino &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>spi</b></td></tr>
 <tr class="separator:ab82b364037ea05afd404dac37b27c4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -604,8 +608,8 @@ VS1053SPI&lt; VS1053SPIArduino &gt;&#160;</td><td class="memItemRight" valign="b
 <p>Load a patch or plugin to fix bugs and/or extend functionality. </p>
 <p>Load a patch or plugin</p>
 <p>Patches can be found on the VLSI Website <a href="http://www.vlsi.fi/en/support/software/vs10xxpatches.html">http://www.vlsi.fi/en/support/software/vs10xxpatches.html</a></p>
-<p>Please note that loadUserCode only works for compressed plugins (file ending .plg). To include them, rename them to file ending .h Please also note that, in order to avoid multiple definitions, if you are using more than one patch, it is necessary to rename the name of the array plugin[] and the name of PLUGIN_SIZE to names of your choice. example: after renaming plugin[] to plugin_myname[] and PLUGIN_SIZE to PLUGIN_MYNAME_SIZE the method is called by player.loadUserCode(plugin_myname, PLUGIN_MYNAME_SIZE) It is also possible to just rename the array plugin[] to a name of your choice example: after renaming plugin[] to plugin_myname[] <br  />
- the method is called by player.loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0])) </p>
+<p>Please note that loadUserCode only works for compressed plugins (file ending .plg). To include them, rename them to file ending .h Please also note that, in order to avoid multiple definitions, if you are using more than one patch, it is necessary to rename the name of the array plugin[] and the name of PLUGIN_SIZE to names of your choice. example: after renaming plugin[] to plugin_myname[] and PLUGIN_SIZE to PLUGIN_MYNAME_SIZE the method is called by loadUserCode(plugin_myname, PLUGIN_MYNAME_SIZE) It is also possible to just rename the array plugin[] to a name of your choice example: after renaming plugin[] to plugin_myname[] <br  />
+ the method is called by loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0])) </p>
 
 </div>
 </div>
@@ -690,8 +694,8 @@ VS1053SPI&lt; VS1053SPIArduino &gt;&#160;</td><td class="memItemRight" valign="b
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
-<li>src/<a class="el" href="_v_s1053_8h_source.html">VS1053.h</a></li>
-<li>src/VS1053.cpp</li>
+<li>src/<a class="el" href="_v_s1053_driver_8h_source.html">VS1053Driver.h</a></li>
+<li>src/VS1053Driver.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

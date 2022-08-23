@@ -52,7 +52,7 @@
   -CPU Frequency: 160Hz
 */
 
-#include <VS1053.h>
+#include <VS1053Driver.h>
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WiFi.h>

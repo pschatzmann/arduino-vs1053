@@ -56,10 +56,10 @@
 */
 
 // This ESP_VS1053_Library
-#include <VS1053.h>
+#include <VS1053Driver.h>
 
-#include "patches/rtmidi1003b.h"
-#include "patches/rtmidi1053b.h"
+#include "patches_midi/rtmidi1003b.h"
+#include "patches_midi/rtmidi1053b.h"
 
 // Wiring of VS1053 board (SPI connected in a standard way)
 #ifdef ARDUINO_ARCH_ESP8266

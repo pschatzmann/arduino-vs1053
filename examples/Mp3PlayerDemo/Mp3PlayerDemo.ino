@@ -45,7 +45,7 @@
 */
 
 // This ESP_VS1053_Library
-#include <VS1053.h>
+#include <VS1053Driver.h>
 
 // Please find SampleMp3.h file here:
 //   github.com/baldram/ESP_VS1053_Library/blob/master/examples/Mp3PlayerDemo/SampleMp3.h
