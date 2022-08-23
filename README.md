@@ -6,9 +6,9 @@ A powerful Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec chip.<br/>
 ![vs1053](https://pschatzmann.github.io/arduino-vs1053/doc/vs1053.jpg)
 
 
-The library enables the possibility to play audio files. Eg. it may be a base to build your own webradio player or different audio device. I recommend to use this library together with my [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools).
+The library enables the possibility to play audio files. Eg. it may be a base to build your own webradio player or different audio device. I recommend to use this library together with my [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools) with the related [examples](https://github.com/pschatzmann/arduino-audio-tools/tree/main/examples/examples-vs1053).
 
-This is an interesting way to output audio information for all microcontrollers that do not support I2S or do not have the power or resources to decode audio files.
+This is an interesting way to output audio information for all __microcontrollers that do not support I2S__ or do not have the power or resources to decode audio files.
 
 ## Documentation
 
@@ -16,7 +16,7 @@ Here is the [relevant class documentation](https://pschatzmann.github.io/arduino
 
 ## Pinout
 
-The major disadvantage of the VS1053 based modules is the number of pins that need to be connected and the fact that they might be named differently. The module is using SPI to communicate, therefore consult the SPI documentation of your microcontroller to find the correct SPI pins.
+The major disadvantage of the VS1053 based modules is the number of pins that need to be connected and the fact that they might be named differently. The module is using __SPI__ to communicate, therefore consult the SPI documentation of your microcontroller to find the correct SPI pins.
 
 
 |  VS1053  |   Comment                                   |
