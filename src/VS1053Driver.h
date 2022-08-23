@@ -38,7 +38,9 @@
 #include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
 #include "patches_in/vs1053-input.h"
+//#include "patches_in/vs1003-input.h"
 #include "patches_midi/rtmidi1053b.h"
+#include "patches_midi/rtmidi1003b.h"
 
 #ifndef _BV
 #define _BV(bit) (1 << (bit))

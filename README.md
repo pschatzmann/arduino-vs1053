@@ -1,6 +1,6 @@
 # VS1053 library
 
-This is a Arduino library for the generic **[VS1053 Breakout](http://www.vlsi.fi/en/products/VS1053Driver.html)** by VLSI Solution:
+This is a Arduino library for the generic **[VS1053 Breakout](https://www.vlsi.fi/en/products/vs1053.html)** by VLSI Solution:
 A powerful Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec chip.<br/>
 
 ![vs1053](https://pschatzmann.github.io/arduino-vs1053/doc/vs1053.jpg)
@@ -27,11 +27,11 @@ The major disadvantage of the VS1053 based modules is the number of pins that ne
 | CS       | SPI Chip Select/ Configured in Sketch       |
 | DCS      | Data Chip Select: Configured in Sketch      |
 | DREQ     | Data Request: Configured in Sketch          |
-| XRST     | Hardware Reset Pin: low= module active      |
+| XRST     | Hardware Reset Pin: low=reset               |
 | 5V       | Power Supply                                |
 | GND      | Ground                                      |
 
-The XRST pin can be configured in the sketch or you can connect it to GND or the RST of your microcontroller.
+The XRST pin can be configured in the sketch or you can connect it to RST of your microcontroller: XRST must be high for the module to work.
 
 
 ## Credits

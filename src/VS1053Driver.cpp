@@ -119,7 +119,7 @@ bool VS1053::testComm(const char *header) {
     uint16_t delta = 300; // 3 for fast SPI
 
     if (!digitalRead(dreq_pin)) {
-        LOG("VS1053 not properly installed!\n");
+        LOG("VS1053 not properly installed!");
         // Allow testing without the VS1053 module
         pinMode(dreq_pin, INPUT_PULLUP); // DREQ is now input with pull-up
         return false;                    // Return bad result
@@ -140,7 +140,7 @@ bool VS1053::testComm(const char *header) {
         r2 = read_register(SCI_VOL);        // Read back a second time
         if (r1 != r2 || i != r1 || i != r2) // Check for 2 equal reads
         {
-            LOG("VS1053 error retry SB:%04X R1:%04X R2:%04X\n", i, r1, r2);
+            LOG("VS1053 error retry SB:%04X R1:%04X R2:%04X", i, r1, r2);
             cnt++;
             delay(10);
         }
@@ -162,12 +162,12 @@ void VS1053::begin() {
     digitalWrite(dcs_pin, HIGH); // Start HIGH for SCI en SDI
     digitalWrite(cs_pin, HIGH);
     delay(100);
-    LOG("\n");
-    LOG("Reset VS1053...\n");
+    LOG("");
+    LOG("Reset VS1053...");
     digitalWrite(dcs_pin, LOW); // Low & Low will bring reset pin low
     digitalWrite(cs_pin, LOW);
     delay(500);
-    LOG("End reset VS1053...\n");
+    LOG("End reset VS1053...");
     digitalWrite(dcs_pin, HIGH); // Back to normal again
     digitalWrite(cs_pin, HIGH);
     delay(500);
@@ -176,7 +176,7 @@ void VS1053::begin() {
     // printDetails("Right after reset/startup");
     delay(20);
     // printDetails("20 msec after reset");
-    if (testComm("Slow SPI,Testing VS1053 read/write registers...\n")) {
+    if (testComm("Slow SPI,Testing VS1053 read/write registers...")) {
         //softReset();
         // Switch on the analog parts
         writeRegister(SCI_AUDATA, 44101); // 44.1kHz stereo
@@ -185,11 +185,11 @@ void VS1053::begin() {
         // SPI Clock to 4 MHz. Now you can set high speed SPI clock.
         spi.set_speed(4000000);
         writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
-        testComm("Fast SPI, Testing VS1053 read/write registers again...\n");
+        testComm("Fast SPI, Testing VS1053 read/write registers again...");
         delay(10);
         await_data_request();
         endFillByte = wram_read(0x1E06) & 0xFF;
-        LOG("endFillByte is %X\n", endFillByte);
+        LOG("endFillByte is %X", endFillByte);
         //printDetails("After last clocksetting") ;
         delay(100);
     }
@@ -307,7 +307,7 @@ void VS1053::stopSong() {
         modereg = read_register(SCI_MODE); // Read status
         if ((modereg & _BV(SM_CANCEL)) == 0) {
             sdi_send_fillers(2052);
-            LOG("Song stopped correctly after %d msec\n", i * 10);
+            LOG("Song stopped correctly after %d msec", i * 10);
             return;
         }
         delay(10);
@@ -316,7 +316,7 @@ void VS1053::stopSong() {
 }
 
 void VS1053::softReset() {
-    LOG("Performing soft-reset\n");
+    LOG("Performing soft-reset");
     writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_RESET));
     delay(10);
     await_data_request();
@@ -325,12 +325,12 @@ void VS1053::softReset() {
 
 void VS1053::hardReset(){
     if (reset_pin!=-1){
-        LOG("Performing hard-reset\n");
+        LOG("Performing hard-reset");
         digitalWrite(reset_pin, LOW);
         delay(500);
         digitalWrite(reset_pin, HIGH);
     } else {
-        LOG("hard-reset not supported\n");
+        LOG("hard-reset not supported");
     }
 }
 
@@ -345,14 +345,14 @@ void VS1053::hardReset(){
 */
 
 void VS1053::streamModeOn() {
-    LOG("Performing streamModeOn\n");
+    LOG("Performing streamModeOn");
     writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_STREAM));
     delay(10);
     await_data_request();
 }
 
 void VS1053::streamModeOff() {
-    LOG("Performing streamModeOff\n");
+    LOG("Performing streamModeOff");
     writeRegister(SCI_MODE, _BV(SM_SDINEW));
     delay(10);
     await_data_request();
@@ -363,14 +363,14 @@ void VS1053::printDetails(const char *header) {
     uint8_t i;
 
     LOG("%s", header);
-    LOG("REG   Contents\n");
-    LOG("---   -----\n");
+    LOG("REG   Contents");
+    LOG("---   -----");
     for (i = 0; i <= SCI_num_registers; i++) {
         regbuf[i] = read_register(i);
     }
     for (i = 0; i <= SCI_num_registers; i++) {
         delay(5);
-        LOG("%3X - %5X\n", i, regbuf[i]);
+        LOG("%3X - %5X", i, regbuf[i]);
     }
 }
 
@@ -386,7 +386,7 @@ void VS1053::switchToMp3Mode() {
     wram_write(ADDR_REG_GPIO_DDR_RW, 3); // GPIO DDR = 3
     wram_write(ADDR_REG_GPIO_ODATA_RW, 0); // GPIO ODATA = 0
     delay(100);
-    LOG("Switched to mp3 mode\n");
+    LOG("Switched to mp3 mode");
     softReset();
 }
 
@@ -511,7 +511,7 @@ void VS1053::adjustRate(long ppm2) {
  * the method is called by loadUserCode(plugin_myname, sizeof(plugin_myname)/sizeof(plugin_myname[0]))
  */
 void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size) {
-    LOG("Loading User Code\n");
+    LOG("Loading User Code");
     int i = 0;
     while (i<plugin_size) {
         unsigned short addr, n, val;
@@ -530,7 +530,7 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
             }
         }
     }
-    LOG("User Code - done\n");
+    LOG("User Code - done");
 }
 
 /**
@@ -538,7 +538,7 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
  */
 void VS1053::loadDefaultVs1053Patches() {
     if (getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
-        LOG("loadDefaultVs1053Patches\n");
+        LOG("loadDefaultVs1053Patches");
         loadUserCode(PATCHES, PATCHES_SIZE);
     }
 }
@@ -667,20 +667,37 @@ void VS1053::beginMIDI() {
     // initialize the player
     begin();  
 
+#ifdef USE_BASIC_VS1053_MIDI
+    const unsigned short plugin[10] = { 
+        0x0007, 0x0001, 0x8260,
+        0x0006, 0x0002, 0x1234, 0x5678,
+        0x0006, 0x8004, 0xabcd,
+    };
+    loadUserCode(plugin,10);
+    int check = read_register(SCI_AUDATA);
+    LOG("Midi %s", check==0xac45?"active":"inactive");
+#else
     int version = getChipVersion();
     switch(version){
-        case 3:
-            LOG("10003b Not supported");    
-            break;              
-        case 4:
+        case 3: {
+            loadUserCode(MIDI1003, MIDI1003_SIZE); 
+            writeRegister(0xA , 0x30);  // setting VS1003 Start adress for user code
+            LOG("MIDI plugin VS1003 loaded");  
+            int check = read_register(SCI_AUDATA);
+            LOG("Midi %s", check==0xac45?"active":"inactive");
+            } break;   
+        case 4: {
             loadUserCode(MIDI1053, MIDI1053_SIZE); 
-            writeRegister(0xA /*SCI_AIADDR*/, 0x50);  // setting VS1053 Start adress for user code
+            writeRegister(0xA , 0x50);  // setting VS1053 Start adress for user code
             LOG("MIDI plugin VS1053 loaded");  
-            break;   
+            int check = read_register(SCI_AUDATA);
+            LOG("Midi %s", check==0xac45?"active":"inactive");
+            } break;   
 
         default:
            LOG("Please check whether your device is properly connected!");    
            break;
     }
-    setVolume(100);  
+#endif
+    //setVolume(99);  
 }
