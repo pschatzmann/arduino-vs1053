@@ -32,6 +32,7 @@
  */
 #include "VS1053Driver.h"
 
+
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
 }
@@ -39,7 +40,7 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
 }
 
-uint16_t VS1053::read_register(uint8_t _reg) const {
+uint16_t VS1053::readRegister(uint8_t _reg) const {
     uint16_t result;
 
     control_mode_on();
@@ -106,7 +107,7 @@ void VS1053::wram_write(uint16_t address, uint16_t data) {
 
 uint16_t VS1053::wram_read(uint16_t address) {
     writeRegister(SCI_WRAMADDR, address); // Start reading from WRAM
-    return read_register(SCI_WRAM);        // Read back result
+    return readRegister(SCI_WRAM);        // Read back result
 }
 
 bool VS1053::testComm(const char *header) {
@@ -136,8 +137,8 @@ bool VS1053::testComm(const char *header) {
 
     for (i = 0; (i < 0xFFFF) && (cnt < 20); i += delta) {
         writeRegister(SCI_VOL, i);         // Write data to SCI_VOL
-        r1 = read_register(SCI_VOL);        // Read back for the first time
-        r2 = read_register(SCI_VOL);        // Read back a second time
+        r1 = readRegister(SCI_VOL);        // Read back for the first time
+        r2 = readRegister(SCI_VOL);        // Read back a second time
         if (r1 != r2 || i != r1 || i != r2) // Check for 2 equal reads
         {
             LOG("VS1053 error retry SB:%04X R1:%04X R2:%04X", i, r1, r2);
@@ -149,7 +150,9 @@ bool VS1053::testComm(const char *header) {
     return (cnt == 0); // Return the result
 }
 
-void VS1053::begin() {
+bool VS1053::begin() {
+    LOG("begin");
+
     // support for optional custom reset pin when wiring is not possible
     if (reset_pin!=-1){
         pinMode(reset_pin, OUTPUT);
@@ -162,7 +165,6 @@ void VS1053::begin() {
     digitalWrite(dcs_pin, HIGH); // Start HIGH for SCI en SDI
     digitalWrite(cs_pin, HIGH);
     delay(100);
-    LOG("");
     LOG("Reset VS1053...");
     digitalWrite(dcs_pin, LOW); // Low & Low will bring reset pin low
     digitalWrite(cs_pin, LOW);
@@ -193,6 +195,8 @@ void VS1053::begin() {
         //printDetails("After last clocksetting") ;
         delay(100);
     }
+    chip_version = getChipVersion();
+    return true;
 }
 
 void VS1053::setVolume(uint8_t vol) {
@@ -251,48 +255,9 @@ void VS1053::startSong() {
     sdi_send_fillers(10);
 }
 
+
 void VS1053::playChunk(uint8_t *data, size_t len) {
     sdi_send_buffer(data, len);
-}
-
-
-/**
- * send a MIDI message
- *
- * a MIDI message ranges from 1 byte to three bytes
- * the first byte consists of 4 command bits and 4 channel bits
- * 
- * based on talkMIDI function in MP3_Shield_RealtimeMIDI demo by Matthias Neeracher,
- * which is based on Nathan Seidle's Sparkfun Electronics example
- */
- 
-void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
-      
-    digitalWrite(dcs_pin, LOW); //data_mode_on() does not seem to work here
-
-    // await_data_request() works for VS1053 and provides from overrunning the input buffer,
-    // which is unlikely to happen in RTMidi
-    // for VS1003 for some reason sometimes DREQ is ALWAYS down
-    // Hence, in case of running to an infinite loop, commenting await_data_request() is the solution    
-    await_data_request(); 
-	
-    spi.write(0x00);
-    spi.write(cmd);    
-
-    // Some commands only have one data byte. All cmds less than 0xBn have 2 data bytes 
-    // (sort of: http://253.ccarh.org/handout/midiprotocol/)
-    if( (cmd & 0xF0) <= 0xB0 || (cmd & 0xF0) >= 0xE0) {
-      spi.write(0x00);  
-      spi.write(data1);      
-      spi.write(0x00);  
-      spi.write(data2);  
-    } else {
-      spi.write(0x00);  
-      spi.write(data1);
-    }
-    
-    digitalWrite(dcs_pin, HIGH);  //data_mode_off() does not seem to work here
-
 }
 
 void VS1053::stopSong() {
@@ -304,7 +269,7 @@ void VS1053::stopSong() {
     writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_CANCEL));
     for (i = 0; i < 200; i++) {
         sdi_send_fillers(32);
-        modereg = read_register(SCI_MODE); // Read status
+        modereg = readRegister(SCI_MODE); // Read status
         if ((modereg & _BV(SM_CANCEL)) == 0) {
             sdi_send_fillers(2052);
             LOG("Song stopped correctly after %d msec", i * 10);
@@ -321,7 +286,6 @@ void VS1053::softReset() {
     delay(10);
     await_data_request();
 }
-
 
 void VS1053::hardReset(){
     if (reset_pin!=-1){
@@ -366,7 +330,7 @@ void VS1053::printDetails(const char *header) {
     LOG("REG   Contents");
     LOG("---   -----");
     for (i = 0; i <= SCI_num_registers; i++) {
-        regbuf[i] = read_register(i);
+        regbuf[i] = readRegister(i);
     }
     for (i = 0; i <= SCI_num_registers; i++) {
         delay(5);
@@ -428,7 +392,7 @@ void VS1053::enableI2sOut(VS1053_I2S_RATE i2sRate) {
  * @return true if the chip is wired up correctly
  */
 bool VS1053::isChipConnected() {
-    uint16_t status = read_register(SCI_STATUS);
+    uint16_t status = readRegister(SCI_STATUS);
 
     return !(status == 0 || status == 0xFFFF);
 }
@@ -439,7 +403,7 @@ bool VS1053::isChipConnected() {
  * 5 for VS1033, 7 for VS1103, and 6 for VS1063. 
  */
 uint16_t VS1053::getChipVersion() {
-    uint16_t status = read_register(SCI_STATUS);
+    uint16_t status = readRegister(SCI_STATUS);
        
     return ( (status & 0x00F0) >> 4);
 }
@@ -465,7 +429,7 @@ uint16_t VS1053::getChipVersion() {
  * @return current decoded time in full seconds
  */
 uint16_t VS1053::getDecodedTime() {
-    return read_register(SCI_DECODE_TIME);
+    return readRegister(SCI_DECODE_TIME);
 }
 
 /**
@@ -492,7 +456,7 @@ void VS1053::adjustRate(long ppm2) {
     writeRegister(SCI_WRAMADDR, 0x5b1c);
     writeRegister(SCI_WRAM, 0);
     // Write to AUDATA or CLOCKF checks rate and recalculates adjustment.
-    writeRegister(SCI_AUDATA, read_register(SCI_AUDATA));
+    writeRegister(SCI_AUDATA, readRegister(SCI_AUDATA));
 }
 
 /**
@@ -513,7 +477,7 @@ void VS1053::adjustRate(long ppm2) {
 void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_size) {
     LOG("Loading User Code");
     int i = 0;
-    while (i<plugin_size) {
+    while (i < plugin_size) {
         unsigned short addr, n, val;
         addr = plugin[i++];
         n = plugin[i++];
@@ -579,12 +543,123 @@ void VS1053::setBassFrequencyLimit(uint16_t value){
     writeRegister(SCI_BASS, equilizer.value());
 }
 
+
+/// Stops the recording of sound
+void VS1053::end() {
+    uint16_t sci = readRegister(SCI_MODE);
+    // clear SM_ADPCM bit
+    sci &= ~(1U << SM_ADPCM);
+    writeRegister(SCI_MODE, sci);
+    softReset();
+}
+
+
+bool VS1053::beginMIDI() {
+    LOG("beginMIDI");
+                        
+    // initialize the player
+    begin();  
+    mode = VS1053_MIDI;
+
+    await_data_request();
+
+    switch(chip_version){
+        case 3: {
+            loadUserCode(MIDI1003, MIDI1003_SIZE); 
+            writeRegister(0xA , 0x30);  // setting VS1003 Start adress for user code
+            LOG("MIDI plugin VS1003 loaded");  
+            int check = readRegister(SCI_AUDATA);
+            LOG("Midi %s", check==0xac45?"active":"inactive");
+            } break;   
+        case 4: {
+            loadUserCode(MIDI1053, MIDI1053_SIZE); 
+            writeRegister(0xA , 0x50);  // setting VS1053 Start adress for user code
+            LOG("MIDI plugin VS1053 loaded");  
+            int check = readRegister(SCI_AUDATA);
+            LOG("Midi %s", check==0xac45?"active":"inactive");
+            } break;   
+
+        default:
+           LOG("Please check whether your device is properly connected!");    
+           break;
+    }
+}
+
+/**
+ * send a MIDI message
+ *
+ * a MIDI message ranges from 1 byte to three bytes
+ * the first byte consists of 4 command bits and 4 channel bits
+ * 
+ * based on talkMIDI function in MP3_Shield_RealtimeMIDI demo by Matthias Neeracher,
+ * which is based on Nathan Seidle's Sparkfun Electronics example
+ */
+ 
+void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
+     if (mode != VS1053_MIDI){
+        LOG("beginMidi not called");
+        return;
+     }
+    int len = 4;
+    uint8_t data[6] ={0x00, cmd, 0x00, data1};
+    // Some commands only have one data byte. All cmds less than 0xBn have 2 data bytes 
+    // (sort of: http://253.ccarh.org/handout/midiprotocol/)
+    if( (cmd & 0xF0) <= 0xB0 || (cmd & 0xF0) >= 0xE0) {
+      data[4]=0x00;
+      data[5]=data2;
+      len = 6;
+    } 
+    sdi_send_buffer(data, len);
+}
+
+
+void VS1053::writeAudio(uint8_t*data, size_t len){
+     if (mode != VS1053_MIDI){
+        uint8_t tmp[len*2];
+        for (int j=0;j<len;j++){
+            tmp[j*2] = 0;
+            tmp[j+1] = data[j];
+        }
+        sdi_send_buffer(tmp, len*2);
+     } else {
+        sdi_send_buffer(data, len);
+     }
+}
+
 /// Starts the recording of sound as WAV data
-void VS1053::beginInput(bool wavHeader) {
+bool VS1053::beginInput(bool wavHeader) {
+    LOG("beginInput");
+    bool result = false;
+
     // regular setup
     begin();
+
+    switch (chip_version){
+        case 3:
+            result = begin_input_vs1003(wavHeader);
+            mode = VS1053_IN;
+            break;
+
+        case 4:
+            result = begin_input_vs1053(wavHeader);
+            mode = VS1053_IN;
+            break;
+
+        default:
+            LOG("Only vs1053 supported - version %d", chip_version);
+            result =false;
+            break;
+    }
+
+
+    return result;
+}
+
+
+bool VS1053::begin_input_vs1053(bool wavHeader){
+    LOG("%s",__func__);
     // clear SM_ADPCM bit
-    uint16_t sci = read_register(SCI_MODE);
+    uint16_t sci = readRegister(SCI_MODE);
     sci &= ~(1U << SM_ADPCM);
     writeRegister(SCI_MODE, sci);
 
@@ -603,6 +678,8 @@ void VS1053::beginInput(bool wavHeader) {
     writeRegister(SCI_WRAMADDR, 0xC01A);
     writeRegister(SCI_WRAM, 0x2);
 
+    delay(20);
+
     // load plugin profile
     loadUserCode(pcm48s, 0xC01A);   
 
@@ -618,13 +695,6 @@ void VS1053::beginInput(bool wavHeader) {
     // activate encoder
     writeRegister(SCI_AIADDR, 0x34);
 
-    delay(1);
-
-    // Wait until DREQ pin is high before reading any data.
-    while(digitalRead(dreq_pin)==0){
-        delay(100);
-    }
-
     if (!wavHeader){
         // remove wav header 44 bytes
         uint8_t tmp[44];
@@ -635,69 +705,60 @@ void VS1053::beginInput(bool wavHeader) {
     }
 }
 
-/// Stops the recording of sound
-void VS1053::end() {
-    uint16_t sci = read_register(SCI_MODE);
-    // clear SM_ADPCM bit
-    sci &= ~(1U << SM_ADPCM);
-    writeRegister(SCI_MODE, sci);
-    softReset();
+bool VS1053::begin_input_vs1003(bool wavHeader){
+    LOG("%s",__func__);
+//1) Load the patch using either the plugin format (vs1003b-pcm.plg)
+//   or the loading tables (vs1003b-pcm.c)
+    loadUserCode(pcm1003, PLUGIN_SIZE_pcm1003);   
+
+//2) Configure the encoding normally, for example
+//   CLOCKF=0x4000
+//   AICTRL0=0x000c
+//   AICTRL1=0x0800
+//   MODE=0x1800
+
+// sampleing rate = internal clock / 256 * divider value (SCI_AICTRL0)
+
+    writeRegister(SCI_CLOCKF, 0x4430);
+    delay(100);
+    writeRegister(SCI_AICTRL0, 12); // clock divider: -> 12=8kHz 8=12kHz 6=16kHz */
+    delay(100);
+    writeRegister(SCI_AICTRL1, rec.recording_gain);
+    delay(100);
+    writeRegister(SCI_MODE, 0x1800);
+    delay(100);
+
+//3) Start the encoding mode by writing AIADDR=0x0030
+    writeRegister(SCI_AIADDR, 0x0030);
 }
+
 
 /// Provides the number of bytes which are available in the read buffer
 size_t VS1053::available() {
-    size_t available = spi.read16(SCI_HDAT1)*2;
+    if (mode!=VS1053_IN) return 0;
+
+    size_t available = readRegister(SCI_HDAT1)*2;
+    if (available>1024*2){
+        LOG("Invalid value: %d", available);
+        available = 0;
+    }
     return available;
 }
 
 /// Provides the audio data as WAV
 size_t VS1053::readBytes(uint8_t*data, size_t len){
+    if (mode!=VS1053_IN) return 0;
+
     size_t read = min(len, available());
     size_t result = 0;
     int16_t *p_word = (int16_t*)data;
     for (int j=0; j<= read/2;j++){
-        *p_word++ = spi.read16(SCI_HDAT0);
+        *p_word++ = readRegister(SCI_HDAT0);
+        result+=2;
     }
     return result;
 }
 
-void VS1053::beginMIDI() {
-    LOG("beginMIDI");
-                        
-    // initialize the player
-    begin();  
 
-#ifdef USE_BASIC_VS1053_MIDI
-    const unsigned short plugin[10] = { 
-        0x0007, 0x0001, 0x8260,
-        0x0006, 0x0002, 0x1234, 0x5678,
-        0x0006, 0x8004, 0xabcd,
-    };
-    loadUserCode(plugin,10);
-    int check = read_register(SCI_AUDATA);
-    LOG("Midi %s", check==0xac45?"active":"inactive");
-#else
-    int version = getChipVersion();
-    switch(version){
-        case 3: {
-            loadUserCode(MIDI1003, MIDI1003_SIZE); 
-            writeRegister(0xA , 0x30);  // setting VS1003 Start adress for user code
-            LOG("MIDI plugin VS1003 loaded");  
-            int check = read_register(SCI_AUDATA);
-            LOG("Midi %s", check==0xac45?"active":"inactive");
-            } break;   
-        case 4: {
-            loadUserCode(MIDI1053, MIDI1053_SIZE); 
-            writeRegister(0xA , 0x50);  // setting VS1053 Start adress for user code
-            LOG("MIDI plugin VS1053 loaded");  
-            int check = read_register(SCI_AUDATA);
-            LOG("Midi %s", check==0xac45?"active":"inactive");
-            } break;   
 
-        default:
-           LOG("Please check whether your device is properly connected!");    
-           break;
-    }
-#endif
-    //setVolume(99);  
-}
+

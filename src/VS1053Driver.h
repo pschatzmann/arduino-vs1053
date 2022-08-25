@@ -38,7 +38,7 @@
 #include "VS1053SPI.h"
 #include "patches/vs1053b-patches.h"
 #include "patches_in/vs1053-input.h"
-//#include "patches_in/vs1003-input.h"
+#include "patches_in/vs1003b-pcm.h"
 #include "patches_midi/rtmidi1053b.h"
 #include "patches_midi/rtmidi1003b.h"
 
@@ -47,9 +47,6 @@
 #endif
 
 
-
-//#endif
-
 enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_192_KHZ,
     VS1053_I2S_RATE_96_KHZ,
@@ -57,18 +54,56 @@ enum VS1053_I2S_RATE {
 };
 
 enum VS1053_INPUT {
-    VS1053_MIC,
-    VS1053_AUX,
-    VS1053_ALL
+    VS1053_MIC = 0,
+    VS1053_AUX = 1,
 };
 
-struct VS1053 {
+enum VS1053_MODE {
+    VS1053_OUT,
+    VS1053_IN,
+    VS1053_MIDI
+};
+
+class VS1053 {
+    /**
+     * @brief Relevant control data for recording
+     */
+    struct VS1053Recording {
+        friend class VS1053;
+        public:
+            // values from 8000 to 48000
+            void setSampleRate(uint16_t rate){
+                sample_rate = rate;
+                if (sample_rate>48000) sample_rate = 48000;
+                if (sample_rate<8000) sample_rate = 8000;
+            }
+            // values from 0 to 100
+            void setRecoringGain(uint8_t gain){
+                recording_gain = 1024 * gain / 100;
+                if (recording_gain>1024) recording_gain = 1024;
+                if (recording_gain<0) recording_gain = 0; // 0 = automatic gain control
+            }
+            // values from 0 to 100
+            void setAutoGainAmplification(uint8_t amp){
+                autogain_amplification = 65535 * amp / 100 ;
+                if (autogain_amplification>65535) autogain_amplification = 65535;
+                if (autogain_amplification<0) autogain_amplification = 0;
+            }
+
+            void setInput(VS1053_INPUT in){
+                input = in;
+            }
+
+    protected:
+        uint16_t sample_rate = 8000;
+        uint16_t recording_gain = 0; // 
+        uint16_t autogain_amplification = 0; // 
+        VS1053_INPUT input = VS1053_MIC;
+    };   
     /**
      * @brief Amplitude and Frequency Limit 
-     * 
      */
-    class VS1053EquilizerValue {
-    public:
+    struct VS1053EquilizerValue {
         VS1053EquilizerValue(uint8_t limit){
             this->freq_limit = limit;
         }
@@ -93,12 +128,11 @@ struct VS1053 {
      */
 
     class VS1053Equilizer {
-    protected:
+      protected:
         VS1053EquilizerValue v_bass{3}; // 30 hz
         VS1053EquilizerValue v_treble{15}; // 15000 hz
 
-
-    public:
+      public:
         /// Provides the bass VS1053EquilizerValue
         VS1053EquilizerValue &bass() {
             return v_bass;
@@ -119,24 +153,6 @@ struct VS1053 {
             return result;
         }
     };
-
-protected:
-    uint8_t cs_pin;                         // Pin where CS line is connected
-    uint8_t dcs_pin;                        // Pin where DCS line is connected
-    uint8_t dreq_pin;                       // Pin where DREQ line is connected
-    uint8_t curvol;                         // Current volume setting 0..100%
-    int16_t reset_pin = -1;                 // Custom Reset Pin (optional)
-    int8_t  curbalance = 0;                 // Current balance setting -100..100
-                                            // (-100 = right channel silent, 100 = left channel silent)
-    const uint8_t vs1053_chunk_size = 32;
-    SPISettings VS1053_SPI;                 // SPI settings for this slave
-    uint8_t endFillByte;                    // Byte to send when stopping song
-    VS1053Equilizer equilizer;
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-    VS1053SPI<VS1053SPIESP32> spi;
-#else
-    VS1053SPI<VS1053SPIArduino> spi;
-#endif
 
 
  public:
@@ -180,48 +196,6 @@ protected:
     const uint16_t SC_ADD_53_10X = 0x0800;
 
 
-protected:
-    inline void await_data_request() const {
-        while (!digitalRead(dreq_pin)) {
-            yield();                        // Very short delay
-        }
-    }
-
-    inline void control_mode_on() const {
-        spi.beginTransaction();   // Prevent other SPI users
-        digitalWrite(dcs_pin, HIGH);        // Bring slave in control mode
-        digitalWrite(cs_pin, LOW);
-    }
-
-    inline void control_mode_off() const {
-        digitalWrite(cs_pin, HIGH);         // End control mode
-        spi.endTransaction();               // Allow other SPI users
-    }
-
-    inline void data_mode_on() const {
-        spi.beginTransaction();   // Prevent other SPI users
-        digitalWrite(cs_pin, HIGH);         // Bring slave in data mode
-        digitalWrite(dcs_pin, LOW);
-    }
-
-    inline void data_mode_off() const {
-        digitalWrite(dcs_pin, HIGH);        // End data mode
-        spi.endTransaction();               // Allow other SPI users
-    }
-
-    uint16_t read_register(uint8_t _reg) const;
-
-    void sdi_send_buffer(uint8_t *data, size_t len);
-
-    void sdi_send_fillers(size_t length);
-
-
-
-    void wram_write(uint16_t address, uint16_t data);
-
-    uint16_t wram_read(uint16_t address);
-
-public:
     /// Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);
 
@@ -229,7 +203,7 @@ public:
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin);
 
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
-    void begin();
+    bool begin();
 
     /// Prepare to start playing. Call this each time a new song starts
     void startSong();
@@ -237,9 +211,9 @@ public:
     /// Play a chunk of data.  Copies the data to the chip.  Blocks until complete
     void playChunk(uint8_t *data, size_t len);
     
-    /// performs a MIDI command
-    void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
-	
+    /// Play a chunk of data.  Copies the data to the chip.  Blocks until complete - also supports serial midi
+    void writeAudio(uint8_t*data, size_t len);
+
     /// Finish playing a song. Call this after the last playChunk call
     void stopSong();
 
@@ -335,10 +309,19 @@ public:
     void setBassFrequencyLimit(uint16_t value);
 
     /// Starts the recording of sound as WAV data
-    void beginInput(bool wavHeader=true);
+    bool beginInput(bool wavHeader=true);
 
     /// Stops the recording of sound
     void end();
+
+    /// Starts the MIDI output processing
+    bool beginMIDI();
+
+    /// performs a MIDI command
+    void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
+
+    /// Starts the Recording
+    void beginRecording();
 
     /// Provides the number of bytes which are available in the read buffer
     size_t available();
@@ -346,9 +329,83 @@ public:
     /// Provides the audio data as WAV
     size_t readBytes(uint8_t*data, size_t len);
 
-    /// Starts the MIDI output processing
-    void beginMIDI();
+    // Sets the recording sample rate: values from 8000 to 48000
+    void setRecordingSampleRate(uint16_t rate) { rec.setSampleRate(rate);}
 
+    // Sets the recoring gain: values from 0 to 100
+    void setRecoringGain(uint8_t gain) {rec.setRecoringGain(gain);}
+
+    // Sets the recording auto gain amplification: values from 0 to 100
+    void setRecoringAutoGainAmplification(uint8_t amp) {rec.setAutoGainAmplification(amp);}
+
+    // Sets mic or aux as input; default is mic
+    void setRecordingDevice(VS1053_INPUT in){ rec.setInput(in);}
+
+protected:
+    uint8_t cs_pin;                         // Pin where CS line is connected
+    uint8_t dcs_pin;                        // Pin where DCS line is connected
+    uint8_t dreq_pin;                       // Pin where DREQ line is connected
+    uint8_t curvol;                         // Current volume setting 0..100%
+    int16_t reset_pin = -1;                 // Custom Reset Pin (optional)
+    int8_t  curbalance = 0;                 // Current balance setting -100..100
+                                            // (-100 = right channel silent, 100 = left channel silent)
+    const uint8_t vs1053_chunk_size = 32;
+    SPISettings VS1053_SPI;                 // SPI settings for this slave
+    uint8_t endFillByte;                    // Byte to send when stopping song
+    VS1053Equilizer equilizer;
+    VS1053Recording rec;
+    VS1053_MODE mode;
+    uint16_t chip_version = -1;
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
+    VS1053SPI<VS1053SPIESP32> spi;
+#else
+    VS1053SPI<VS1053SPIArduino> spi;
+#endif
+
+
+protected:
+
+    inline void await_data_request() const {
+        while (!digitalRead(dreq_pin)) {
+            yield();                        // Very short delay
+        }
+    }
+
+    inline void control_mode_on() const {
+        spi.beginTransaction();   // Prevent other SPI users
+        digitalWrite(dcs_pin, HIGH);        // Bring slave in control mode
+        digitalWrite(cs_pin, LOW);
+    }
+
+    inline void control_mode_off() const {
+        digitalWrite(cs_pin, HIGH);         // End control mode
+        spi.endTransaction();               // Allow other SPI users
+    }
+
+    inline void data_mode_on() const {
+        spi.beginTransaction();   // Prevent other SPI users
+        digitalWrite(cs_pin, HIGH);         // Bring slave in data mode
+        digitalWrite(dcs_pin, LOW);
+    }
+
+    inline void data_mode_off() const {
+        digitalWrite(dcs_pin, HIGH);        // End data mode
+        spi.endTransaction();               // Allow other SPI users
+    }
+
+    uint16_t readRegister(uint8_t _reg) const;
+
+    void sdi_send_buffer(uint8_t *data, size_t len);
+
+    void sdi_send_fillers(size_t length);
+
+    void wram_write(uint16_t address, uint16_t data);
+
+    uint16_t wram_read(uint16_t address);
+
+
+    bool begin_input_vs1053(bool wavHeader=true);
+    bool begin_input_vs1003(bool wavHeader=true);
 
 };
 
