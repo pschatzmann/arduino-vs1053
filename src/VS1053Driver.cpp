@@ -196,6 +196,8 @@ bool VS1053::begin() {
         delay(100);
     }
     chip_version = getChipVersion();
+    mode = VS1053_OUT; // default mode
+
     return true;
 }
 
@@ -257,7 +259,8 @@ void VS1053::startSong() {
 
 
 void VS1053::playChunk(uint8_t *data, size_t len) {
-    sdi_send_buffer(data, len);
+    //sdi_send_buffer(data, len);
+    writeAudio(data, len);
 }
 
 void VS1053::stopSong() {
