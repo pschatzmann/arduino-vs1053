@@ -617,11 +617,11 @@ void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
 
 
 void VS1053::writeAudio(uint8_t*data, size_t len){
-     if (mode != VS1053_MIDI){
+     if (mode == VS1053_MIDI){
         uint8_t tmp[len*2];
         for (int j=0;j<len;j++){
             tmp[j*2] = 0;
-            tmp[j+1] = data[j];
+            tmp[j*2+1] = data[j];
         }
         sdi_send_buffer(tmp, len*2);
      } else {
