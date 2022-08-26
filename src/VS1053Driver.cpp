@@ -61,6 +61,16 @@ void VS1053::writeRegister(uint8_t _reg, uint16_t _value) const {
     control_mode_off();
 }
 
+void VS1053::set_register_flag(uint16_t reg, uint16_t flag, bool active){
+    int16_t reg_value = readRegister(reg);
+    if (active){
+        reg_value |= flag; // setting bit
+    } else {
+        reg_value &= ~(flag);  // clearing bit 0x1800
+    }
+    writeRegister(reg, reg_value);
+}
+
 void VS1053::sdi_send_buffer(uint8_t *data, size_t len) {
     size_t chunk_length; // Length of chunk 32 byte or shorter
 
@@ -549,6 +559,7 @@ bool VS1053::setEarSpeaker(VS1053_EARSPEAKER value){
         LOG("Function not supported");
         return false;
     }
+    int16_t mode = readRegister(SCI_MODE);
     switch(value){
         case VS1053_EARSPEAKER_MAX:
             writeRegister(SCI_MODE, mode | (SC_EAR_SPEAKER_HI | SC_EAR_SPEAKER_LO)); // extreme 3 - on on
@@ -569,10 +580,8 @@ bool VS1053::setEarSpeaker(VS1053_EARSPEAKER value){
 
 /// Stops the recording of sound
 void VS1053::end() {
-    uint16_t sci = readRegister(SCI_MODE);
     // clear SM_ADPCM bit
-    sci &= ~(1U << SM_ADPCM);
-    writeRegister(SCI_MODE, sci);
+    set_register_flag(SCI_MODE, SM_ADPCM, false);
     softReset();
 }
 
@@ -683,9 +692,7 @@ bool VS1053::beginInput(VS1053Recording &opt) {
 bool VS1053::begin_input_vs1053(VS1053Recording &opt){
     LOG("%s",__func__);
     // clear SM_ADPCM bit
-    uint16_t sci = readRegister(SCI_MODE);
-    sci &= ~(1U << SM_ADPCM);
-    writeRegister(SCI_MODE, sci);
+    set_register_flag(SCI_MODE, SM_ADPCM, false);
 
     // set the clock to a value between just below 55.3 MHz and 67.6 MHz.
     // SC_MULT 3.5 & SC_ADD 1x (9.6.4 SCI_CLOCKF (RW))
@@ -708,8 +715,7 @@ bool VS1053::begin_input_vs1053(VS1053Recording &opt){
     loadUserCode(pcm48s, 0xC01A);   
 
     // Set bit SM_ADPCM (12) in register SCI_MODE (0) to 1.
-    sci |= 1U << SM_ADPCM;
-    writeRegister(SCI_MODE, sci);
+    set_register_flag(SCI_MODE, SM_ADPCM, true);
 
     // Set recording level control registers SCI_AICTRL1 (13) and SCI_AICTRL2 (14).
     writeRegister(SCI_AICTRL1, 0);
@@ -732,6 +738,9 @@ bool VS1053::begin_input_vs1053(VS1053Recording &opt){
 
 bool VS1053::begin_input_vs1003(VS1053Recording &opt){
     LOG("%s",__func__);
+    // we might need to repeat some values per channel
+    channels_multiplier = opt.channels();
+
 //1) Load the patch using either the plugin format (vs1003b-pcm.plg)
 //   or the loading tables (vs1003b-pcm.c)
     loadUserCode(pcm1003, PLUGIN_SIZE_pcm1003);   
@@ -764,7 +773,11 @@ bool VS1053::begin_input_vs1003(VS1053Recording &opt){
     delay(100);
     writeRegister(SCI_AICTRL1, opt.recording_gain);
     delay(100);
-    writeRegister(SCI_MODE, 0x1800);
+
+    // setting mic or aux as input
+    int sci_mode = readRegister(SCI_MODE);
+    set_register_flag(SCI_MODE, SM_ADPCM, true);
+    set_register_flag(SCI_MODE, SM_LINE_IN, opt.input!=VS1053_MIC);
     delay(100);
 
 //3) Start the encoding mode by writing AIADDR=0x0030
@@ -786,7 +799,7 @@ size_t VS1053::available() {
         //LOG("Invalid value: %d", available);
         available = 0; //1024*2;
     }
-    return available;
+    return available * channels_multiplier;
 }
 
 /// Provides the audio data as PCM data
@@ -796,9 +809,13 @@ size_t VS1053::readBytes(uint8_t*data, size_t len){
     size_t read = min(len, available());
     size_t result = 0;
     int16_t *p_word = (int16_t*)data;
-    for (int j=0; j<= read/2;j++){
-        *p_word++ = readRegister(SCI_HDAT0);
-        result+=2;
+    size_t max_samples = read / 2 / channels_multiplier;
+    for (int j=0; j<= max_samples;j++){
+        int16_t tmp = readRegister(SCI_HDAT0);
+        for (int j=0;j<channels_multiplier;j++){
+            *p_word++ = tmp;
+            result+=2;
+        }
     }
     return result;
 }

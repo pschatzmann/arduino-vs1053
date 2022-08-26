@@ -230,7 +230,6 @@ class VS1053 {
     const uint8_t SM_TESTS = 5;             // Bitnumber in SCI_MODE for tests
     const uint8_t SM_LINE1 = 14;            // Bitnumber in SCI_MODE for Line input
     const uint8_t SM_STREAM = 6;            // Bitnumber in SCI_MODE for Streaming Mode
-    const uint8_t SM_ADPCM = 12;            // PCM/ADPCM recording active
 
     const uint16_t ADDR_REG_GPIO_DDR_RW = 0xc017;
     const uint16_t ADDR_REG_GPIO_VAL_R = 0xc018;
@@ -244,6 +243,8 @@ class VS1053 {
 
     const uint16_t SC_EAR_SPEAKER_LO = 0x0010;
     const uint16_t SC_EAR_SPEAKER_HI = 0x0080;
+    const uint16_t SM_ADPCM = 1 << 12;
+    const uint16_t SM_LINE_IN = 1 << 14;
 
 
     /// Constructor which allows a custom reset pin
@@ -395,6 +396,7 @@ protected:
     VS1053Equilizer equilizer;
     VS1053_MODE mode;
     uint16_t chip_version = -1;
+    uint8_t channels_multiplier = 1;        // Repeat read values for multiple channels
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
     VS1053SPI<VS1053SPIESP32> spi;
 #else
@@ -441,10 +443,11 @@ protected:
 
     uint16_t wram_read(uint16_t address);
 
-
     bool begin_input_vs1053(VS1053Recording &opt);
+
     bool begin_input_vs1003(VS1053Recording &opt);
 
+    void set_register_flag(uint16_t reg, uint16_t flag, bool active);
 };
 
 #endif

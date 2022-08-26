@@ -24,6 +24,14 @@ struct VS1053Recording {
             return sample_rate;
         }
 
+        void setChannels(uint8_t ch){
+            channels_v = ch;
+        }
+        
+        uint8_t channels() {
+            return channels_v;
+        }
+        
         // values from 0 to 100
         void setRecoringGain(uint8_t gain){
             recording_gain = 1024 * gain / 100;
@@ -52,6 +60,7 @@ struct VS1053Recording {
 
 protected:
     uint16_t sample_rate = 8000;
+    uint8_t channels_v = 1;
     uint16_t recording_gain = 0; // 
     uint16_t autogain_amplification = 0; // 
     VS1053_INPUT input = VS1053_MIC;
