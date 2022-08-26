@@ -278,6 +278,9 @@ class VS1053 {
     /// Clears SCI_DECODE_TIME register (sets 0x00)
     void clearDecodedTime();
 
+    /// Reads a register value
+    uint16_t readRegister(uint8_t _reg) const;
+
     /// Writes to VS10xx's SCI (serial command interface) SPI bus.
     // A low level method which lets users access the internals of the VS1053.
     void writeRegister(uint8_t _reg, uint16_t _value) const;
@@ -288,7 +291,6 @@ class VS1053 {
 
     /// Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
-
 
     /// Provides the treble amplitude value
     uint8_t treble();
@@ -393,7 +395,6 @@ protected:
         spi.endTransaction();               // Allow other SPI users
     }
 
-    uint16_t readRegister(uint8_t _reg) const;
 
     void sdi_send_buffer(uint8_t *data, size_t len);
 
