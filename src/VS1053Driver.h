@@ -36,6 +36,7 @@
 
 #include "ConsoleLogger.h"
 #include "VS1053SPI.h"
+#include "VS1053Recording.h"
 #include "patches/vs1053b-patches.h"
 #include "patches_in/vs1053-input.h"
 #include "patches_in/vs1003b-pcm.h"
@@ -53,53 +54,22 @@ enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_48_KHZ
 };
 
-enum VS1053_INPUT {
-    VS1053_MIC = 0,
-    VS1053_AUX = 1,
-};
-
 enum VS1053_MODE {
     VS1053_OUT,
     VS1053_IN,
     VS1053_MIDI
 };
 
+enum VS1053_EARSPEAKER {
+    VS1053_EARSPEAKER_OFF = 0,
+    VS1053_EARSPEAKER_MIN,
+    VS1053_EARSPEAKER_ON,
+    VS1053_EARSPEAKER_MAX
+};
+
+
 class VS1053 {
-    /**
-     * @brief Relevant control data for recording
-     */
-    struct VS1053Recording {
-        friend class VS1053;
-        public:
-            // values from 8000 to 48000
-            void setSampleRate(uint16_t rate){
-                sample_rate = rate;
-                if (sample_rate>48000) sample_rate = 48000;
-                if (sample_rate<8000) sample_rate = 8000;
-            }
-            // values from 0 to 100
-            void setRecoringGain(uint8_t gain){
-                recording_gain = 1024 * gain / 100;
-                if (recording_gain>1024) recording_gain = 1024;
-                if (recording_gain<0) recording_gain = 0; // 0 = automatic gain control
-            }
-            // values from 0 to 100
-            void setAutoGainAmplification(uint8_t amp){
-                autogain_amplification = 65535 * amp / 100 ;
-                if (autogain_amplification>65535) autogain_amplification = 65535;
-                if (autogain_amplification<0) autogain_amplification = 0;
-            }
 
-            void setInput(VS1053_INPUT in){
-                input = in;
-            }
-
-    protected:
-        uint16_t sample_rate = 8000;
-        uint16_t recording_gain = 0; // 
-        uint16_t autogain_amplification = 0; // 
-        VS1053_INPUT input = VS1053_MIC;
-    };   
     /**
      * @brief Amplitude and Frequency Limit 
      */
@@ -154,6 +124,83 @@ class VS1053 {
         }
     };
 
+    /**
+     * @brief Some Additional logic for the VS1003 to manage the complicated clock values. 
+     * @author pschatzmann
+     */
+    class VS1003Clock {
+      public:
+        VS1003Clock() = default;
+
+        int setSampleRate(int sample_rate){        
+            int diff_min = sample_rate; // max value for difference
+            int sample_rate_result = -1;
+            multiplier = -1;
+
+            // find the combination with the smallet difference
+            for (int j=0;j<7;j++){
+                for (int div=4;div<=126;div++){
+                    float mf = multiplier_factors[j];
+                    uint16_t sc_mult = sc_multipliers[j];
+                    int sample_rate_eff = getSampleRate(div, mf);
+
+                    if (sample_rate_eff < sample_rate){
+                        // increasing dividers will make the sample rate just smaller, wo we break
+                        break;
+                    }
+
+                    int diff = abs(sample_rate_eff - sample_rate);
+                    LOG("--> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
+                    if (diff<diff_min){
+                        LOG("==> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
+                        diff_min = diff;
+                        this->divider = div;
+                        this->multiplier = sc_mult;
+                        this->multiplier_factor = mf;
+                        sample_rate_result = sample_rate_eff;
+                    }
+                    // if we found the correct rate we are done
+                    if (diff==0) return sample_rate_result; 
+                }
+            }
+            return multiplier==-1? -1: sample_rate_result;
+        }
+
+        uint16_t getMultiplierRegisterValue() {
+            return multiplier;
+        }
+
+        float getMultiplier() {
+            return multiplier_factor;
+        }
+
+        int8_t getDivider() {
+            return divider; // 4. If SCI_AICTRL0 contains 0, the default divider value 12 is used.
+        }
+
+      protected:
+        float clock_rate = 12288000;
+        int8_t divider = -1;
+        uint16_t multiplier = -1;
+        const uint16_t sc_multipliers[7] = { SC_1003_MULT_2,SC_1003_MULT_25,SC_1003_MULT_3, SC_1003_MULT_35, SC_1003_MULT_4, SC_1003_MULT_45, SC_1003_MULT_5};
+        float multiplier_factor;
+        const float multiplier_factors[7] = { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
+
+        const uint16_t SC_1003_MULT_1 = 0x0000;
+        const uint16_t SC_1003_MULT_2 = 0x2000;
+        const uint16_t SC_1003_MULT_25 = 0x4000;
+        const uint16_t SC_1003_MULT_3 = 0x6000;
+        const uint16_t SC_1003_MULT_35 = 0x8000;
+        const uint16_t SC_1003_MULT_4 = 0xa000;
+        const uint16_t SC_1003_MULT_45 = 0xc000;
+        const uint16_t SC_1003_MULT_5 = 0xe000;
+
+        int getSampleRate(int div, float multiplierValue){
+            return (multiplierValue * clock_rate) / 256 / div;
+        }
+
+    };
+
 
  public:
     // SCI Register
@@ -195,12 +242,12 @@ class VS1053 {
     const uint16_t SC_MULT_53_35X = 0x8000;
     const uint16_t SC_ADD_53_10X = 0x0800;
 
+    const uint16_t SC_EAR_SPEAKER_LO = 0x0010;
+    const uint16_t SC_EAR_SPEAKER_HI = 0x0080;
 
-    /// Constructor.  Only sets pin values.  Doesn't touch the chip.  Be sure to call begin()!
-    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin);
 
     /// Constructor which allows a custom reset pin
-    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin);
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1);
 
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     bool begin();
@@ -278,19 +325,13 @@ class VS1053 {
     /// Clears SCI_DECODE_TIME register (sets 0x00)
     void clearDecodedTime();
 
-    /// Reads a register value
-    uint16_t readRegister(uint8_t _reg) const;
-
-    /// Writes to VS10xx's SCI (serial command interface) SPI bus.
-    // A low level method which lets users access the internals of the VS1053.
-    void writeRegister(uint8_t _reg, uint16_t _value) const;
-
     /// Load a patch or plugin to fix bugs and/or extend functionality.
     // For more info about patches see http://www.vlsi.fi/en/support/software/vs10xxpatches.html
     void loadUserCode(const unsigned short* plugin, unsigned short plugin_size);
 
     /// Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
+
 
     /// Provides the treble amplitude value
     uint8_t treble();
@@ -310,8 +351,11 @@ class VS1053 {
     /// Sets the bass frequency limit in hz (range 0 to 15000)
     void setBassFrequencyLimit(uint16_t value);
 
+    /// Activate the ear speaker mode
+    bool setEarSpeaker(VS1053_EARSPEAKER value);
+
     /// Starts the recording of sound as WAV data
-    bool beginInput(bool wavHeader=true);
+    bool beginInput(VS1053Recording &opt);
 
     /// Stops the recording of sound
     void end();
@@ -322,26 +366,20 @@ class VS1053 {
     /// performs a MIDI command
     void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
 
-    /// Starts the Recording
-    void beginRecording();
-
     /// Provides the number of bytes which are available in the read buffer
     size_t available();
 
     /// Provides the audio data as WAV
     size_t readBytes(uint8_t*data, size_t len);
 
-    // Sets the recording sample rate: values from 8000 to 48000
-    void setRecordingSampleRate(uint16_t rate) { rec.setSampleRate(rate);}
+    /// Reads a register value
+    // A low level method which lets users access the internals of the VS1053.
+    uint16_t readRegister(uint8_t _reg) const;
 
-    // Sets the recoring gain: values from 0 to 100
-    void setRecoringGain(uint8_t gain) {rec.setRecoringGain(gain);}
+    /// Writes to VS10xx's SCI (serial command interface) SPI bus.
+    // A low level method which lets users access the internals of the VS1053.
+    void writeRegister(uint8_t _reg, uint16_t _value) const;
 
-    // Sets the recording auto gain amplification: values from 0 to 100
-    void setRecoringAutoGainAmplification(uint8_t amp) {rec.setAutoGainAmplification(amp);}
-
-    // Sets mic or aux as input; default is mic
-    void setRecordingDevice(VS1053_INPUT in){ rec.setInput(in);}
 
 protected:
     uint8_t cs_pin;                         // Pin where CS line is connected
@@ -355,7 +393,6 @@ protected:
     SPISettings VS1053_SPI;                 // SPI settings for this slave
     uint8_t endFillByte;                    // Byte to send when stopping song
     VS1053Equilizer equilizer;
-    VS1053Recording rec;
     VS1053_MODE mode;
     uint16_t chip_version = -1;
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
@@ -363,6 +400,7 @@ protected:
 #else
     VS1053SPI<VS1053SPIArduino> spi;
 #endif
+
 
 
 protected:
@@ -395,7 +433,6 @@ protected:
         spi.endTransaction();               // Allow other SPI users
     }
 
-
     void sdi_send_buffer(uint8_t *data, size_t len);
 
     void sdi_send_fillers(size_t length);
@@ -405,8 +442,8 @@ protected:
     uint16_t wram_read(uint16_t address);
 
 
-    bool begin_input_vs1053(bool wavHeader=true);
-    bool begin_input_vs1003(bool wavHeader=true);
+    bool begin_input_vs1053(VS1053Recording &opt);
+    bool begin_input_vs1003(VS1053Recording &opt);
 
 };
 

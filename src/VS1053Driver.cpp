@@ -33,11 +33,9 @@
 #include "VS1053Driver.h"
 
 
-VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)
-        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
-}
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
+
 }
 
 uint16_t VS1053::readRegister(uint8_t _reg) const {
@@ -546,6 +544,28 @@ void VS1053::setBassFrequencyLimit(uint16_t value){
     writeRegister(SCI_BASS, equilizer.value());
 }
 
+bool VS1053::setEarSpeaker(VS1053_EARSPEAKER value){
+    if (getChipVersion()!=4){
+        LOG("Function not supported");
+        return false;
+    }
+    switch(value){
+        case VS1053_EARSPEAKER_MAX:
+            writeRegister(SCI_MODE, mode | (SC_EAR_SPEAKER_HI | SC_EAR_SPEAKER_LO)); // extreme 3 - on on
+            break;
+        case VS1053_EARSPEAKER_ON:
+            writeRegister(SCI_MODE, (mode | SC_EAR_SPEAKER_HI) & (~SC_EAR_SPEAKER_LO)); // normal 2 - off on
+            break;
+        case VS1053_EARSPEAKER_MIN:
+            writeRegister(SCI_MODE, (mode | SC_EAR_SPEAKER_LO) & (~SC_EAR_SPEAKER_HI)); // minimal 1 - on off
+            break;
+        case VS1053_EARSPEAKER_OFF:
+            writeRegister(SCI_MODE, (mode & (~SC_EAR_SPEAKER_HI)) & (~SC_EAR_SPEAKER_LO)); // off 0 - off off
+            break;
+    }
+    return true;
+}
+
 
 /// Stops the recording of sound
 void VS1053::end() {
@@ -562,7 +582,6 @@ bool VS1053::beginMIDI() {
                         
     // initialize the player
     begin();  
-    mode = VS1053_MIDI;
 
     await_data_request();
 
@@ -571,21 +590,25 @@ bool VS1053::beginMIDI() {
             loadUserCode(MIDI1003, MIDI1003_SIZE); 
             writeRegister(0xA , 0x30);  // setting VS1003 Start adress for user code
             LOG("MIDI plugin VS1003 loaded");  
-            int check = readRegister(SCI_AUDATA);
-            LOG("Midi %s", check==0xac45?"active":"inactive");
-            } break;   
+        } break;   
         case 4: {
             loadUserCode(MIDI1053, MIDI1053_SIZE); 
             writeRegister(0xA , 0x50);  // setting VS1053 Start adress for user code
             LOG("MIDI plugin VS1053 loaded");  
-            int check = readRegister(SCI_AUDATA);
-            LOG("Midi %s", check==0xac45?"active":"inactive");
-            } break;   
-
+        } break; 
         default:
            LOG("Please check whether your device is properly connected!");    
            break;
     }
+
+    delay(500);
+    // check if midi is active
+    int check = readRegister(SCI_AUDATA);
+    if (check==0xac45){
+        mode = VS1053_MIDI;
+    }
+    LOG("Midi %s", mode==VS1053_MIDI?"active":"inactive");
+
 }
 
 /**
@@ -630,7 +653,7 @@ void VS1053::writeAudio(uint8_t*data, size_t len){
 }
 
 /// Starts the recording of sound as WAV data
-bool VS1053::beginInput(bool wavHeader) {
+bool VS1053::beginInput(VS1053Recording &opt) {
     LOG("beginInput");
     bool result = false;
 
@@ -639,12 +662,12 @@ bool VS1053::beginInput(bool wavHeader) {
 
     switch (chip_version){
         case 3:
-            result = begin_input_vs1003(wavHeader);
+            result = begin_input_vs1003(opt);
             mode = VS1053_IN;
             break;
 
         case 4:
-            result = begin_input_vs1053(wavHeader);
+            result = begin_input_vs1053(opt);
             mode = VS1053_IN;
             break;
 
@@ -653,13 +676,11 @@ bool VS1053::beginInput(bool wavHeader) {
             result =false;
             break;
     }
-
-
     return result;
 }
 
 
-bool VS1053::begin_input_vs1053(bool wavHeader){
+bool VS1053::begin_input_vs1053(VS1053Recording &opt){
     LOG("%s",__func__);
     // clear SM_ADPCM bit
     uint16_t sci = readRegister(SCI_MODE);
@@ -698,21 +719,23 @@ bool VS1053::begin_input_vs1053(bool wavHeader){
     // activate encoder
     writeRegister(SCI_AIADDR, 0x34);
 
-    if (!wavHeader){
-        // remove wav header 44 bytes
-        uint8_t tmp[44];
-        int open = 44;
-        while(open>0){
-            open -= readBytes(tmp, open);
-        }
+    // remove wav header 44 bytes
+    uint8_t tmp[44];
+    int open = 44;
+    while(open>0){
+        open -= readBytes(tmp, open);
     }
+
+    // update (fixed) audio information
+    opt.sample_rate = 48000;
 }
 
-bool VS1053::begin_input_vs1003(bool wavHeader){
+bool VS1053::begin_input_vs1003(VS1053Recording &opt){
     LOG("%s",__func__);
 //1) Load the patch using either the plugin format (vs1003b-pcm.plg)
 //   or the loading tables (vs1003b-pcm.c)
     loadUserCode(pcm1003, PLUGIN_SIZE_pcm1003);   
+    delay(100);
 
 //2) Configure the encoding normally, for example
 //   CLOCKF=0x4000
@@ -720,19 +743,37 @@ bool VS1053::begin_input_vs1003(bool wavHeader){
 //   AICTRL1=0x0800
 //   MODE=0x1800
 
-// sampleing rate = internal clock / 256 * divider value (SCI_AICTRL0)
+    VS1003Clock calc;  // clock calculator
+    int sample_rate_calc = calc.setSampleRate(opt.sample_rate);
+    if (sample_rate_calc<0){
+        LOG("Could not set sample rate");
+        return false;
+    }
+    int16_t clock_freq = readRegister(SCI_CLOCKF) & 0x3FF;
+    int16_t sci_clockf = clock_freq | calc.getMultiplierRegisterValue() ;
+    LOG("clock_freq: %x", clock_freq);
+    LOG("multipler: %x -  %f", calc.getMultiplierRegisterValue(), calc.getMultiplier());
+    LOG("SCI_CLOCKF: %x", sci_clockf);
+    LOG("divider: %d", calc.getDivider());
+    LOG("sample_rate: %d", opt.sample_rate);
+    LOG("sample_rate eff: %d", sample_rate_calc);
 
-    writeRegister(SCI_CLOCKF, 0x4430);
+    writeRegister(SCI_CLOCKF, sci_clockf ); // e.g. 0x4430
     delay(100);
-    writeRegister(SCI_AICTRL0, 12); // clock divider: -> 12=8kHz 8=12kHz 6=16kHz */
+    writeRegister(SCI_AICTRL0, calc.getDivider()); // e.g. 12 / clock divider: -> 12=8kHz 8=12kHz 6=16kHz 
     delay(100);
-    writeRegister(SCI_AICTRL1, rec.recording_gain);
+    writeRegister(SCI_AICTRL1, opt.recording_gain);
     delay(100);
     writeRegister(SCI_MODE, 0x1800);
     delay(100);
 
 //3) Start the encoding mode by writing AIADDR=0x0030
     writeRegister(SCI_AIADDR, 0x0030);
+    delay(100);
+
+    // inform api about used sample rate
+    opt.sample_rate = sample_rate_calc;
+    return true;
 }
 
 
@@ -742,13 +783,13 @@ size_t VS1053::available() {
 
     size_t available = readRegister(SCI_HDAT1)*2;
     if (available>1024*2){
-        LOG("Invalid value: %d", available);
-        available = 0;
+        //LOG("Invalid value: %d", available);
+        available = 0; //1024*2;
     }
     return available;
 }
 
-/// Provides the audio data as WAV
+/// Provides the audio data as PCM data
 size_t VS1053::readBytes(uint8_t*data, size_t len){
     if (mode!=VS1053_IN) return 0;
 
