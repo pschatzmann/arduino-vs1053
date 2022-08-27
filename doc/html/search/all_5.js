@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['enablei2sout_10',['enableI2sOut',['../class_v_s1053.html#af954478675666426717c25aa2c096b2e',1,'VS1053']]],
-  ['end_11',['end',['../class_v_s1053.html#a791ceada0d6df8dc4e9f2486b2686705',1,'VS1053']]]
+  ['getbalance_11',['getBalance',['../class_v_s1053.html#a297d9a8fe5e317e4fd00730b1aef9922',1,'VS1053']]],
+  ['getchipversion_12',['getChipVersion',['../class_v_s1053.html#aa31a27d4f1a8cda72578e0058f04e443',1,'VS1053']]],
+  ['getdecodedtime_13',['getDecodedTime',['../class_v_s1053.html#aa5270c3d9df9d42ab611a2778ea248f1',1,'VS1053']]],
+  ['getvolume_14',['getVolume',['../class_v_s1053.html#a406300c0ea9d9f09d4aa363b7e239449',1,'VS1053']]]
 ];

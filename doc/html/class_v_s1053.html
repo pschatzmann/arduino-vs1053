@@ -80,8 +80,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4d34efe8e380829c8b8bd8d7fb67bd74"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, <a class="el" href="class_v_s1053_s_p_i.html">VS1053SPI</a> *_p_spi=nullptr)</td></tr>
-<tr class="memdesc:a4d34efe8e380829c8b8bd8d7fb67bd74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows a custom reset pin.  <a href="class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74">More...</a><br /></td></tr>
+<tr class="memitem:a4d34efe8e380829c8b8bd8d7fb67bd74"><td class="memItemLeft" align="right" valign="top"><a id="a4d34efe8e380829c8b8bd8d7fb67bd74"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, <a class="el" href="class_v_s1053_s_p_i.html">VS1053SPI</a> *_p_spi=nullptr)</td></tr>
+<tr class="memdesc:a4d34efe8e380829c8b8bd8d7fb67bd74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows a custom reset pin. <br /></td></tr>
 <tr class="separator:a4d34efe8e380829c8b8bd8d7fb67bd74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3023d66822d70442a69994c81c30a7af"><td class="memItemLeft" align="right" valign="top"><a id="a3023d66822d70442a69994c81c30a7af"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_v_s1053.html#a3023d66822d70442a69994c81c30a7af">begin</a> ()</td></tr>
@@ -428,68 +429,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main class for controlling <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> and VS1003 modules. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4d34efe8e380829c8b8bd8d7fb67bd74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d34efe8e380829c8b8bd8d7fb67bd74">&#9670;&nbsp;</a></span>VS1053()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">VS1053::VS1053 </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>_cs_pin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>_dcs_pin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>_dreq_pin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>_reset_pin</em> = <code>-1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_v_s1053_s_p_i.html">VS1053SPI</a> *&#160;</td>
-          <td class="paramname"><em>_p_spi</em> = <code>nullptr</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructor which allows a custom reset pin. </p>
-<p>This is a driver library for <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> MP3 Codec Breakout (Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec Chip). Adapted for Espressif ESP8266 and ESP32 boards.</p>
-<p>version 1.0.1</p>
-<p>Licensed under GNU GPLv3 <a href="http://gplv3.fsf.org/">http://gplv3.fsf.org/</a> Copyright © 2018</p>
-<dl class="section author"><dt>Authors</dt><dd>baldram, edzelf, MagicCube, maniacbug</dd></dl>
-<p>Development log:</p><ul>
-<li>2011: initial <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> Arduino library originally written by J. Coliz (github: @maniacbug),</li>
-<li>2016: refactored and integrated into Esp-radio sketch by Ed Smallenburg (github: @edzelf)</li>
-<li>2017: refactored to use as PlatformIO library by Marcin Szalomski (github: @baldram | twitter: @baldram)</li>
-</ul>
-<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License or later version.</p>
-<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
-<p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="af599988b5f5e3e3ba6a509de77ba8c16"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af599988b5f5e3e3ba6a509de77ba8c16">&#9670;&nbsp;</a></span>adjustRate()</h2>
 

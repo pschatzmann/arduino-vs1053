@@ -39,7 +39,8 @@
 #ifndef VS1053_H
 #define VS1053_H
 
-#include "ConsoleLogger.h"
+#include "VS1053Config.h"
+#include "VS1053Logger.h"
 #include "VS1053SPI.h"
 #include "VS1053Recording.h"
 #include "patches/vs1053b-patches.h"

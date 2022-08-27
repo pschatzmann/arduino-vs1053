@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['_5fbv_0',['_BV',['../_v_s1053_driver_8h.html#a11643f271076024c395a93800b3d9546',1,'VS1053Driver.h']]]
+  ['adjustrate_0',['adjustRate',['../class_v_s1053.html#af599988b5f5e3e3ba6a509de77ba8c16',1,'VS1053']]],
+  ['available_1',['available',['../class_v_s1053.html#a2e5dc44db7c9c04cbd0b998763c69ed5',1,'VS1053']]]
 ];

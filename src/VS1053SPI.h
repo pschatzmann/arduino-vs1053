@@ -22,18 +22,17 @@ class VS1053SPI {
 
     virtual  void write(uint8_t data) = 0;
     virtual  void write16(uint16_t data)= 0;
-    virtual  void write_bytes(const uint8_t * data, uint32_t size) = 0;
+    virtual  void write_bytes(uint8_t * data, uint32_t size) = 0;
     virtual  uint8_t transfer(uint8_t data) = 0;
     virtual uint16_t read16(uint16_t port) = 0;
-
 };
 
 
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
 
 /**
- * @brief Arduino Driver for ESP32 
- * 
+ * @brief Arduino Driver for ESP32 and ESP8266
+ * @author pschatzmann
  */
 class VS1053SPIESP32 : public VS1053SPI {
   protected:
@@ -62,7 +61,7 @@ class VS1053SPIESP32 : public VS1053SPI {
         p_spi->write16(data);
     }
 
-     void write_bytes(const uint8_t * data, uint32_t size)  override{
+     void write_bytes(uint8_t * data, uint32_t size)  override{
         p_spi->writeBytes(data, size);
     }
 
@@ -74,11 +73,13 @@ class VS1053SPIESP32 : public VS1053SPI {
 
 };
 
-#elif defined(ARDUINO)
+#endif
+
+#ifdef ARDUINO
 
 /**
  * @brief Generic SPI Driver for Arduino
- * 
+ * @author pschatzmann
  */
 class VS1053SPIArduino : public VS1053SPI {
   protected:
@@ -110,8 +111,12 @@ class VS1053SPIArduino : public VS1053SPI {
         return SPI.transfer16(port);
     }
 
-     void write_bytes(const uint8_t * data, uint32_t size)  override {
-        SPI.transfer((void*)data, size);
+     void write_bytes(uint8_t * data, uint32_t size)  override {
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
+        SPI.writeBytes(data, size);
+#else
+        SPI.transfer(data, size);
+#endif
         // for (int i = 0; i < size; ++i) {
         //     SPI.transfer(data[i]);
         // }

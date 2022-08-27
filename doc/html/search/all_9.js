@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['loaddefaultvs1053patches_18',['loadDefaultVs1053Patches',['../class_v_s1053.html#adfde9ea37c2fb65f7e7be9b645b43ff0',1,'VS1053']]],
-  ['loadusercode_19',['loadUserCode',['../class_v_s1053.html#afe9d18a645855a74996c827aaee1df56',1,'VS1053']]]
+  ['playchunk_19',['playChunk',['../class_v_s1053.html#a29fcc8ea9ab3d936f368b8b35bbeea0e',1,'VS1053']]],
+  ['printdetails_20',['printDetails',['../class_v_s1053.html#aedba287552789ce8da580c5066711b20',1,'VS1053']]]
 ];

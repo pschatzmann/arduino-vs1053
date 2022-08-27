@@ -1,36 +1,4 @@
-/**
- * This is a driver library for VS1053 MP3 Codec Breakout
- * (Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec Chip).
- * Adapted for Espressif ESP8266 and ESP32 boards.
- *
- * version 1.0.1
- *
- * Licensed under GNU GPLv3 <http://gplv3.fsf.org/>
- * Copyright © 2018
- *
- * @authors baldram, edzelf, MagicCube, maniacbug
- *
- * Development log:
- *  - 2011: initial VS1053 Arduino library
- *          originally written by J. Coliz (github: @maniacbug),
- *  - 2016: refactored and integrated into Esp-radio sketch
- *          by Ed Smallenburg (github: @edzelf)
- *  - 2017: refactored to use as PlatformIO library
- *          by Marcin Szalomski (github: @baldram | twitter: @baldram)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License or later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "VS1053Driver.h"
+    #include "VS1053Driver.h"
 
 
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, VS1053SPI *_p_spi)
@@ -38,7 +6,7 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
 
     if (p_spi==nullptr){
 // if spi parameter is undifined, we use the system specific default drivers
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
+#if USE_ESP_SPI_CUSTOM && (defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266))
         static VS1053SPIESP32 spi;
         p_spi = &spi;
 #else
@@ -612,7 +580,7 @@ void VS1053::end() {
 
 bool VS1053::beginMIDI() {
     LOG("beginMIDI");
-                        
+    bool result = false;           
     // initialize the player
     begin();  
 
@@ -639,9 +607,10 @@ bool VS1053::beginMIDI() {
     int check = readRegister(SCI_AUDATA);
     if (check==0xac45){
         mode = VS1053_MIDI;
+        result = true;
     }
-    LOG("Midi %s", mode==VS1053_MIDI?"active":"inactive");
-
+    LOG("Midi %s", result ? "active":"inactive");
+    return result;
 }
 
 /**
@@ -758,6 +727,7 @@ bool VS1053::begin_input_vs1053(VS1053Recording &opt){
 
     // update (fixed) audio information
     opt.sample_rate = 48000;
+    return true;
 }
 
 bool VS1053::begin_input_vs1003(VS1053Recording &opt){
