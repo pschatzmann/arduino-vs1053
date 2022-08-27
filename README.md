@@ -12,7 +12,7 @@ This is an interesting way to output audio information for all __microcontroller
 
 ## Documentation
 
-Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/struct_v_s1053.html)
+Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/annotated.html)
 
 ## Pinout
 

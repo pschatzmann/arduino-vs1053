@@ -279,12 +279,12 @@ class VS1053 {
     /// Prepare to start playing. Call this each time a new song starts
     void startSong();
 
-    /// Play a chunk of data.  Copies the data to the chip.  Blocks until complete
-    void playChunk(uint8_t *data, size_t len);
-    
     /// Play a chunk of data.  Copies the data to the chip.  Blocks until complete - also supports serial midi
     void writeAudio(uint8_t*data, size_t len);
 
+    /// Legacy method - Play a chunk of data.  Copies the data to the chip.  Blocks until complete
+    void playChunk(uint8_t *data, size_t len);
+    
     /// Finish playing a song. Call this after the last playChunk call
     void stopSong();
 
