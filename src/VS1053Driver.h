@@ -304,10 +304,6 @@ class VS1053 {
     /// Test communication with module
     bool testComm(const char *header);
 
-    inline bool data_request() const {
-        return (digitalRead(dreq_pin) == HIGH);
-    }
-
     /// Fine tune the data rate
     void adjustRate(long ppm2);
 

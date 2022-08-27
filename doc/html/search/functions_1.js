@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['bass_56',['bass',['../class_v_s1053_1_1_v_s1053_equilizer.html#a00d55a8eac2b0308850f2f7755fdcad5',1,'VS1053::VS1053Equilizer::bass()'],['../struct_v_s1053.html#ae26b328b10fd00601b6e3477526c112a',1,'VS1053::bass()']]],
-  ['begin_57',['begin',['../struct_v_s1053.html#acc6eeb1f8935e86f5568a9f03f93e61b',1,'VS1053']]],
-  ['begininput_58',['beginInput',['../struct_v_s1053.html#a69bde3ba82c6f8f15111d2b11e795405',1,'VS1053']]],
-  ['beginmidi_59',['beginMIDI',['../struct_v_s1053.html#a3c477a62a33d1da087bd0724b4a8c50d',1,'VS1053']]]
+  ['bass_51',['bass',['../class_v_s1053.html#ae26b328b10fd00601b6e3477526c112a',1,'VS1053']]],
+  ['begin_52',['begin',['../class_v_s1053.html#a3023d66822d70442a69994c81c30a7af',1,'VS1053']]],
+  ['begininput_53',['beginInput',['../class_v_s1053.html#a5875cec2e2054aaef3348eeca811bc2a',1,'VS1053']]],
+  ['beginmidi_54',['beginMIDI',['../class_v_s1053.html#ac153121973ed7000a6346a5f3c9dde64',1,'VS1053']]],
+  ['beginoutput_55',['beginOutput',['../class_v_s1053.html#a7e17b1df8ac5f19ae6fc81387dd9794b',1,'VS1053']]]
 ];

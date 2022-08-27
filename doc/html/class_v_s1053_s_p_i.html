@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Arduino VS1053: VS1053SPI&lt; Driver &gt; Class Template Reference</title>
+<title>Arduino VS1053: VS1053SPI Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,59 +63,46 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_v_s1053_s_p_i-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">VS1053SPI&lt; Driver &gt; Class Template Reference</div>  </div>
+<div class="title">VS1053SPI Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>SPI Dirver for <a class="el" href="struct_v_s1053.html">VS1053</a>. We support different alternative implementations. Outside of Arduino you need to provide your own.  
+<p>Abstract SPI Driver for <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a>. We support different alternative implementations. Outside of Arduino you need to provide your own.  
  <a href="class_v_s1053_s_p_i.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_v_s1053_s_p_i_8h_source.html">VS1053SPI.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a31fe1cd4a5794f0e48e0ae6f7d9256ea"><td class="memItemLeft" align="right" valign="top"><a id="a31fe1cd4a5794f0e48e0ae6f7d9256ea"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>beginTransaction</b> () const</td></tr>
-<tr class="separator:a31fe1cd4a5794f0e48e0ae6f7d9256ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28a37493f6f3ff4260982b4fd83d650a"><td class="memItemLeft" align="right" valign="top"><a id="a28a37493f6f3ff4260982b4fd83d650a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>endTransaction</b> () const</td></tr>
-<tr class="separator:a28a37493f6f3ff4260982b4fd83d650a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab36e2f3ded4b20e5fa9f2a662e21dbbd"><td class="memItemLeft" align="right" valign="top"><a id="ab36e2f3ded4b20e5fa9f2a662e21dbbd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_speed</b> (uint32_t speed)</td></tr>
-<tr class="separator:ab36e2f3ded4b20e5fa9f2a662e21dbbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad6c3a6c0f7302e8b3fef4c2e9e084d1"><td class="memItemLeft" align="right" valign="top"><a id="aad6c3a6c0f7302e8b3fef4c2e9e084d1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t data) const</td></tr>
-<tr class="separator:aad6c3a6c0f7302e8b3fef4c2e9e084d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6ca66b69af380a77287a905a9d88eb"><td class="memItemLeft" align="right" valign="top"><a id="aaa6ca66b69af380a77287a905a9d88eb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write16</b> (uint16_t data) const</td></tr>
-<tr class="separator:aaa6ca66b69af380a77287a905a9d88eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af54286c5a5571ca88555b119001d8dd6"><td class="memItemLeft" align="right" valign="top"><a id="af54286c5a5571ca88555b119001d8dd6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write_bytes</b> (const uint8_t *data, uint32_t size) const</td></tr>
-<tr class="separator:af54286c5a5571ca88555b119001d8dd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9d3e4f4dfe3d4c4d70a6a8ebf23d49e"><td class="memItemLeft" align="right" valign="top"><a id="ae9d3e4f4dfe3d4c4d70a6a8ebf23d49e"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>transfer</b> (uint8_t data) const</td></tr>
-<tr class="separator:ae9d3e4f4dfe3d4c4d70a6a8ebf23d49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d08041d3fdd16f6bdb183caf9413965"><td class="memItemLeft" align="right" valign="top"><a id="a3d08041d3fdd16f6bdb183caf9413965"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>transfer16</b> (uint16_t data) const</td></tr>
-<tr class="separator:a3d08041d3fdd16f6bdb183caf9413965"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae0486d93f5fdf56f310e217d66d7c65"><td class="memItemLeft" align="right" valign="top"><a id="aae0486d93f5fdf56f310e217d66d7c65"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>read16</b> (uint16_t port)</td></tr>
-<tr class="separator:aae0486d93f5fdf56f310e217d66d7c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a7841c0fd0fc3eb822f9200386ef7e0a5"><td class="memItemLeft" align="right" valign="top"><a id="a7841c0fd0fc3eb822f9200386ef7e0a5"></a>
-Driver&#160;</td><td class="memItemRight" valign="bottom"><b>driver</b></td></tr>
-<tr class="separator:a7841c0fd0fc3eb822f9200386ef7e0a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10ef35c8582dabc8b92a9f27c0f3eb1f"><td class="memItemLeft" align="right" valign="top"><a id="a10ef35c8582dabc8b92a9f27c0f3eb1f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>beginTransaction</b> ()=0</td></tr>
+<tr class="separator:a10ef35c8582dabc8b92a9f27c0f3eb1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a98c971f1f7fe2f833a32764d55dd91"><td class="memItemLeft" align="right" valign="top"><a id="a1a98c971f1f7fe2f833a32764d55dd91"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>endTransaction</b> ()=0</td></tr>
+<tr class="separator:a1a98c971f1f7fe2f833a32764d55dd91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9c8994068bd0baa1587daeadfd5e056"><td class="memItemLeft" align="right" valign="top"><a id="af9c8994068bd0baa1587daeadfd5e056"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>set_speed</b> (uint32_t speed)=0</td></tr>
+<tr class="separator:af9c8994068bd0baa1587daeadfd5e056"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c637952f7a3b2fa92e3337ec2c63978"><td class="memItemLeft" align="right" valign="top"><a id="a5c637952f7a3b2fa92e3337ec2c63978"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (uint8_t data)=0</td></tr>
+<tr class="separator:a5c637952f7a3b2fa92e3337ec2c63978"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab04e6518770f1dca0312871065ac78"><td class="memItemLeft" align="right" valign="top"><a id="a1ab04e6518770f1dca0312871065ac78"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write16</b> (uint16_t data)=0</td></tr>
+<tr class="separator:a1ab04e6518770f1dca0312871065ac78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a243f54ac495bd30bd6992d2ee948bf93"><td class="memItemLeft" align="right" valign="top"><a id="a243f54ac495bd30bd6992d2ee948bf93"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>write_bytes</b> (const uint8_t *data, uint32_t size)=0</td></tr>
+<tr class="separator:a243f54ac495bd30bd6992d2ee948bf93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83907bf5e54c6baadd8a893cd71fd790"><td class="memItemLeft" align="right" valign="top"><a id="a83907bf5e54c6baadd8a893cd71fd790"></a>
+virtual uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>transfer</b> (uint8_t data)=0</td></tr>
+<tr class="separator:a83907bf5e54c6baadd8a893cd71fd790"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37b0689739757970efa4bcd4edc9f26b"><td class="memItemLeft" align="right" valign="top"><a id="a37b0689739757970efa4bcd4edc9f26b"></a>
+virtual uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>read16</b> (uint16_t port)=0</td></tr>
+<tr class="separator:a37b0689739757970efa4bcd4edc9f26b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class Driver&gt;<br />
-class VS1053SPI&lt; Driver &gt;</h3>
-
-<p>SPI Dirver for <a class="el" href="struct_v_s1053.html">VS1053</a>. We support different alternative implementations. Outside of Arduino you need to provide your own. </p>
+<div class="textblock"><p>Abstract SPI Driver for <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a>. We support different alternative implementations. Outside of Arduino you need to provide your own. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Driver</td><td></td></tr>
