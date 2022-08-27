@@ -511,14 +511,14 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
 
 </div>
 </div>
-<a id="a1b82bab991932b6a1cf9ad37676e7cea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b82bab991932b6a1cf9ad37676e7cea">&#9670;&nbsp;</a></span>clearDecodedTime()</h2>
+<a id="aca2a036cf693c2bfbea032c81e657f93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca2a036cf693c2bfbea032c81e657f93">&#9670;&nbsp;</a></span>streamModeOn()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VS1053::clearDecodedTime </td>
+          <td class="memname">void VS1053::streamModeOn </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -526,20 +526,19 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
       </table>
 </div><div class="memdoc">
 
-<p>Clears SCI_DECODE_TIME register (sets 0x00) </p>
-<p>Clears decoded time (sets SCI_DECODE_TIME register to 0x00)</p>
-<p>The user may change the value of this register. In that case the new value should be written twice to make absolutely certain that the change is not overwritten by the firmware. A write to SCI_DECODE_TIME also resets the byteRate calculation. </p>
+<p>Streaming Mode On. </p>
+<p>VLSI datasheet: "SM_STREAM activates VS1053b’s stream mode. In this mode, data should be sent with as even intervals as possible and preferable in blocks of less than 512 bytes, and VS1053b makes every attempt to keep its input buffer half full by changing its playback speed up to 5%. For best quality sound, the average speed error should be within 0.5%, the bitrate should not exceed 160 kbit/s and VBR should not be used. For details, see Application Notes for VS10XX. This mode only works with MP3 and WAV files." </p>
 
 </div>
 </div>
-<a id="a791ceada0d6df8dc4e9f2486b2686705"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a791ceada0d6df8dc4e9f2486b2686705">&#9670;&nbsp;</a></span>end()</h2>
+<a id="a6e4d72183750904b91704f7c566db241"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e4d72183750904b91704f7c566db241">&#9670;&nbsp;</a></span>switchToMp3Mode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VS1053::end </td>
+          <td class="memname">void VS1053::switchToMp3Mode </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -547,8 +546,30 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
       </table>
 </div><div class="memdoc">
 
-<p>Stops the recording of sound - and resets the module. </p>
-<p>Stops the recording of sound. </p>
+<p>An optional switch preventing the module starting up in MIDI mode. </p>
+<p>An optional switch. Most <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> modules will start up in MIDI mode. The result is that there is no audio when playing MP3. You can modify the board, but there is a more elegant way without soldering. No side effects for boards which do not need this switch. It means you can call it just in case.</p>
+<p>Read more here: <a href="http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773">http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773</a> </p>
+
+</div>
+</div>
+<a id="aefddc81a3a825b8460eaa0883a0f4327"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefddc81a3a825b8460eaa0883a0f4327">&#9670;&nbsp;</a></span>isChipConnected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool VS1053::isChipConnected </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks whether the <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> chip is connected and is able to exchange data to the ESP. </p>
+<p>A lightweight method to check if <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> is correctly wired up (power supply and connection to SPI interface).</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the chip is wired up correctly </dd></dl>
 
 </div>
 </div>
@@ -596,14 +617,14 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
 
 </div>
 </div>
-<a id="aefddc81a3a825b8460eaa0883a0f4327"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefddc81a3a825b8460eaa0883a0f4327">&#9670;&nbsp;</a></span>isChipConnected()</h2>
+<a id="a1b82bab991932b6a1cf9ad37676e7cea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b82bab991932b6a1cf9ad37676e7cea">&#9670;&nbsp;</a></span>clearDecodedTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool VS1053::isChipConnected </td>
+          <td class="memname">void VS1053::clearDecodedTime </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -611,29 +632,9 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
       </table>
 </div><div class="memdoc">
 
-<p>Checks whether the <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> chip is connected and is able to exchange data to the ESP. </p>
-<p>A lightweight method to check if <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> is correctly wired up (power supply and connection to SPI interface).</p>
-<dl class="section return"><dt>Returns</dt><dd>true if the chip is wired up correctly </dd></dl>
-
-</div>
-</div>
-<a id="adfde9ea37c2fb65f7e7be9b645b43ff0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfde9ea37c2fb65f7e7be9b645b43ff0">&#9670;&nbsp;</a></span>loadDefaultVs1053Patches()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void VS1053::loadDefaultVs1053Patches </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Loads the latest generic firmware patch. </p>
-<p>Load the latest generic firmware patch </p>
+<p>Clears SCI_DECODE_TIME register (sets 0x00) </p>
+<p>Clears decoded time (sets SCI_DECODE_TIME register to 0x00)</p>
+<p>The user may change the value of this register. In that case the new value should be written twice to make absolutely certain that the change is not overwritten by the firmware. A write to SCI_DECODE_TIME also resets the byteRate calculation. </p>
 
 </div>
 </div>
@@ -671,34 +672,43 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
 
 </div>
 </div>
-<a id="ae3c10741b43814477cfa0a0ef1afa22a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3c10741b43814477cfa0a0ef1afa22a">&#9670;&nbsp;</a></span>readBytes()</h2>
+<a id="adfde9ea37c2fb65f7e7be9b645b43ff0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfde9ea37c2fb65f7e7be9b645b43ff0">&#9670;&nbsp;</a></span>loadDefaultVs1053Patches()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t VS1053::readBytes </td>
+          <td class="memname">void VS1053::loadDefaultVs1053Patches </td>
           <td>(</td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Provides the audio data as WAV. </p>
-<p>Provides the audio data as PCM data. </p>
+<p>Loads the latest generic firmware patch. </p>
+<p>Load the latest generic firmware patch </p>
+
+</div>
+</div>
+<a id="a791ceada0d6df8dc4e9f2486b2686705"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a791ceada0d6df8dc4e9f2486b2686705">&#9670;&nbsp;</a></span>end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VS1053::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stops the recording of sound - and resets the module. </p>
+<p>Stops the recording of sound. </p>
 
 </div>
 </div>
@@ -741,44 +751,34 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>channels_multiplie
 
 </div>
 </div>
-<a id="aca2a036cf693c2bfbea032c81e657f93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca2a036cf693c2bfbea032c81e657f93">&#9670;&nbsp;</a></span>streamModeOn()</h2>
+<a id="ae3c10741b43814477cfa0a0ef1afa22a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3c10741b43814477cfa0a0ef1afa22a">&#9670;&nbsp;</a></span>readBytes()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VS1053::streamModeOn </td>
+          <td class="memname">size_t VS1053::readBytes </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
         </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Streaming Mode On. </p>
-<p>VLSI datasheet: "SM_STREAM activates VS1053b’s stream mode. In this mode, data should be sent with as even intervals as possible and preferable in blocks of less than 512 bytes, and VS1053b makes every attempt to keep its input buffer half full by changing its playback speed up to 5%. For best quality sound, the average speed error should be within 0.5%, the bitrate should not exceed 160 kbit/s and VBR should not be used. For details, see Application Notes for VS10XX. This mode only works with MP3 and WAV files." </p>
-
-</div>
-</div>
-<a id="a6e4d72183750904b91704f7c566db241"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e4d72183750904b91704f7c566db241">&#9670;&nbsp;</a></span>switchToMp3Mode()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
         <tr>
-          <td class="memname">void VS1053::switchToMp3Mode </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>An optional switch preventing the module starting up in MIDI mode. </p>
-<p>An optional switch. Most <a class="el" href="class_v_s1053.html" title="Main class for controlling VS1053 and VS1003 modules.">VS1053</a> modules will start up in MIDI mode. The result is that there is no audio when playing MP3. You can modify the board, but there is a more elegant way without soldering. No side effects for boards which do not need this switch. It means you can call it just in case.</p>
-<p>Read more here: <a href="http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773">http://www.bajdi.com/lcsoft-vs1053-mp3-module/#comment-33773</a> </p>
+<p>Provides the audio data as WAV. </p>
+<p>Provides the audio data as PCM data. </p>
 
 </div>
 </div>
