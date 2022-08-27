@@ -377,14 +377,14 @@ class VS1053 {
     /// Stops the recording of sound - and resets the module
     void end();
 
-    /// Starts the recording of sound as WAV data
-    bool beginInput(VS1053Recording &opt);
-
     /// Starts the MIDI output processing
     bool beginMIDI();
 
     /// performs a MIDI command
     void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
+
+    /// Starts the recording of sound as WAV data
+    bool beginInput(VS1053Recording &opt);
 
     /// Provides the number of bytes which are available in the read buffer
     size_t available();
