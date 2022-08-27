@@ -1,7 +1,7 @@
 #pragma once
 
 // Activate/Deactivate Logging in Arduino: Comment out define to deactivate
-#define DEBUG_PORT Serial
+// #define DEBUG_PORT Serial
 
 
 // I2S Configuration: Use custom SPI Class for ESP
