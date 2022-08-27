@@ -17,10 +17,13 @@
  *          by Ed Smallenburg (github: @edzelf)
  *  - 2017: refactored to use as PlatformIO library
  *          by Marcin Szalomski (github: @baldram | twitter: @baldram)
- *  - 2022: Redesigned SPI interface
- *          Support for Midi
- *          Support for Reading the microphon
+ *  - 2022: Refactord to provide first class Arduino support for all processors!
+ *          Redesigned SPI interface
+ *          Support for Realtime Midi
+ *          Support for Reading  from the microphone
  *          Some additional methods to handle treble, bass, earphones
+ *          Support for cmake 
+ *          using arduino_vs1053 namespace
  *          by Phil Schatzmann
  *
  * This program is free software; you can redistribute it and/or modify
