@@ -17,8 +17,23 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
 #endif
 
     }
-
 }
+
+#ifdef ARDUINO
+
+VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &spi)
+        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
+    static VS1053_SPIArduino vs_spi(spi);
+    p_spi = &vs_spi;
+}
+
+VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &spi)
+        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
+    static VS1053_SPIArduino vs_spi(spi);
+    p_spi = &vs_spi;
+}
+#endif
+
 
 uint16_t VS1053::readRegister(uint8_t _reg) const {
     uint16_t result;
@@ -580,7 +595,7 @@ void VS1053::end() {
 }
 
 
-bool VS1053::beginMIDI() {
+bool VS1053::beginMidi() {
     LOG("beginMIDI");
     bool result = false;           
     // initialize the player

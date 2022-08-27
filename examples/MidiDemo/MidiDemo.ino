@@ -76,7 +76,7 @@
 
 #define VOLUME  100 // volume level 0-100
 
-VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ);
+VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, SPI);
 
 // noteOn and noteOff based on MP3_Shield_RealtimeMIDI demo 
 // by Matthias Neeracher, Nathan Seidle's Sparkfun Electronics example respectively
@@ -92,37 +92,10 @@ void noteOff(uint8_t channel, uint8_t note, uint8_t release_velocity) {
 }
 
 void setup() {
-  
     Serial.begin(115200);
-
-    // initialize SPI
     SPI.begin();
-                           
-    // initialize the player
-    player.begin();  
-
-    if(player.getChipVersion() == 4)
-       Serial.println("Hello VS1053!");
-    else if(player.getChipVersion()==3)       
-       Serial.println("Hello VS1003!"); 
-    else
-       Serial.println("Please check whether your device is properly connected!");         
-
-  
-    if(player.getChipVersion()==4 /*4*/) { // MIDI using a VS1053 chip
-        player.loadUserCode(MIDI1053, MIDI1053_SIZE); 
-        player.writeRegister(0xA /*SCI_AIADDR*/, 0x50);  // setting VS1053 Start adress for user code
-        Serial.println(" MIDI plugin VS1053 loaded");                 
-    }
-             
-    if(player.getChipVersion()==3) { // MIDI using a VS1003 chip
-        player.loadUserCode(MIDI1003, MIDI1003_SIZE);      
-        player.writeRegister(0xA /*SCI_AIADDR*/, 0x30);  // setting VS1003 Start adress for user code             
-        Serial.println(" MIDI plugin VS1003 loaded");                     
-    }     
-
+    player.beginMIDI();  
     player.setVolume(VOLUME);  
-
 }
 
 void loop() {

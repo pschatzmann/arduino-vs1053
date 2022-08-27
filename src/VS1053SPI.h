@@ -49,7 +49,7 @@ class VS1053_SPIESP32 : public VS1053_SPI {
         SPISettings settings(speed, MSBFIRST, SPI_MODE0);       
         p_spi->beginTransaction(settings);
     }
-    void endTransaction()  override{SPI.endTransaction();}
+    void endTransaction()  override{p_spi->endTransaction();}
     void set_speed(uint32_t value){ this->speed = value;}
 
      void write(uint8_t data)  override{
@@ -89,41 +89,51 @@ class VS1053_SPIArduino : public VS1053_SPI {
     uint32_t speed = 200000;
 
   public:
-    VS1053_SPIArduino() = default;
+    /// Using SPI by default
+    VS1053_SPIArduino() {
+      p_spi = &SPI;
+    }
+
+    /// Using the indicated SPI object
+    VS1053_SPIArduino(SPIClass &spi) {
+      p_spi = &spi;
+    }
 
     void beginTransaction()  override{ 
         SPISettings settings(speed, MSBFIRST, SPI_MODE0);       
-        SPI.beginTransaction(settings);
+        p_spi->beginTransaction(settings);
     }
-    void endTransaction()  override {SPI.endTransaction();}
+    void endTransaction()  override {p_spi->endTransaction();}
     void set_speed(uint32_t value){ this->speed = value;}
 
      void write(uint8_t data)  override {
-        (void)SPI.transfer(data);
+        (void)p_spi->transfer(data);
     }
 
      uint8_t transfer(uint8_t data)  override{
-        return SPI.transfer(data);
+        return p_spi->transfer(data);
     }
 
      void write16(uint16_t data)  override{
-        (void)SPI.transfer16(data);
+        (void)p_spi->transfer16(data);
     }
 
     uint16_t read16(uint16_t port) override {
-        return SPI.transfer16(port);
+        return p_spi->transfer16(port);
     }
 
      void write_bytes(uint8_t * data, uint32_t size)  override {
 #if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-        SPI.writeBytes(data, size);
+        p_spi->writeBytes(data, size);
 #else
-        SPI.transfer(data, size);
+        p_spi->transfer(data, size);
 #endif
         // for (int i = 0; i < size; ++i) {
-        //     SPI.transfer(data[i]);
+        //     p_spi->transfer(data[i]);
         // }
     }
+  protected:
+    SPIClass *p_spi;
 };
 
 #endif

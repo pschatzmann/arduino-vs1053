@@ -88,6 +88,14 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#ae9816966b4d2e74ac3c484d0e9128c4d">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, <a class="el" href="classarduino__vs1053_1_1_v_s1053___s_p_i.html">VS1053_SPI</a> *_p_spi=nullptr)</td></tr>
 <tr class="memdesc:ae9816966b4d2e74ac3c484d0e9128c4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows a custom reset pin. <br /></td></tr>
 <tr class="separator:ae9816966b4d2e74ac3c484d0e9128c4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a108309a327672bd466fecf5c593bdfe2"><td class="memItemLeft" align="right" valign="top"><a id="a108309a327672bd466fecf5c593bdfe2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a108309a327672bd466fecf5c593bdfe2">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &amp;_p_spi)</td></tr>
+<tr class="memdesc:a108309a327672bd466fecf5c593bdfe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows a custom reset pin and a Arduino SPI object. <br /></td></tr>
+<tr class="separator:a108309a327672bd466fecf5c593bdfe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63de4f63090e31379f8f389c22f5d724"><td class="memItemLeft" align="right" valign="top"><a id="a63de4f63090e31379f8f389c22f5d724"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a63de4f63090e31379f8f389c22f5d724">VS1053</a> (uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, SPIClass &amp;_p_spi)</td></tr>
+<tr class="memdesc:a63de4f63090e31379f8f389c22f5d724"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor which allows an Arduino SPI object. <br /></td></tr>
+<tr class="separator:a63de4f63090e31379f8f389c22f5d724"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57a4838c0623016f347d3d4a7c408c7d"><td class="memItemLeft" align="right" valign="top"><a id="a57a4838c0623016f347d3d4a7c408c7d"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a57a4838c0623016f347d3d4a7c408c7d">begin</a> ()</td></tr>
 <tr class="memdesc:a57a4838c0623016f347d3d4a7c408c7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin operation. Sets pins correctly, and prepares SPI bus. <br /></td></tr>
@@ -218,10 +226,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a5976c9fcecc92f749b187d022fa86522"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a5976c9fcecc92f749b187d022fa86522">end</a> ()</td></tr>
 <tr class="memdesc:a5976c9fcecc92f749b187d022fa86522"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the recording of sound - and resets the module.  <a href="classarduino__vs1053_1_1_v_s1053.html#a5976c9fcecc92f749b187d022fa86522">More...</a><br /></td></tr>
 <tr class="separator:a5976c9fcecc92f749b187d022fa86522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d29509ac4bf18436bd98892f45e1c06"><td class="memItemLeft" align="right" valign="top"><a id="a7d29509ac4bf18436bd98892f45e1c06"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a7d29509ac4bf18436bd98892f45e1c06">beginMIDI</a> ()</td></tr>
-<tr class="memdesc:a7d29509ac4bf18436bd98892f45e1c06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the MIDI output processing. <br /></td></tr>
-<tr class="separator:a7d29509ac4bf18436bd98892f45e1c06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a722826c10290bbf1f88ec9c06b4e103e"><td class="memItemLeft" align="right" valign="top"><a id="a722826c10290bbf1f88ec9c06b4e103e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a722826c10290bbf1f88ec9c06b4e103e">beginMidi</a> ()</td></tr>
+<tr class="memdesc:a722826c10290bbf1f88ec9c06b4e103e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the MIDI output processing. <br /></td></tr>
+<tr class="separator:a722826c10290bbf1f88ec9c06b4e103e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90d03da36b59af896ff92a19c9778da5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarduino__vs1053_1_1_v_s1053.html#a90d03da36b59af896ff92a19c9778da5">sendMidiMessage</a> (uint8_t cmd, uint8_t data1, uint8_t data2)</td></tr>
 <tr class="memdesc:a90d03da36b59af896ff92a19c9778da5"><td class="mdescLeft">&#160;</td><td class="mdescRight">performs a MIDI command  <a href="classarduino__vs1053_1_1_v_s1053.html#a90d03da36b59af896ff92a19c9778da5">More...</a><br /></td></tr>
 <tr class="separator:a90d03da36b59af896ff92a19c9778da5"><td class="memSeparator" colspan="2">&#160;</td></tr>

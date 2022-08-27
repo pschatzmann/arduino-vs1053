@@ -71,7 +71,7 @@
 // Default volume
 #define VOLUME  80
 
-VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ);
+VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, SPI);
 WiFiClient client;
 
 // WiFi settings example, substitute your own
@@ -99,12 +99,7 @@ void setup() {
     Serial.println("\n\nSimple Radio Node WiFi Radio");
 
     SPI.begin();
-
-    player.begin();
-    player.switchToMp3Mode();    
-    if (player.getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
-        player.loadDefaultVs1053Patches(); 
-    }
+    player.beginOutput();
     player.setVolume(VOLUME);
 
     Serial.print("Connecting to SSID ");

@@ -270,6 +270,14 @@ class VS1053 {
     /// Constructor which allows a custom reset pin
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, VS1053_SPI *_p_spi=nullptr);
 
+#ifdef ARDUINO
+    /// Constructor which allows a custom reset pin and a Arduino SPI object
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &_p_spi);
+    /// Constructor which allows an Arduino SPI object
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, SPIClass &_p_spi);
+
+#endif
+
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     bool begin();
 
@@ -378,7 +386,7 @@ class VS1053 {
     void end();
 
     /// Starts the MIDI output processing
-    bool beginMIDI();
+    bool beginMidi();
 
     /// performs a MIDI command
     void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
