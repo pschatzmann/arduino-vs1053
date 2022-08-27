@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vs1053_89',['VS1053',['../class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74',1,'VS1053']]]
+  ['vs1053_98',['VS1053',['../class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74',1,'VS1053']]]
 ];

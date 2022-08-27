@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['disablei2sout_8',['disableI2sOut',['../class_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc',1,'VS1053']]]
+  ['cleardecodedtime_8',['clearDecodedTime',['../class_v_s1053.html#a1b82bab991932b6a1cf9ad37676e7cea',1,'VS1053']]]
 ];

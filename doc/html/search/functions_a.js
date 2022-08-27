@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['readbytes_70',['readBytes',['../class_v_s1053.html#ae3c10741b43814477cfa0a0ef1afa22a',1,'VS1053']]],
-  ['readregister_71',['readRegister',['../class_v_s1053.html#a121355b5b40467763c334aebec384c5c',1,'VS1053']]]
+  ['readbytes_79',['readBytes',['../class_v_s1053.html#ae3c10741b43814477cfa0a0ef1afa22a',1,'VS1053']]],
+  ['readregister_80',['readRegister',['../class_v_s1053.html#a121355b5b40467763c334aebec384c5c',1,'VS1053']]]
 ];

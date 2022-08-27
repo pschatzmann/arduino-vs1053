@@ -52,13 +52,16 @@
 #define _BV(bit) (1 << (bit))
 #endif
 
+/** @file */
 
+/// I2S Rate
 enum VS1053_I2S_RATE {
     VS1053_I2S_RATE_192_KHZ,
     VS1053_I2S_RATE_96_KHZ,
     VS1053_I2S_RATE_48_KHZ
 };
 
+/// Actual Mode: Input, Output, Output Streaming Midi
 enum VS1053_MODE {
     VS1053_SPI,
     VS1053_OUT,
@@ -66,6 +69,7 @@ enum VS1053_MODE {
     VS1053_MIDI,
 };
 
+/// Earspeaker settings
 enum VS1053_EARSPEAKER {
     VS1053_EARSPEAKER_OFF = 0,
     VS1053_EARSPEAKER_MIN,

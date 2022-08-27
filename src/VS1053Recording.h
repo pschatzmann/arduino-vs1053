@@ -1,6 +1,10 @@
 #pragma once
 #include "stdint.h"
 
+/** @file */
+
+
+/// Input from Aux or Microphone
 enum VS1053_INPUT {
     VS1053_MIC = 0,
     VS1053_AUX = 1,
