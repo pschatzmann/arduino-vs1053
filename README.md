@@ -10,6 +10,18 @@ The library enables the possibility to play audio files. Eg. it may be a base to
 
 This is an interesting way to output audio information for all __microcontrollers that do not support I2S__ or do not have the power or resources to decode audio files.
 
+Functional highlights:
+
+- Output of decoded audio
+- Reading of pcm data from microphone / aux input
+- Methods to manage volume, treble, bass, earphones 
+- Support for real time MIDI
+- Flexible SPI Design
+- Functioinality implemented in arduino_vs1053 namespace 
+- Supports Arduino
+- Supports PlatformIO
+- Supports cmake
+
 ## Documentation
 
 Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/annotated.html)

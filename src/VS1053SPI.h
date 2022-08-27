@@ -41,7 +41,7 @@ class VS1053_SPIESP32 : public VS1053_SPI {
   protected:
     uint32_t speed = 200000;
   public:
-    VS1053S_PIESP32(SPIClass &spi=SPI){
+    VS1053_SPIESP32(SPIClass &spi=SPI){
         p_spi = &spi;
     }
 
