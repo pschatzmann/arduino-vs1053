@@ -1,18 +1,18 @@
 var searchData=
 [
-  ['sendmidimessage_23',['sendMidiMessage',['../class_v_s1053.html#a064e619933cba300853a06a7aebd450b',1,'VS1053']]],
-  ['setbalance_24',['setBalance',['../class_v_s1053.html#ac1eb8f9824accaca1d796db7d963aafe',1,'VS1053']]],
-  ['setbass_25',['setBass',['../class_v_s1053.html#a5914b66a2219f7235478983e40e25e51',1,'VS1053']]],
-  ['setbassfrequencylimit_26',['setBassFrequencyLimit',['../class_v_s1053.html#a74adda9aec2d4b440deb599e49efaca5',1,'VS1053']]],
-  ['setearspeaker_27',['setEarSpeaker',['../class_v_s1053.html#aa7648ec5a8bcfa8e7703a316ea2e7c97',1,'VS1053']]],
-  ['settone_28',['setTone',['../class_v_s1053.html#a0c68d9a5164e941f2a4a68cd059a1dae',1,'VS1053']]],
-  ['settreble_29',['setTreble',['../class_v_s1053.html#a20467bca156da0a0e1422d8b42e5d00c',1,'VS1053']]],
-  ['settreblefrequencylimit_30',['setTrebleFrequencyLimit',['../class_v_s1053.html#abf25fb179ec81efe548ae96b376b8538',1,'VS1053']]],
-  ['setvolume_31',['setVolume',['../class_v_s1053.html#aeb90e28879183bb546baaf436009d262',1,'VS1053']]],
-  ['softreset_32',['softReset',['../class_v_s1053.html#adedd4f8e71065a99eeacbcd550089be6',1,'VS1053']]],
-  ['startsong_33',['startSong',['../class_v_s1053.html#a2142a85b3902e22611c9db5a3ff8fd28',1,'VS1053']]],
-  ['stopsong_34',['stopSong',['../class_v_s1053.html#a12bcfafd720d9739e0b6cd495edcbbab',1,'VS1053']]],
-  ['streammodeoff_35',['streamModeOff',['../class_v_s1053.html#a3b667022407a08377cb1ff922579dac0',1,'VS1053']]],
-  ['streammodeon_36',['streamModeOn',['../class_v_s1053.html#aca2a036cf693c2bfbea032c81e657f93',1,'VS1053']]],
-  ['switchtomp3mode_37',['switchToMp3Mode',['../class_v_s1053.html#a6e4d72183750904b91704f7c566db241',1,'VS1053']]]
+  ['sendmidimessage_23',['sendMidiMessage',['../classarduino__vs1053_1_1_v_s1053.html#a90d03da36b59af896ff92a19c9778da5',1,'arduino_vs1053::VS1053']]],
+  ['setbalance_24',['setBalance',['../classarduino__vs1053_1_1_v_s1053.html#a083e170bd04825a98df450a7f8a3b8e6',1,'arduino_vs1053::VS1053']]],
+  ['setbass_25',['setBass',['../classarduino__vs1053_1_1_v_s1053.html#a2aec35ef4a108b50930ea6d87217c0f0',1,'arduino_vs1053::VS1053']]],
+  ['setbassfrequencylimit_26',['setBassFrequencyLimit',['../classarduino__vs1053_1_1_v_s1053.html#a28123cab5efd49911315ebcc187b9731',1,'arduino_vs1053::VS1053']]],
+  ['setearspeaker_27',['setEarSpeaker',['../classarduino__vs1053_1_1_v_s1053.html#ae571d3a0b9c2aa63a88e3ef48bf26775',1,'arduino_vs1053::VS1053']]],
+  ['settone_28',['setTone',['../classarduino__vs1053_1_1_v_s1053.html#a4635f1ef253c8220199855500ce40b8c',1,'arduino_vs1053::VS1053']]],
+  ['settreble_29',['setTreble',['../classarduino__vs1053_1_1_v_s1053.html#aaf771c116324532f7fe6f84acf9d1873',1,'arduino_vs1053::VS1053']]],
+  ['settreblefrequencylimit_30',['setTrebleFrequencyLimit',['../classarduino__vs1053_1_1_v_s1053.html#a1ba70d021ca754a0e29331aa0e336735',1,'arduino_vs1053::VS1053']]],
+  ['setvolume_31',['setVolume',['../classarduino__vs1053_1_1_v_s1053.html#aab95151ae8119bee6d7f3274ac943a7c',1,'arduino_vs1053::VS1053']]],
+  ['softreset_32',['softReset',['../classarduino__vs1053_1_1_v_s1053.html#a45b3c323fabc2f21c73a2e02b91ba86c',1,'arduino_vs1053::VS1053']]],
+  ['startsong_33',['startSong',['../classarduino__vs1053_1_1_v_s1053.html#a1c0d3645ee089e90fdeb1b9db3642d0c',1,'arduino_vs1053::VS1053']]],
+  ['stopsong_34',['stopSong',['../classarduino__vs1053_1_1_v_s1053.html#a0df15ccae5e5e342889c4be67358ecd1',1,'arduino_vs1053::VS1053']]],
+  ['streammodeoff_35',['streamModeOff',['../classarduino__vs1053_1_1_v_s1053.html#a401068c98821ce0b5f9b023778e55cef',1,'arduino_vs1053::VS1053']]],
+  ['streammodeon_36',['streamModeOn',['../classarduino__vs1053_1_1_v_s1053.html#a68f8b0612e8fac2c5cfd8b09feef3358',1,'arduino_vs1053::VS1053']]],
+  ['switchtomp3mode_37',['switchToMp3Mode',['../classarduino__vs1053_1_1_v_s1053.html#a672dad439f0f61acd8ae7644cd512e14',1,'arduino_vs1053::VS1053']]]
 ];

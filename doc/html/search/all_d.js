@@ -1,15 +1,15 @@
 var searchData=
 [
-  ['vs1053_40',['VS1053',['../class_v_s1053.html',1,'VS1053'],['../class_v_s1053.html#a4d34efe8e380829c8b8bd8d7fb67bd74',1,'VS1053::VS1053()']]],
+  ['vs1053_40',['VS1053',['../classarduino__vs1053_1_1_v_s1053.html',1,'arduino_vs1053::VS1053'],['../classarduino__vs1053_1_1_v_s1053.html#ae9816966b4d2e74ac3c484d0e9128c4d',1,'arduino_vs1053::VS1053::VS1053()']]],
   ['vs1053_20library_41',['VS1053 library',['../index.html',1,'']]],
-  ['vs1053_5fearspeaker_42',['VS1053_EARSPEAKER',['../_v_s1053_driver_8h.html#a608a2a8eca28d5f61d9f47576eb1ca89',1,'VS1053Driver.h']]],
-  ['vs1053_5fi2s_5frate_43',['VS1053_I2S_RATE',['../_v_s1053_driver_8h.html#af3061fc4086d4e5e356a76033d91ffe4',1,'VS1053Driver.h']]],
-  ['vs1053_5finput_44',['VS1053_INPUT',['../_v_s1053_recording_8h.html#ab0b6f17685d5fb69e76d36b9eba24721',1,'VS1053Recording.h']]],
-  ['vs1053_5fmode_45',['VS1053_MODE',['../_v_s1053_driver_8h.html#aeb85b910662a65ab6f1cb2f63cd0d9f1',1,'VS1053Driver.h']]],
-  ['vs1053driver_2eh_46',['VS1053Driver.h',['../_v_s1053_driver_8h.html',1,'']]],
-  ['vs1053recording_47',['VS1053Recording',['../struct_v_s1053_recording.html',1,'']]],
-  ['vs1053recording_2eh_48',['VS1053Recording.h',['../_v_s1053_recording_8h.html',1,'']]],
-  ['vs1053spi_49',['VS1053SPI',['../class_v_s1053_s_p_i.html',1,'']]],
-  ['vs1053spiarduino_50',['VS1053SPIArduino',['../class_v_s1053_s_p_i_arduino.html',1,'']]],
-  ['vs1053spiesp32_51',['VS1053SPIESP32',['../class_v_s1053_s_p_i_e_s_p32.html',1,'']]]
+  ['vs1053_5fearspeaker_42',['VS1053_EARSPEAKER',['../_v_s1053_driver_8h.html#a014078781b37e68cdbd78b2ec4dfc25b',1,'arduino_vs1053']]],
+  ['vs1053_5fi2s_5frate_43',['VS1053_I2S_RATE',['../_v_s1053_driver_8h.html#a8d24d7d99e5d2c7a890c6f56e1d145c0',1,'arduino_vs1053']]],
+  ['vs1053_5finput_44',['VS1053_INPUT',['../_v_s1053_recording_8h.html#af8cb9bf9eb32d125acc77b780ddff01c',1,'arduino_vs1053']]],
+  ['vs1053_5fmode_45',['VS1053_MODE',['../_v_s1053_driver_8h.html#a83fa36627d8c33e05beacf9731739e48',1,'arduino_vs1053']]],
+  ['vs1053_5fspi_46',['VS1053_SPI',['../classarduino__vs1053_1_1_v_s1053___s_p_i.html',1,'arduino_vs1053']]],
+  ['vs1053_5fspiarduino_47',['VS1053_SPIArduino',['../classarduino__vs1053_1_1_v_s1053___s_p_i_arduino.html',1,'arduino_vs1053']]],
+  ['vs1053_5fspiesp32_48',['VS1053_SPIESP32',['../classarduino__vs1053_1_1_v_s1053___s_p_i_e_s_p32.html',1,'arduino_vs1053']]],
+  ['vs1053driver_2eh_49',['VS1053Driver.h',['../_v_s1053_driver_8h.html',1,'']]],
+  ['vs1053recording_50',['VS1053Recording',['../structarduino__vs1053_1_1_v_s1053_recording.html',1,'arduino_vs1053']]],
+  ['vs1053recording_2eh_51',['VS1053Recording.h',['../_v_s1053_recording_8h.html',1,'']]]
 ];

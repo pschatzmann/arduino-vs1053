@@ -1,16 +1,18 @@
-    #include "VS1053Driver.h"
+#include "VS1053Driver.h"
+
+namespace arduino_vs1053 {
 
 
-VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, VS1053SPI *_p_spi)
+VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, VS1053_SPI *_p_spi)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin), p_spi(_p_spi) {
 
     if (p_spi==nullptr){
 // if spi parameter is undifined, we use the system specific default drivers
 #if USE_ESP_SPI_CUSTOM && (defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266))
-        static VS1053SPIESP32 spi;
+        static VS1053_SPIESP32 spi;
         p_spi = &spi;
-#else
-        static VS1053SPIArduino spi;
+#elif defined(ARDUINO)
+        static VS1053_SPIArduino spi;
         p_spi = &spi;
 #endif
 
@@ -184,7 +186,7 @@ bool VS1053::begin() {
         delay(100);
     } 
     chip_version = getChipVersion();
-    mode = VS1053_SPI; // default mode
+    mode = VS1053_NA; // default mode
 
     return true;
 }
@@ -814,6 +816,6 @@ size_t VS1053::readBytes(uint8_t*data, size_t len){
     return result;
 }
 
-
+}
 
 

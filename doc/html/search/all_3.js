@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['disablei2sout_8',['disableI2sOut',['../class_v_s1053.html#adfbf07ea5a57f92ea7929f5615c944fc',1,'VS1053']]]
+  ['disablei2sout_8',['disableI2sOut',['../classarduino__vs1053_1_1_v_s1053.html#abc42568f6dde4ac08e1380d3b5cb30c4',1,'arduino_vs1053::VS1053']]]
 ];

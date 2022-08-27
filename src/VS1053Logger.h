@@ -1,12 +1,12 @@
 #pragma once
+
+namespace arduino_vs1053 {
+
 /**
  * Licensed under GNU GPLv3 <http://gplv3.fsf.org/>
  * Copyright © 2018
  *
  * @author Marcin Szalomski (github: @baldram | twitter: @baldram)
- */
-
-/**
  * To enable debug, add build flag to your platformio.ini as below (depending on platform).
  *
  * For ESP8266:
@@ -30,3 +30,5 @@
     #define LOG(...) 
 #endif
 
+
+}

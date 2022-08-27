@@ -3,6 +3,8 @@
 
 /** @file */
 
+namespace arduino_vs1053 {
+
 
 /// Input from Aux or Microphone
 enum VS1053_INPUT {
@@ -69,3 +71,5 @@ protected:
     uint16_t autogain_amplification = 0; // 
     VS1053_INPUT input = VS1053_MIC;
 };   
+
+}

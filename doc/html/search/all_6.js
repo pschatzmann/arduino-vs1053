@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hardreset_15',['hardReset',['../class_v_s1053.html#a683f9a5985852e1fa21828a1f0754701',1,'VS1053']]]
+  ['hardreset_15',['hardReset',['../classarduino__vs1053_1_1_v_s1053.html#ae0fdf32074aad79473ee675aca5758c9',1,'arduino_vs1053::VS1053']]]
 ];

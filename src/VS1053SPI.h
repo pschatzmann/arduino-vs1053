@@ -7,6 +7,9 @@
 #else
 # include "VS1053Ext.h"
 #endif
+
+namespace arduino_vs1053 {
+
 /**
  * @brief Abstract SPI Driver for VS1053. We support different alternative implementations.
  * Outside of Arduino you need to provide your own
@@ -14,7 +17,7 @@
  * @tparam Driver 
  */
 
-class VS1053SPI {
+class VS1053_SPI {
   public:
     virtual void beginTransaction() = 0;
     virtual void endTransaction() = 0;
@@ -34,11 +37,11 @@ class VS1053SPI {
  * @brief Arduino Driver for ESP32 and ESP8266
  * @author pschatzmann
  */
-class VS1053SPIESP32 : public VS1053SPI {
+class VS1053_SPIESP32 : public VS1053_SPI {
   protected:
     uint32_t speed = 200000;
   public:
-    VS1053SPIESP32(SPIClass &spi=SPI){
+    VS1053S_PIESP32(SPIClass &spi=SPI){
         p_spi = &spi;
     }
 
@@ -81,12 +84,12 @@ class VS1053SPIESP32 : public VS1053SPI {
  * @brief Generic SPI Driver for Arduino
  * @author pschatzmann
  */
-class VS1053SPIArduino : public VS1053SPI {
+class VS1053_SPIArduino : public VS1053_SPI {
   protected:
     uint32_t speed = 200000;
 
   public:
-    VS1053SPIArduino() = default;
+    VS1053_SPIArduino() = default;
 
     void beginTransaction()  override{ 
         SPISettings settings(speed, MSBFIRST, SPI_MODE0);       
@@ -125,3 +128,4 @@ class VS1053SPIArduino : public VS1053SPI {
 
 #endif
 
+}

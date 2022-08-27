@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['testcomm_99',['testComm',['../class_v_s1053.html#afee80c5e44ea7ea263dd041f48a448a2',1,'VS1053']]],
-  ['treble_100',['treble',['../class_v_s1053.html#a256218ff89d8818c54b1a192e9dd6f32',1,'VS1053']]]
+  ['testcomm_99',['testComm',['../classarduino__vs1053_1_1_v_s1053.html#a0d41c9684afcd2299c075acdefc78430',1,'arduino_vs1053::VS1053']]],
+  ['treble_100',['treble',['../classarduino__vs1053_1_1_v_s1053.html#a5a70a83b3e177020383a39b1e535f49a',1,'arduino_vs1053::VS1053']]]
 ];

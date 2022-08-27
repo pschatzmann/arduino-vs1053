@@ -36,8 +36,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VS1053_H
-#define VS1053_H
+#pragma once
+
 
 #include "VS1053Config.h"
 #include "VS1053Logger.h"
@@ -53,6 +53,9 @@
 #define _BV(bit) (1 << (bit))
 #endif
 
+namespace arduino_vs1053 {
+
+
 /** @file */
 
 /// I2S Rate
@@ -64,7 +67,7 @@ enum VS1053_I2S_RATE {
 
 /// Actual Mode: Input, Output, Output Streaming Midi
 enum VS1053_MODE {
-    VS1053_SPI,
+    VS1053_NA,
     VS1053_OUT,
     VS1053_IN,
     VS1053_MIDI,
@@ -193,13 +196,6 @@ class VS1053 {
         }
 
       protected:
-        float clock_rate = 12288000;
-        int8_t divider = -1;
-        uint16_t multiplier = -1;
-        const uint16_t sc_multipliers[7] = { SC_1003_MULT_2,SC_1003_MULT_25,SC_1003_MULT_3, SC_1003_MULT_35, SC_1003_MULT_4, SC_1003_MULT_45, SC_1003_MULT_5};
-        float multiplier_factor;
-        const float multiplier_factors[7] = { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
-
         const uint16_t SC_1003_MULT_1 = 0x0000;
         const uint16_t SC_1003_MULT_2 = 0x2000;
         const uint16_t SC_1003_MULT_25 = 0x4000;
@@ -208,6 +204,13 @@ class VS1053 {
         const uint16_t SC_1003_MULT_4 = 0xa000;
         const uint16_t SC_1003_MULT_45 = 0xc000;
         const uint16_t SC_1003_MULT_5 = 0xe000;
+
+        float clock_rate = 12288000;
+        int divider = -1;
+        int multiplier = -1;
+        const uint16_t sc_multipliers[7] = { SC_1003_MULT_2,SC_1003_MULT_25,SC_1003_MULT_3, SC_1003_MULT_35, SC_1003_MULT_4, SC_1003_MULT_45, SC_1003_MULT_5};
+        float multiplier_factor;
+        const float multiplier_factors[7] = { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
 
         int getSampleRate(int div, float multiplierValue){
             return (multiplierValue * clock_rate) / 256 / div;
@@ -262,7 +265,7 @@ class VS1053 {
 
 
     /// Constructor which allows a custom reset pin
-    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, VS1053SPI *_p_spi=nullptr);
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, VS1053_SPI *_p_spi=nullptr);
 
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     bool begin();
@@ -404,7 +407,7 @@ protected:
     int8_t  curbalance = 0;                 // Current balance setting -100..100
                                             // (-100 = right channel silent, 100 = left channel silent)
     const uint8_t vs1053_chunk_size = 32;
-    VS1053SPI *p_spi = nullptr;             // SPI Driver
+    VS1053_SPI *p_spi = nullptr;             // SPI Driver
     uint8_t endFillByte;                    // Byte to send when stopping song
     VS1053Equilizer equilizer;
     VS1053_MODE mode;
@@ -458,4 +461,4 @@ protected:
     void set_register_flag(uint16_t reg, uint16_t flag, bool active);
 };
 
-#endif
+}

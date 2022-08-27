@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['enablei2sout_70',['enableI2sOut',['../class_v_s1053.html#af954478675666426717c25aa2c096b2e',1,'VS1053']]],
-  ['end_71',['end',['../class_v_s1053.html#a791ceada0d6df8dc4e9f2486b2686705',1,'VS1053']]]
+  ['enablei2sout_70',['enableI2sOut',['../classarduino__vs1053_1_1_v_s1053.html#ab857a50b2547c41366cf17371efb5f88',1,'arduino_vs1053::VS1053']]],
+  ['end_71',['end',['../classarduino__vs1053_1_1_v_s1053.html#a5976c9fcecc92f749b187d022fa86522',1,'arduino_vs1053::VS1053']]]
 ];
