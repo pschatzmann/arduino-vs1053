@@ -1,6 +1,6 @@
 # VS1053 library
 
-This is a Arduino library for the generic **[VS1053 Breakout](https://www.vlsi.fi/en/products/vs1053.html)** by VLSI Solution:
+This is a Arduino library for breakout boards using the **[VS1053 and VS1003 Chip](https://www.vlsi.fi/en/products/vs1053.html)** by VLSI Solution:
 A powerful Ogg Vorbis / MP3 / AAC / WMA / FLAC / MIDI Audio Codec chip.<br/>
 
 ![vs1053](https://pschatzmann.github.io/arduino-vs1053/doc/vs1053.jpg)
