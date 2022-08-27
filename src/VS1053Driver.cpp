@@ -33,8 +33,20 @@
 #include "VS1053Driver.h"
 
 
-VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin)
-        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
+VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, VS1053SPI *_p_spi)
+        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin), p_spi(_p_spi) {
+
+    if (p_spi==nullptr){
+// if spi parameter is undifined, we use the system specific default drivers
+#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
+        static VS1053SPIESP32 spi;
+        p_spi = &spi;
+#else
+        static VS1053SPIArduino spi;
+        p_spi = &spi;
+#endif
+
+    }
 
 }
 
@@ -42,11 +54,11 @@ uint16_t VS1053::readRegister(uint8_t _reg) const {
     uint16_t result;
 
     control_mode_on();
-    spi.write(3);    // Read operation
-    spi.write(_reg); // Register to write (0..0xF)
+    p_spi->write(3);    // Read operation
+    p_spi->write(_reg); // Register to write (0..0xF)
     // Note: transfer16 does not seem to work
-    result = (spi.transfer(0xFF) << 8) | // Read 16 bits data
-             (spi.transfer(0xFF));
+    result = (p_spi->transfer(0xFF) << 8) | // Read 16 bits data
+             (p_spi->transfer(0xFF));
     await_data_request(); // Wait for DREQ to be HIGH again
     control_mode_off();
     return result;
@@ -54,9 +66,9 @@ uint16_t VS1053::readRegister(uint8_t _reg) const {
 
 void VS1053::writeRegister(uint8_t _reg, uint16_t _value) const {
     control_mode_on();
-    spi.write(2);        // Write operation
-    spi.write(_reg);     // Register to write (0..0xF)
-    spi.write16(_value); // Send 16 bits data
+    p_spi->write(2);        // Write operation
+    p_spi->write(_reg);     // Register to write (0..0xF)
+    p_spi->write16(_value); // Send 16 bits data
     await_data_request();
     control_mode_off();
 }
@@ -83,7 +95,7 @@ void VS1053::sdi_send_buffer(uint8_t *data, size_t len) {
             chunk_length = vs1053_chunk_size;
         }
         len -= chunk_length;
-        spi.write_bytes(data, chunk_length);
+        p_spi->write_bytes(data, chunk_length);
         data += chunk_length;
     }
     data_mode_off();
@@ -102,7 +114,7 @@ void VS1053::sdi_send_fillers(size_t len) {
         }
         len -= chunk_length;
         while (chunk_length--) {
-            spi.write(endFillByte);
+            p_spi->write(endFillByte);
         }
     }
     data_mode_off();
@@ -182,7 +194,7 @@ bool VS1053::begin() {
     digitalWrite(cs_pin, HIGH);
     delay(500);
     // Init SPI in slow mode ( 0.2 MHz )
-    spi.set_speed(200000);
+    p_spi->set_speed(200000);
     // printDetails("Right after reset/startup");
     delay(20);
     // printDetails("20 msec after reset");
@@ -193,7 +205,7 @@ bool VS1053::begin() {
         // The next clocksetting allows SPI clocking at 5 MHz, 4 MHz is safe then.
         writeRegister(SCI_CLOCKF, 6 << 12); // Normal clock settings multiplyer 3.0 = 12.2 MHz
         // SPI Clock to 4 MHz. Now you can set high speed SPI clock.
-        spi.set_speed(4000000);
+        p_spi->set_speed(4000000);
         writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
         testComm("Fast SPI, Testing VS1053 read/write registers again...");
         delay(10);
@@ -202,12 +214,24 @@ bool VS1053::begin() {
         LOG("endFillByte is %X", endFillByte);
         //printDetails("After last clocksetting") ;
         delay(100);
-    }
+    } 
     chip_version = getChipVersion();
-    mode = VS1053_OUT; // default mode
+    mode = VS1053_SPI; // default mode
 
     return true;
 }
+    
+bool VS1053::beginOutput(){
+    mode = VS1053_OUT;
+    begin();
+    startSong();
+    switchToMp3Mode(); // optional, some boards require this    
+    if (chip_version == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
+        loadDefaultVs1053Patches(); 
+    }
+    return true;
+}
+
 
 void VS1053::setVolume(uint8_t vol) {
     // Set volume.  Both left and right.
@@ -305,7 +329,7 @@ void VS1053::hardReset(){
         delay(500);
         digitalWrite(reset_pin, HIGH);
     } else {
-        LOG("hard-reset not supported");
+        LOG("hard-reset only supported when reset_pin is defined");
     }
 }
 

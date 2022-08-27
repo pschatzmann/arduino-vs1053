@@ -8,7 +8,7 @@
  * Licensed under GNU GPLv3 <http://gplv3.fsf.org/>
  * Copyright © 2017
  *
- * @authors baldram, edzelf, MagicCube, maniacbug
+ * @authors baldram, edzelf, MagicCube, maniacbug, pschatzmann
  *
  * Development log:
  *  - 2011: initial VS1053 Arduino library
@@ -17,6 +17,11 @@
  *          by Ed Smallenburg (github: @edzelf)
  *  - 2017: refactored to use as PlatformIO library
  *          by Marcin Szalomski (github: @baldram | twitter: @baldram)
+ *  - 2022: Redesigned SPI interface
+ *          Support for Midi
+ *          Support for Reading the microphon
+ *          Some additional methods to handle treble, bass, earphones
+ *          by Phil Schatzmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +60,10 @@ enum VS1053_I2S_RATE {
 };
 
 enum VS1053_MODE {
+    VS1053_SPI,
     VS1053_OUT,
     VS1053_IN,
-    VS1053_MIDI
+    VS1053_MIDI,
 };
 
 enum VS1053_EARSPEAKER {
@@ -67,7 +73,10 @@ enum VS1053_EARSPEAKER {
     VS1053_EARSPEAKER_MAX
 };
 
-
+/**
+ * @brief Main class for controlling VS1053 and VS1003 modules
+ * 
+ */
 class VS1053 {
 
     /**
@@ -248,10 +257,13 @@ class VS1053 {
 
 
     /// Constructor which allows a custom reset pin
-    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1);
+    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin=-1, VS1053SPI *_p_spi=nullptr);
 
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     bool begin();
+
+    /// Prepares for regular output in decoding mode - (note that this method is also is calling begin())
+    bool beginOutput();
 
     /// Prepare to start playing. Call this each time a new song starts
     void startSong();
@@ -355,11 +367,11 @@ class VS1053 {
     /// Activate the ear speaker mode
     bool setEarSpeaker(VS1053_EARSPEAKER value);
 
+    /// Stops the recording of sound - and resets the module
+    void end();
+
     /// Starts the recording of sound as WAV data
     bool beginInput(VS1053Recording &opt);
-
-    /// Stops the recording of sound
-    void end();
 
     /// Starts the MIDI output processing
     bool beginMIDI();
@@ -391,17 +403,12 @@ protected:
     int8_t  curbalance = 0;                 // Current balance setting -100..100
                                             // (-100 = right channel silent, 100 = left channel silent)
     const uint8_t vs1053_chunk_size = 32;
-    SPISettings VS1053_SPI;                 // SPI settings for this slave
+    VS1053SPI *p_spi = nullptr;             // SPI Driver
     uint8_t endFillByte;                    // Byte to send when stopping song
     VS1053Equilizer equilizer;
     VS1053_MODE mode;
     uint16_t chip_version = -1;
     uint8_t channels_multiplier = 1;        // Repeat read values for multiple channels
-#if defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266)
-    VS1053SPI<VS1053SPIESP32> spi;
-#else
-    VS1053SPI<VS1053SPIArduino> spi;
-#endif
 
 
 
@@ -414,25 +421,25 @@ protected:
     }
 
     inline void control_mode_on() const {
-        spi.beginTransaction();   // Prevent other SPI users
+        p_spi->beginTransaction();   // Prevent other SPI users
         digitalWrite(dcs_pin, HIGH);        // Bring slave in control mode
         digitalWrite(cs_pin, LOW);
     }
 
     inline void control_mode_off() const {
         digitalWrite(cs_pin, HIGH);         // End control mode
-        spi.endTransaction();               // Allow other SPI users
+        p_spi->endTransaction();               // Allow other SPI users
     }
 
     inline void data_mode_on() const {
-        spi.beginTransaction();   // Prevent other SPI users
+        p_spi->beginTransaction();   // Prevent other SPI users
         digitalWrite(cs_pin, HIGH);         // Bring slave in data mode
         digitalWrite(dcs_pin, LOW);
     }
 
     inline void data_mode_off() const {
         digitalWrite(dcs_pin, HIGH);        // End data mode
-        spi.endTransaction();               // Allow other SPI users
+        p_spi->endTransaction();               // Allow other SPI users
     }
 
     void sdi_send_buffer(uint8_t *data, size_t len);
