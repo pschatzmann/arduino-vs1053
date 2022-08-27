@@ -1,6 +1,6 @@
 #pragma once
 
-// Activate/Deactivate Logging in Arduino: Comment out define to deactivate
+// Activate/Deactivate Logging in Arduino: Uncomment out define to activate
 // #define DEBUG_PORT Serial
 
 
