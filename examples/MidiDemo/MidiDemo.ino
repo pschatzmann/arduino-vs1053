@@ -61,6 +61,8 @@
 #include "patches_midi/rtmidi1003b.h"
 #include "patches_midi/rtmidi1053b.h"
 
+#define UNDEFINED    -1
+
 // Wiring of VS1053 board (SPI connected in a standard way)
 #ifdef ARDUINO_ARCH_ESP8266
 #define VS1053_CS     D1
@@ -76,7 +78,7 @@
 
 #define VOLUME  100 // volume level 0-100
 
-VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, SPI);
+VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, UNDEFINED, SPI);
 
 // noteOn and noteOff based on MP3_Shield_RealtimeMIDI demo 
 // by Matthias Neeracher, Nathan Seidle's Sparkfun Electronics example respectively

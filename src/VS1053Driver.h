@@ -273,8 +273,6 @@ class VS1053 {
 #ifdef ARDUINO
     /// Constructor which allows a custom reset pin and a Arduino SPI object
     VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &_p_spi);
-    /// Constructor which allows an Arduino SPI object
-    VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, SPIClass &_p_spi);
 
 #endif
 

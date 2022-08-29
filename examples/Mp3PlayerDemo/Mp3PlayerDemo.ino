@@ -51,6 +51,8 @@
 //   github.com/baldram/ESP_VS1053_Library/blob/master/examples/Mp3PlayerDemo/SampleMp3.h
 #include "SampleMp3.h"
 
+#define UNDEFINED    -1
+
 // Wiring of VS1053 board (SPI connected in a standard way)
 #ifdef ARDUINO_ARCH_ESP8266
 #define VS1053_CS     D1
@@ -66,7 +68,7 @@
 
 #define VOLUME  100 // volume level 0-100
 
-VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, SPI);
+VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, UNDEFINED, SPI);
 
 void setup() {
     Serial.begin(115200);

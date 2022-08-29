@@ -27,11 +27,6 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
     p_spi = &vs_spi;
 }
 
-VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &spi)
-        : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
-    static VS1053_SPIArduino vs_spi(spi);
-    p_spi = &vs_spi;
-}
 #endif
 
 

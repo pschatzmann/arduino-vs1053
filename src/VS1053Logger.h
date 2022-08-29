@@ -1,7 +1,5 @@
 #pragma once
 
-namespace arduino_vs1053 {
-
 /**
  * Licensed under GNU GPLv3 <http://gplv3.fsf.org/>
  * Copyright © 2018
@@ -30,5 +28,3 @@ namespace arduino_vs1053 {
     #define LOG(...) 
 #endif
 
-
-}

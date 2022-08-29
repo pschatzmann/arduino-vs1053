@@ -53,7 +53,7 @@
 */
 
 #include <VS1053Driver.h>
-
+#define UNDEFINED    -1
 #ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WiFi.h>
 #define VS1053_CS     D1
@@ -71,7 +71,7 @@
 // Default volume
 #define VOLUME  80
 
-VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, SPI);
+VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ, UNDEFINED, SPI);
 WiFiClient client;
 
 // WiFi settings example, substitute your own
