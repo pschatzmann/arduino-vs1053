@@ -205,7 +205,7 @@ bool VS1053::begin() {
           LOG("%s (%d)",chip ,chip_version);  
         } break;   
         case 4: {
-          const char* chip = "VS1003";
+          const char* chip = "VS1053";
           LOG("%s (%d)",chip ,chip_version);  
         } break; 
         default:
