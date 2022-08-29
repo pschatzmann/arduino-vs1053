@@ -39,13 +39,13 @@ struct VS1053Recording {
         }
         
         // values from 0 to 100
-        void setRecoringGain(uint8_t gain){
+        void setRecordingGain(uint8_t gain){
             recording_gain = 1024 * gain / 100;
             if (recording_gain>1024) recording_gain = 1024;
             if (recording_gain<0) recording_gain = 0; // 0 = automatic gain control
         }
 
-        uint8_t recoringGain() {
+        uint8_t recordingGain() {
             return recording_gain;
         }
 

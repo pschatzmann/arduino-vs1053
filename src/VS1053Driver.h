@@ -47,8 +47,8 @@
 #include "VS1053SPI.h"
 #include "VS1053Recording.h"
 #include "patches/vs1053b-patches.h"
-#include "patches_in/vs1053-input.h"
 #include "patches_in/vs1003b-pcm.h"
+#include "patches_in/vs1053b-pcm.h"
 #include "patches_midi/rtmidi1053b.h"
 #include "patches_midi/rtmidi1003b.h"
 
@@ -250,6 +250,7 @@ class VS1053 {
     const uint8_t SM_TESTS = 5;             // Bitnumber in SCI_MODE for tests
     const uint8_t SM_LINE1 = 14;            // Bitnumber in SCI_MODE for Line input
     const uint8_t SM_STREAM = 6;            // Bitnumber in SCI_MODE for Streaming Mode
+    const uint8_t SM_ADPCM = 12;            // Bitnumber in SCI_MODE for PCM/ADPCM recording active 
 
     const uint16_t ADDR_REG_GPIO_DDR_RW = 0xc017;
     const uint16_t ADDR_REG_GPIO_VAL_R = 0xc018;
@@ -263,8 +264,6 @@ class VS1053 {
 
     const uint16_t SC_EAR_SPEAKER_LO = 0x0010;
     const uint16_t SC_EAR_SPEAKER_HI = 0x0080;
-    const uint16_t SM_ADPCM = 1 << 12;
-    const uint16_t SM_LINE_IN = 1 << 14;
 
 
     /// Constructor which allows a custom reset pin
@@ -467,7 +466,7 @@ protected:
 
     bool begin_input_vs1003(VS1053Recording &opt);
 
-    void set_register_flag(uint16_t reg, uint16_t flag, bool active);
+    void set_flag(uint16_t &value, uint16_t flag, bool active);
 };
 
 }

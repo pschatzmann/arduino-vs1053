@@ -53,14 +53,12 @@ void VS1053::writeRegister(uint8_t _reg, uint16_t _value) const {
     control_mode_off();
 }
 
-void VS1053::set_register_flag(uint16_t reg, uint16_t flag, bool active){
-    int16_t reg_value = readRegister(reg);
+void VS1053::set_flag(uint16_t &reg_value, uint16_t flag, bool active){
     if (active){
         reg_value |= flag; // setting bit
     } else {
         reg_value &= ~(flag);  // clearing bit 0x1800
     }
-    writeRegister(reg, reg_value);
 }
 
 void VS1053::sdi_send_buffer(uint8_t *data, size_t len) {
@@ -600,7 +598,9 @@ bool VS1053::setEarSpeaker(VS1053_EARSPEAKER value){
 /// Stops the recording of sound
 void VS1053::end() {
     // clear SM_ADPCM bit
-    set_register_flag(SCI_MODE, SM_ADPCM, false);
+    uint16_t mode = readRegister(SCI_MODE);
+    set_flag(mode, 1<<SM_ADPCM, false); // stop recoring
+    writeRegister(SCI_MODE, mode);
     softReset();
 }
 
@@ -712,48 +712,29 @@ bool VS1053::beginInput(VS1053Recording &opt) {
 bool VS1053::begin_input_vs1053(VS1053Recording &opt){
     LOG("%s",__func__);
     // clear SM_ADPCM bit
-    set_register_flag(SCI_MODE, SM_ADPCM, false);
+    writeRegister(SCI_AICTRL0, opt.sampleRate());
+    writeRegister(SCI_AICTRL1, opt.recordingGain());
+    writeRegister(SCI_AICTRL2, opt.autoGainAmplification());
 
-    // set the clock to a value between just below 55.3 MHz and 67.6 MHz.
-    // SC_MULT 3.5 & SC_ADD 1x (9.6.4 SCI_CLOCKF (RW))
-    writeRegister(SCI_CLOCKF, SC_MULT_53_35X | SC_ADD_53_10X);
-
-    // Set SCI_BASS (2) to 0.
-    setBassFrequencyLimit(0);
-    setBass(0);
-    // Disable any potential user application
-    writeRegister(SCI_AIADDR, 0);
-
-    // Disable all interrupts except the SCI interrupt
-    writeRegister(INT_ENABLE, 0x2); // Intenable, Enable Data interrupt
-    writeRegister(SCI_WRAMADDR, 0xC01A);
-    writeRegister(SCI_WRAM, 0x2);
-
-    delay(20);
-
-    // load plugin profile
-    loadUserCode(pcm48s, 0xC01A);   
-
-    // Set bit SM_ADPCM (12) in register SCI_MODE (0) to 1.
-    set_register_flag(SCI_MODE, SM_ADPCM, true);
-
-    // Set recording level control registers SCI_AICTRL1 (13) and SCI_AICTRL2 (14).
-    writeRegister(SCI_AICTRL1, 0);
-    writeRegister(SCI_AICTRL2, 4096);
-    writeRegister(SCI_AICTRL3, 0);
-
-    // activate encoder
-    writeRegister(SCI_AIADDR, 0x34);
-
-    // remove wav header 44 bytes
-    uint8_t tmp[44];
-    int open = 44;
-    while(open>0){
-        open -= readBytes(tmp, open);
+    // setup SCI_AICTRL3
+    uint16_t ctrl3=0;
+    if (opt.channels()==2){
+        ctrl3 = 0; // joint stereo 
+    } else {
+        ctrl3 = opt.input==VS1053_AUX ? 3 : 2;  // select left or right channel
     }
+    set_flag(ctrl3, 1<<2, 1); // Linear PCM Mode
+    writeRegister(SCI_AICTRL3, ctrl3); 
 
-    // update (fixed) audio information
-    opt.sample_rate = 48000;
+    uint16_t mode = readRegister(SCI_MODE);
+    set_flag(mode, 1<<SM_ADPCM, true); // activate pcm mode
+    set_flag(mode, 1<<SM_RESET, true);
+    set_flag(mode, 1<<SM_LINE1, opt.input==VS1053_AUX);
+
+    writeRegister(SCI_MODE, mode);
+
+    loadUserCode(pcm1053, PLUGIN_SIZE_pcm1053);   
+
     return true;
 }
 
@@ -796,9 +777,10 @@ bool VS1053::begin_input_vs1003(VS1053Recording &opt){
     delay(100);
 
     // setting mic or aux as input
-    int sci_mode = readRegister(SCI_MODE);
-    set_register_flag(SCI_MODE, SM_ADPCM, true);
-    set_register_flag(SCI_MODE, SM_LINE_IN, opt.input!=VS1053_MIC);
+    uint16_t sci_mode = readRegister(SCI_MODE);
+    set_flag(sci_mode, 1<<SM_ADPCM, true);
+    set_flag(sci_mode, 1<<SM_LINE1, opt.input==VS1053_AUX);
+    writeRegister(SCI_MODE, sci_mode);
     delay(100);
 
 //3) Start the encoding mode by writing AIADDR=0x0030
