@@ -155,6 +155,7 @@ bool VS1053::begin() {
     if (reset_pin!=-1){
         pinMode(reset_pin, OUTPUT);
         digitalWrite(reset_pin, HIGH);
+        delay(500);
     }
 
     pinMode(dreq_pin, INPUT); // DREQ is an input
@@ -207,8 +208,8 @@ bool VS1053::begin() {
           LOG("%s (%d)",chip ,chip_version);  
         } break; 
         default:
-          const char* chip = "Not suppored";
-          LOG("%s: (%d)", chip_version);    
+          const char* chip = "Unsuppored chip";
+          LOG("%s: (%d)",chip, chip_version);    
           break;
     }
     return true;
