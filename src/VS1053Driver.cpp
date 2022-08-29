@@ -170,11 +170,11 @@ bool VS1053::begin() {
     digitalWrite(dcs_pin, HIGH); // Start HIGH for SCI en SDI
     digitalWrite(cs_pin, HIGH);
     delay(100);
-    LOG("Reset VS1053...");
+    LOG("Reset...");
     digitalWrite(dcs_pin, LOW); // Low & Low will bring reset pin low
     digitalWrite(cs_pin, LOW);
     delay(500);
-    LOG("End reset VS1053...");
+    LOG("End reset...");
     digitalWrite(dcs_pin, HIGH); // Back to normal again
     digitalWrite(cs_pin, HIGH);
     delay(500);
@@ -183,7 +183,7 @@ bool VS1053::begin() {
     // printDetails("Right after reset/startup");
     delay(20);
     // printDetails("20 msec after reset");
-    if (testComm("Slow SPI,Testing VS1053 read/write registers...")) {
+    if (testComm("Slow SPI,Testing read/write registers...")) {
         //softReset();
         // Switch on the analog parts
         writeRegister(SCI_AUDATA, 44101); // 44.1kHz stereo
@@ -192,7 +192,7 @@ bool VS1053::begin() {
         // SPI Clock to 4 MHz. Now you can set high speed SPI clock.
         p_spi->set_speed(4000000);
         writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
-        testComm("Fast SPI, Testing VS1053 read/write registers again...");
+        testComm("Fast SPI, Testing read/write registers again...");
         delay(10);
         await_data_request();
         endFillByte = wram_read(0x1E06) & 0xFF;
@@ -200,9 +200,24 @@ bool VS1053::begin() {
         //printDetails("After last clocksetting") ;
         delay(100);
     } 
-    chip_version = getChipVersion();
     mode = VS1053_NA; // default mode
 
+    // set and print chip version
+    chip_version = getChipVersion();
+    switch(chip_version){
+        case 3: {
+          const char* chip = "VS1003";
+          LOG("%s (%d)",chip ,chip_version);  
+        } break;   
+        case 4: {
+          const char* chip = "VS1003";
+          LOG("%s (%d)",chip ,chip_version);  
+        } break; 
+        default:
+          const char* chip = "Not suppored";
+          LOG("%s: (%d)", chip_version);    
+          break;
+    }
     return true;
 }
     
