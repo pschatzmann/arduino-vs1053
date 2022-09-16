@@ -19,7 +19,7 @@
     #define LOG(...) ESP_LOGD("ESP_VS1053", __VA_ARGS__)
 #elif defined(DEBUG_PORT) 
     #if (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_RP2040))
-        #define LOG(...) DEBUG_PORT.printf(__VA_ARGS__)
+        #define LOG(...) {DEBUG_PORT.printf(__VA_ARGS__); DEBUG_PORT.println();};
     #else 
         #include <stdio.h>
         #define LOG(...) {char msg[80]; snprintf(msg, 80,__VA_ARGS__); Serial.println(msg);}

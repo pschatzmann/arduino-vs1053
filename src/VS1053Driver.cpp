@@ -109,7 +109,7 @@ uint16_t VS1053::wram_read(uint16_t address) {
 }
 
 bool VS1053::testComm(const char *header) {
-    // Test the communication with the VS1053 module.  The result wille be returned.
+    // Test the communication with the VS1053 module.  The result will be returned.
     // If DREQ is low, there is problably no VS1053 connected.  Pull the line HIGH
     // in order to prevent an endless loop waiting for this signal.  The rest of the
     // software will still work, but readbacks from VS1053 will fail.
@@ -150,7 +150,7 @@ bool VS1053::testComm(const char *header) {
 
 bool VS1053::begin() {
     LOG("begin");
-
+    bool result = false;
     // support for optional custom reset pin when wiring is not possible
     if (reset_pin!=-1){
         pinMode(reset_pin, OUTPUT);
@@ -179,6 +179,7 @@ bool VS1053::begin() {
     // printDetails("20 msec after reset");
     if (testComm("Slow SPI,Testing read/write registers...")) {
         //softReset();
+        result = true;
         // Switch on the analog parts
         writeRegister(SCI_AUDATA, 44101); // 44.1kHz stereo
         // The next clocksetting allows SPI clocking at 5 MHz, 4 MHz is safe then.
@@ -210,9 +211,10 @@ bool VS1053::begin() {
         default:
           const char* chip = "Unsuppored chip";
           LOG("%s: (%d)",chip, chip_version);    
+          result = false;
           break;
     }
-    return true;
+    return result;
 }
     
 bool VS1053::beginOutput(){
