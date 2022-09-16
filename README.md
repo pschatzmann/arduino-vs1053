@@ -12,19 +12,21 @@ This is an interesting way to output audio information for all __microcontroller
 
 Functional highlights:
 
-- Output of decoded audio
-- Reading of pcm data from microphone / aux input
-- Methods to manage volume, treble, bass, earphones 
-- Support for real time MIDI
-- Flexible SPI Design
-- Functioinality implemented in arduino_vs1053 namespace 
-- Supports Arduino
-- Supports PlatformIO
-- Supports cmake
+- __Output__ of decoded audio
+- Reading of pcm data from __microphone__ / aux input
+- Methods to manage __volume, treble, bass, earphones__ 
+- Support for __real time MIDI__
+- Flexible __SPI__ Design
+- Functioinality implemented in arduino_vs1053 __namespace__ 
+- Supports __Arduino__
+- Supports __PlatformIO__
+- Supports __cmake__
 
 ## Documentation
 
-Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/annotated.html)
+Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/annotated.html).
+
+You can find further information in the [Wiki](https://github.com/pschatzmann/arduino-vs1053/wiki) and in [my blogs](https://www.pschatzmann.ch/home/tag/vs1053/)...
 
 ## Pinout
 
