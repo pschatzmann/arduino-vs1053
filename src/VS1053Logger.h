@@ -21,7 +21,7 @@ public:
   VS1053LogLevel_t logLevel = VS1053Warning;
 
   /// start the logger
-  bool begin(VS1053LogLevel_t l, Print &out) {
+  bool begin(Print &out, VS1053LogLevel_t l) {
     p_out = &out;
     logLevel = l;
     return true;
@@ -31,7 +31,8 @@ public:
   void log(VS1053LogLevel_t level, const char *fmt...) {
     if (logLevel <= level) { // AUDIOKIT_LOG_LEVEL = Debug
       char log_buffer[200];
-      strcpy(log_buffer, VS1053_log_msg[level]);
+      strcpy(log_buffer,"VS1053 - ");  
+      strcat(log_buffer, VS1053_log_msg[level]);
       strcat(log_buffer, ":     ");
       va_list arg;
       va_start(arg, fmt);
