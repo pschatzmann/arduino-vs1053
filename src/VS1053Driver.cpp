@@ -116,9 +116,10 @@ bool VS1053::testComm(const char *header) {
     int i; // Loop control
     uint16_t r1, r2, cnt = 0;
     uint16_t delta = 300; // 3 for fast SPI
+    delay(100);
 
     if (!digitalRead(dreq_pin)) {
-        VS1053_LOGE("VS1053 not properly installed!");
+        VS1053_LOGW("VS1053 not properly installed!");
         // Allow testing without the VS1053 module
         pinMode(dreq_pin, INPUT_PULLUP); // DREQ is now input with pull-up
         return false;                    // Return bad result
