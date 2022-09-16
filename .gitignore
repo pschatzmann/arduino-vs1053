@@ -4,3 +4,4 @@
 .vscode/
 .pio/
 build/
+.DS_Store
