@@ -3,9 +3,9 @@
 // declare namespace
 namespace arduino_vs1053{}
 
-// Activate/Deactivate Logging in Arduino: Comment/Uncomment out define to activate
-#ifndef VS1053_NOLOG
-#define DEBUG_PORT Serial
+// Define Logging Port
+#ifndef VS1053_LOG_PORT
+#define VS1053_LOG_PORT Serial
 #endif
 
 // I2S Configuration: Use custom SPI Class for ESP

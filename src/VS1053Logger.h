@@ -1,30 +1,57 @@
 #pragma once
 
-/**
- * Licensed under GNU GPLv3 <http://gplv3.fsf.org/>
- * Copyright © 2018
- *
- * @author Marcin Szalomski (github: @baldram | twitter: @baldram)
- * To enable debug, add build flag to your platformio.ini as below (depending on platform).
- *
- * For ESP8266:
- *      build_flags = -D DEBUG_PORT=Serial
- *
- * For ESP32:
- *      build_flags = -DCORE_DEBUG_LEVEL=ARDUHAL_LOG_LEVEL_DEBUG
- *
- */
-#ifdef ARDUINO_ARCH_ESP32
-    #include "Arduino.h"
-    #define LOG(...) ESP_LOGD("ESP_VS1053", __VA_ARGS__)
-#elif defined(DEBUG_PORT) 
-    #if (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_RP2040))
-        #define LOG(...) {DEBUG_PORT.printf(__VA_ARGS__); DEBUG_PORT.println();};
-    #else 
-        #include <stdio.h>
-        #define LOG(...) {char msg[80]; snprintf(msg, 80,__VA_ARGS__); Serial.println(msg);}
-    #endif
-#else 
-    #define LOG(...) 
-#endif
+#pragma once
+#include "Arduino.h"
+#include "VS1053Config.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 
+namespace arduino_vs1053 {
+
+enum VS1053LogLevel_t { VS1053Debug, VS1053Info, VS1053Warning, VS1053Error };
+
+/**
+ * @brief Logging class which supports multiple log levels
+ * 
+ */
+class VS1053LoggerClass {
+public:
+  // global actual loggin level for application
+  VS1053LogLevel_t logLevel = VS1053Warning;
+
+  /// start the logger
+  bool begin(VS1053LogLevel_t l, Print &out) {
+    p_out = &out;
+    logLevel = l;
+    return true;
+  }
+
+  /// Print log message
+  void log(VS1053LogLevel_t level, const char *fmt...) {
+    if (logLevel <= level) { // AUDIOKIT_LOG_LEVEL = Debug
+      char log_buffer[200];
+      strcpy(log_buffer, VS1053_log_msg[level]);
+      strcat(log_buffer, ":     ");
+      va_list arg;
+      va_start(arg, fmt);
+      vsprintf(log_buffer + 9, fmt, arg);
+      va_end(arg);
+      p_out->println(log_buffer);
+    }
+  }
+
+protected:
+  // Error level as string
+  const char *VS1053_log_msg[4] = {"Debug", "Info", "Warning", "Error"};
+  Print *p_out = &VS1053_LOG_PORT;
+};
+
+extern VS1053LoggerClass VS1053Logger;
+
+#define VS1053_LOGD(fmt, ...) VS1053Logger.log(VS1053Debug, fmt, ##__VA_ARGS__)
+#define VS1053_LOGI(fmt, ...) VS1053Logger.log(VS1053Info, fmt, ##__VA_ARGS__)
+#define VS1053_LOGW(fmt, ...) VS1053Logger.log(VS1053Warning, fmt, ##__VA_ARGS__)
+#define VS1053_LOGE(fmt, ...) VS1053Logger.log(VS1053Error, fmt, ##__VA_ARGS__)
+
+} // namespace arduino_vs1053

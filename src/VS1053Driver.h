@@ -170,9 +170,9 @@ class VS1053 {
                     }
 
                     int diff = abs(sample_rate_eff - sample_rate);
-                    LOG("--> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
+                    VS1053_LOGD("--> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
                     if (diff<diff_min){
-                        LOG("==> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
+                        VS1053_LOGD("==> div: %d - mult: %f (%x) -> %d", div, mf, sc_mult, sample_rate_eff);
                         diff_min = diff;
                         this->divider = div;
                         this->multiplier = sc_mult;

@@ -22,6 +22,13 @@ Functional highlights:
 - Supports __PlatformIO__
 - Supports __cmake__
 
+## Logger
+
+The application has a built in logger that uses Serial as output. The default log level is Warning. You can initialize the Logger with 
+```
+VS1053Logger.begin(Serial, VS1053Info); // use VS1053Debug, VS1053Info, VS1053Warning, VS1053Error
+```
+
 ## Documentation
 
 Here is the [relevant class documentation](https://pschatzmann.github.io/arduino-vs1053/doc/html/annotated.html).
