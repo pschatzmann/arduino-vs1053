@@ -43,8 +43,8 @@ The major disadvantage of the VS1053 based modules is the number of pins that ne
 | 5V       | Power Supply                                |
 | GND      | Ground                                      |
 
-The XRST pin can be configured in the sketch or you can connect it to RST of your microcontroller: XRST must be high for the module to work.
-
+- The XRST pin can be configured in the sketch or you can connect it to RST of your microcontroller: XRST must be high for the module to work.
+- Some boards provide a SD card and therefore have an aditional CS pin.
 
 ## Credits
 
