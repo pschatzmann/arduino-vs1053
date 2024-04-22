@@ -532,11 +532,15 @@ void VS1053::loadUserCode(const unsigned short* plugin, unsigned short plugin_si
 /**
  * Load the latest generic firmware patch
  */
-void VS1053::loadDefaultVs1053Patches() {
+bool VS1053::loadDefaultVs1053Patches() {
+#if USE_PATCHES
     if (getChipVersion() == 4) { // Only perform an update if we really are using a VS1053, not. eg. VS1003
         VS1053_LOGD("loadDefaultVs1053Patches");
         loadUserCode(PATCHES, PATCHES_SIZE);
+        return true;
     }
+#endif
+    return false;
 }
 
 /// Provides the treble amplitude value
@@ -608,6 +612,7 @@ void VS1053::end() {
     softReset();
 }
 
+#if USE_MIDI
 
 bool VS1053::beginMidi() {
     VS1053_LOGI("beginMIDI");
@@ -671,6 +676,7 @@ void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
     sdi_send_buffer(data, len);
 }
 
+#endif
 
 void VS1053::writeAudio(uint8_t*data, size_t len){
      if (mode == VS1053_MIDI){
@@ -714,6 +720,7 @@ bool VS1053::beginInput(VS1053Recording &opt) {
 
 
 bool VS1053::begin_input_vs1053(VS1053Recording &opt){
+#ifdef USE_INPUT
     VS1053_LOGD("%s",__func__);
     // clear SM_ADPCM bit
     writeRegister(SCI_AICTRL0, opt.sampleRate());
@@ -740,6 +747,9 @@ bool VS1053::begin_input_vs1053(VS1053Recording &opt){
     loadUserCode(pcm1053, PLUGIN_SIZE_pcm1053);   
 
     return true;
+#else
+    return false;
+#endif
 }
 
 bool VS1053::begin_input_vs1003(VS1053Recording &opt){

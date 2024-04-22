@@ -26,7 +26,7 @@
 #endif
 
 #ifndef PROGMEM
-#define PROGMEM
+#  define PROGMEM
 #endif
 
 namespace arduino_vs1053 {

@@ -30,13 +30,13 @@ public:
   /// Print log message
   void log(VS1053LogLevel_t level, const char *fmt...) {
     if (logLevel <= level) { // AUDIOKIT_LOG_LEVEL = Debug
-      char log_buffer[200];
+      char log_buffer[LOG_BUFFER_SIZE];
       strcpy(log_buffer,"VS1053 - ");  
       strcat(log_buffer, VS1053_log_msg[level]);
       strcat(log_buffer, ":     ");
       va_list arg;
       va_start(arg, fmt);
-      vsprintf(log_buffer + 9, fmt, arg);
+      vsnprintf(log_buffer + 9, LOG_BUFFER_SIZE-9, fmt, arg);
       va_end(arg);
       p_out->println(log_buffer);
     }

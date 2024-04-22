@@ -355,7 +355,7 @@ class VS1053 {
     void loadUserCode(const unsigned short* plugin, unsigned short plugin_size);
 
     /// Loads the latest generic firmware patch.
-    void loadDefaultVs1053Patches();
+    bool loadDefaultVs1053Patches();
 
 
     /// Provides the treble amplitude value
@@ -382,11 +382,13 @@ class VS1053 {
     /// Stops the recording of sound - and resets the module
     void end();
 
+#if USE_MIDI
     /// Starts the MIDI output processing
     bool beginMidi();
 
     /// performs a MIDI command
     void sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2);    
+#endif
 
     /// Starts the recording of sound as WAV data
     bool beginInput(VS1053Recording &opt);
