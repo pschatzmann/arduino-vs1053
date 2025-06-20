@@ -366,11 +366,11 @@ class VS1053 {
     bool loadDefaultVs1053Patches();
 
 
-    /// Provides the treble amplitude value
-    uint8_t treble();
+    /// Provides the treble level value
+    int8_t treble();
 
-    /// Sets the treble amplitude value (range 0 to 100)
-    void setTreble(uint8_t value);
+    /// Sets the treble level value (range -50 0 to 50)
+    void setTreble(int8_t value);
 
     /// Provides the Bass amplitude value 
     uint8_t bass();
