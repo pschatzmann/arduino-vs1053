@@ -101,6 +101,8 @@ class VS1053 {
         uint16_t freq_limit=0; 
         /// Amplitude value: range 0 to 100 
         uint8_t amplitude=0;  
+        /// Level value: range -50 to 50 
+        int8_t level=0;  
         /// Register value for amplitude
         uint16_t scaledAmplitude(){
             if (amplitude>100) amplitude = 100;
@@ -111,6 +113,12 @@ class VS1053 {
             uint16_t result = static_cast<float>(freq_limit) / scale;
             if (result>15) result = 15;
             return result;
+        }
+        /// Register value for level
+        uint16_t scaledLevel(){
+            if (level>50) level = 50;
+            if (level<50) level = -50;
+            return static_cast<float>(amplitude)/100.0*15;
         }
     };
     /**
@@ -136,7 +144,7 @@ class VS1053 {
         /// Provides the VS1053 SCI_BASS Register Value
         uint16_t value() {
             uint16_t result=0;
-            result |= v_treble.scaledAmplitude() << 12;
+            result |= v_treble.scaledLevel() << 12;
             result |= v_treble.scaledFreq(1000) << 8;
             result |= v_bass.scaledAmplitude() << 4;
             result |= v_bass.scaledFreq(10);
