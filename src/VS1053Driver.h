@@ -115,7 +115,7 @@ class VS1053 {
             return result;
         }
         /// Register value for level
-        int16_t scaledLevel(){
+        uint16_t scaledLevel(){
             if (level>50) level = 50;
             if (level<50) level = -50;
             return static_cast<float>(level)/100.0*15;
