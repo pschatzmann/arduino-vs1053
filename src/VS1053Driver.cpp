@@ -543,15 +543,16 @@ bool VS1053::loadDefaultVs1053Patches() {
     return false;
 }
 
-/// Provides the treble amplitude value
-uint8_t VS1053::treble() {
-    return equilizer.treble().amplitude;
+/// Provides the treble level value
+int8_t VS1053::treble() {
+    return equilizer.treble().level;
 }
 
-/// Sets the treble amplitude value (range 0 to 100)
-void VS1053::setTreble(uint8_t value){
-    if (value>100) value = 100;
-    equilizer.treble().amplitude = value;
+/// Sets the treble level value (range -50 to 50)
+void VS1053::setTreble(int8_t value){
+    if (value>50) value = 50;
+    if (value<-50) value = -50;
+    equilizer.treble().level = value;
     writeRegister(SCI_BASS, equilizer.value());
 }
 
