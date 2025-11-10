@@ -569,7 +569,7 @@ void VS1053::setBass(uint8_t value){
 
 /// Sets the treble frequency limit in hz (range 0 to 15000)
 void VS1053::setTrebleFrequencyLimit(uint16_t value){
-    equilizer.bass().freq_limit = value;
+    equilizer.treble().freq_limit = value;
     writeRegister(SCI_BASS, equilizer.value());
 }
 
@@ -679,16 +679,25 @@ void VS1053::sendMidiMessage(uint8_t cmd, uint8_t data1, uint8_t data2) {
 #endif
 
 void VS1053::writeAudio(uint8_t*data, size_t len){
-     if (mode == VS1053_MIDI){
-        uint8_t tmp[len*2];
-        for (int j=0;j<len;j++){
-            tmp[j*2] = 0;
-            tmp[j*2+1] = data[j];
-        }
-        sdi_send_buffer(tmp, len*2);
-     } else {
-        sdi_send_buffer(data, len);
-     }
+      if (mode == VS1053_MIDI){
+          // Convert to 16-bit big-endian (0x00, data[i]) in small chunks to avoid large stack usage
+          const size_t chunk = vs1053_chunk_size; // 32
+          uint8_t tmp[vs1053_chunk_size * 2];
+          const uint8_t *p = data;
+          size_t remaining = len;
+          while (remaining) {
+                size_t n = remaining > chunk ? chunk : remaining;
+                for (size_t i = 0; i < n; ++i) {
+                     tmp[i * 2] = 0x00;
+                     tmp[i * 2 + 1] = p[i];
+                }
+                sdi_send_buffer(tmp, n * 2);
+                p += n;
+                remaining -= n;
+          }
+      } else {
+          sdi_send_buffer(data, len);
+      }
 }
 
 /// Starts the recording of sound as WAV data
@@ -823,15 +832,15 @@ size_t VS1053::available() {
 size_t VS1053::readBytes(uint8_t*data, size_t len){
     if (mode!=VS1053_IN) return 0;
 
-    size_t read = min(len, available());
+    size_t to_read = min(len, available());
     size_t result = 0;
     int16_t *p_word = (int16_t*)data;
-    size_t max_samples = read / 2 / channels_multiplier;
-    for (int j=0; j<= max_samples;j++){
+    size_t max_samples = to_read / 2 / channels_multiplier;
+    for (size_t i = 0; i < max_samples; i++){
         int16_t tmp = readRegister(SCI_HDAT0);
-        for (int j=0;j<channels_multiplier;j++){
+        for (uint8_t ch = 0; ch < channels_multiplier; ch++){
             *p_word++ = tmp;
-            result+=2;
+            result += 2;
         }
     }
     return result;

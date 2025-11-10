@@ -36,7 +36,10 @@ public:
       strcat(log_buffer, ":     ");
       va_list arg;
       va_start(arg, fmt);
-      vsnprintf(log_buffer + 9, LOG_BUFFER_SIZE-9, fmt, arg);
+      size_t off = strlen(log_buffer);
+      if (off < LOG_BUFFER_SIZE) {
+        vsnprintf(log_buffer + off, LOG_BUFFER_SIZE - off, fmt, arg);
+      }
       va_end(arg);
       p_out->println(log_buffer);
     }
