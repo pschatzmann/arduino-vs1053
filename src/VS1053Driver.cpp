@@ -204,15 +204,15 @@ bool VS1053::begin() {
     switch(chip_version){
         case 3: {
           const char* chip = "VS1003";
-          VS1053_LOGI("%s (%d)",chip ,chip_version);  
+          VS1053_LOGI("version: %s (%d)",chip ,chip_version);  
         } break;   
         case 4: {
           const char* chip = "VS1053";
-          VS1053_LOGI("%s (%d)",chip ,chip_version);  
+          VS1053_LOGI("version: %s (%d)",chip ,chip_version);  
         } break; 
         default:
           const char* chip = "Unsuppored chip";
-          VS1053_LOGI("%s: (%d)",chip, chip_version);    
+          VS1053_LOGI("version: %s (%d)",chip, chip_version);    
           result = false;
           break;
     }
