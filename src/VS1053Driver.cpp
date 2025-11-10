@@ -146,6 +146,7 @@ bool VS1053::testComm(const char *header) {
         }
         yield(); // Allow ESP firmware to do some bookkeeping
     }
+    VS1053_LOGD("testComm: %s", cnt==0 ? "OK" : "FAILED");
     return (cnt == 0); // Return the result
 }
 
@@ -219,6 +220,7 @@ bool VS1053::begin() {
 }
     
 bool VS1053::beginOutput(){
+    VS1053_LOGD("beginOutput");
     mode = VS1053_OUT;
     begin();
     startSong();
@@ -538,6 +540,8 @@ bool VS1053::loadDefaultVs1053Patches() {
         VS1053_LOGD("loadDefaultVs1053Patches");
         loadUserCode(PATCHES, PATCHES_SIZE);
         return true;
+    } else {
+        VS1053_LOGE("Patches only supported for VS1053");
     }
 #endif
     return false;
@@ -757,6 +761,7 @@ bool VS1053::begin_input_vs1053(VS1053Recording &opt){
 
     return true;
 #else
+    VS1053_LOGE("Input not supported - recompile with USE_INPUT");
     return false;
 #endif
 }

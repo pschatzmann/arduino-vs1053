@@ -23,6 +23,11 @@ namespace arduino_vs1053{}
 #  define USE_PATCHES 1
 #endif
 
+// Enable support for Input (Recording): set to 0 to minimize memory usage
+#ifndef USE_INPUT
+#  define USE_INPUT 1
+#endif
+
 // I2S Configuration: Use custom SPI Class for ESP
 #ifndef USE_ESP_SPI_CUSTOM
 #  define USE_ESP_SPI_CUSTOM 0
