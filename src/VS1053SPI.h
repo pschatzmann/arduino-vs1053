@@ -19,6 +19,7 @@ namespace arduino_vs1053 {
 
 class VS1053_SPI {
   public:
+    virtual ~VS1053_SPI() = default;
     virtual void beginTransaction() = 0;
     virtual void endTransaction() = 0;
     virtual void set_speed(uint32_t speed)= 0;

@@ -8,14 +8,14 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
 
     if (p_spi==nullptr){
 // if spi parameter is undifined, we use the system specific default drivers
+// Note: each instance needs its own driver object so that multiple VS1053
+// instances using different SPI buses do not end up sharing one wrapper
 #if USE_ESP_SPI_CUSTOM && (defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266))
-        static VS1053_SPIESP32 spi;
-        p_spi = &spi;
+        p_spi = new VS1053_SPIESP32();
 #elif defined(ARDUINO)
-        static VS1053_SPIArduino spi;
-        p_spi = &spi;
+        p_spi = new VS1053_SPIArduino();
 #endif
-
+        owns_spi = true;
     }
 }
 
@@ -23,11 +23,19 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
 
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &spi)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
-    static VS1053_SPIArduino vs_spi(spi);
-    p_spi = &vs_spi;
+    // allocated per instance so each object can be bound to its own SPI bus
+    p_spi = new VS1053_SPIArduino(spi);
+    owns_spi = true;
 }
 
 #endif
+
+VS1053::~VS1053() {
+    if (owns_spi) {
+        delete p_spi;
+        p_spi = nullptr;
+    }
+}
 
 
 uint16_t VS1053::readRegister(uint8_t _reg) const {

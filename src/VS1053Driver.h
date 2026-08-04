@@ -275,6 +275,13 @@ class VS1053 {
 
 #endif
 
+    /// Destructor - releases the SPI driver if it was allocated internally
+    ~VS1053();
+
+    // Each instance can own its own SPI driver instance, so copying is not supported
+    VS1053(const VS1053 &) = delete;
+    VS1053 &operator=(const VS1053 &) = delete;
+
     /// Begin operation.  Sets pins correctly, and prepares SPI bus.
     bool begin();
 
@@ -418,6 +425,7 @@ protected:
                                             // (-100 = right channel silent, 100 = left channel silent)
     const uint8_t vs1053_chunk_size = 32;
     VS1053_SPI *p_spi = nullptr;             // SPI Driver
+    bool owns_spi = false;                  // true if p_spi was allocated by this instance and must be freed
     uint8_t endFillByte;                    // Byte to send when stopping song
     VS1053Equilizer equilizer;
     VS1053_MODE mode;
