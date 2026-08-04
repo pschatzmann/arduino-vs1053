@@ -24,7 +24,11 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _re
 VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin, uint8_t _reset_pin, SPIClass &spi)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin), reset_pin(_reset_pin) {
     // allocated per instance so each object can be bound to its own SPI bus
+#if USE_ESP_SPI_CUSTOM && (defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_ESP8266))
+    p_spi = new VS1053_SPIESP32(spi);
+#else
     p_spi = new VS1053_SPIArduino(spi);
+#endif
     owns_spi = true;
 }
 
